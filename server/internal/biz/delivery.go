@@ -172,7 +172,10 @@ func (s *Service) materializeProject(ctx context.Context, ws, projectID string) 
 			due := addWorkdays(planned, max(t.Duration, 1)+t.DueSlack)
 			assigneeType, assigneeID := "", ""
 			switch {
-			case strings.HasPrefix(t.Assignee, "agent:") && !importing:
+			case strings.HasPrefix(t.Assignee, "agent:") && importing && leadID != "":
+				// History is not re-run by agents: the accountable person owns it.
+				assigneeType, assigneeID = leadType, leadID
+			case strings.HasPrefix(t.Assignee, "agent:"):
 				if id, ok := s.agentAvailable(ctx, ws, strings.TrimPrefix(t.Assignee, "agent:")); ok {
 					assigneeType, assigneeID = "agent", id
 				}
