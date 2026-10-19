@@ -1,0 +1,91 @@
+# XcodeGen spec for the native macOS host (TLS).
+# Regenerate the project with `xcodegen generate` from apps/macos/ after editing
+# this file; TLS.xcodeproj is committed so Xcode users don't need XcodeGen.
+name: TLS
+options:
+  bundleIdPrefix: com.leonmag.tls
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: TK4C5KVU73
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "Apple Development"
+    ENABLE_HARDENED_RUNTIME: YES
+    ARCHS: arm64
+    ONLY_ACTIVE_ARCH: YES
+targets:
+  TLS:
+    type: application
+    platform: macOS
+    sources:
+      - path: TLS
+        excludes:
+          - "Resources/bridge.js"
+      - path: TLS/Resources/bridge.js
+        buildPhase: resources
+    info:
+      path: TLS/Support/Info.plist
+      properties:
+        CFBundleDisplayName: TLS
+        CFBundleName: TLS
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSApplicationCategoryType: public.app-category.business
+        NSPrincipalClass: NSApplication
+        NSHumanReadableCopyright: "Built on Multica (https://github.com/multica-ai/multica). See Resources/LICENSE and Resources/NOTICE."
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    entitlements:
+      path: TLS/Support/TLS.entitlements
+      properties:
+        # The host spawns the bundled `multica` daemon and agent CLIs, which the
+        # App Sandbox forbids. Direct distribution only (see docs/tls).
+        com.apple.security.app-sandbox: false
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.leonmag.tls.app
+        PRODUCT_NAME: TLS
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        GENERATE_INFOPLIST_FILE: NO
+    preBuildScripts:
+      - name: Check web and Go artifacts
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          ART="${SRCROOT}/build/artifacts"
+          if [ ! -f "$ART/renderer/index.html" ] || [ ! -x "$ART/bin/multica" ]; then
+            echo "error: missing $ART. Run apps/macos/scripts/prepare-artifacts.sh first." >&2
+            exit 1
+          fi
+    postBuildScripts:
+      - name: Embed renderer, CLI and notices
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          ART="${SRCROOT}/build/artifacts"
+          DEST="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+          rm -rf "$DEST/renderer" "$DEST/bin"
+          mkdir -p "$DEST/bin"
+          /usr/bin/rsync -a --delete "$ART/renderer/" "$DEST/renderer/"
+          /bin/cp "$ART/bin/multica" "$DEST/bin/multica"
+          /bin/cp "${SRCROOT}/../../LICENSE" "${SRCROOT}/../../NOTICE" "$DEST/"
+          if [ "${CODE_SIGNING_ALLOWED}" != "NO" ] && [ -n "${EXPANDED_CODE_SIGN_IDENTITY}" ]; then
+            /usr/bin/codesign --force --options runtime --timestamp=none \
+              --sign "${EXPANDED_CODE_SIGN_IDENTITY}" "$DEST/bin/multica"
+          fi
+schemes:
+  TLS:
+    build:
+      targets:
+        TLS: all
+    run:
+      config: Debug
+    archive:
+      config: Release
