@@ -38,6 +38,9 @@ import (
 )
 
 type TaskService struct {
+	// ClaimGate (TLS) can veto a claim for an agent, e.g. while a company's
+	// global kill switch or the agent's business area pause is on. Nil allows.
+	ClaimGate func(ctx context.Context, workspaceID, agentID string) bool
 	Queries   *db.Queries
 	TxStarter TxStarter
 	Hub       *realtime.Hub
@@ -3528,6 +3531,10 @@ func (s *TaskService) claimTask(ctx context.Context, agentID, runtimeID pgtype.U
 		if err != nil {
 			outcome = "error_get_agent"
 			return fmt.Errorf("agent not found: %w", err)
+		}
+		if s.ClaimGate != nil && !s.ClaimGate(ctx, util.UUIDToString(agent.WorkspaceID), util.UUIDToString(agentID)) {
+			outcome = "gated"
+			return nil
 		}
 		claimRuntimeID := runtimeID
 		if !claimRuntimeID.Valid {

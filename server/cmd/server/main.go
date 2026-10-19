@@ -847,6 +847,7 @@ func main() {
 		slog.Warn("scheduler: failed to register plugin_hook_schedule_dispatch job", "error", err)
 	}
 	go func() {
+		startTLSBiz(sweepCtx)
 		_ = schedulerMgr.Run(sweepCtx)
 	}()
 

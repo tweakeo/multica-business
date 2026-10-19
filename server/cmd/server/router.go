@@ -1985,6 +1985,9 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.RequireWorkspaceMember(queries))
 
+			// TLS business layer ("Empresa"), see internal/biz.
+			r.Route("/api/biz", newTLSBiz(pool, queries, bus, h).Routes)
+
 			// Assignee frequency
 			r.Get("/api/assignee-frequency", h.GetAssigneeFrequency)
 

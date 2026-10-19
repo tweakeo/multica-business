@@ -1,0 +1,392 @@
+{
+  "page": {
+    "title": "Habilidades",
+    "tagline": "Instrucciones que cualquier agente de este espacio de trabajo puede usar.",
+    "learn_more": "Más información →",
+    "new_skill": "Nueva habilidad",
+    "search_placeholder": "Buscar habilidades…",
+    "scopes": {
+      "all": {
+        "label": "Todas",
+        "description": "Todas las habilidades de este espacio de trabajo"
+      },
+      "used": {
+        "label": "En uso",
+        "description": "Habilidades asignadas al menos a un agente"
+      },
+      "unused": {
+        "label": "Sin usar",
+        "description": "Habilidades no asignadas a ningún agente"
+      },
+      "mine": {
+        "label": "Creadas por mí",
+        "description": "Habilidades que has creado"
+      }
+    },
+    "empty": {
+      "title": "Aún no hay habilidades",
+      "description": "Crea o importa una habilidad."
+    },
+    "no_matches": {
+      "title": "Sin coincidencias",
+      "with_query": "Ninguna habilidad coincide con \"{{query}}\"{{filterSuffix}}.",
+      "with_query_filter_suffix": " en este filtro",
+      "filter_only": "Ninguna habilidad coincide con este filtro.",
+      "try_different": " Prueba con otra búsqueda."
+    },
+    "intro_banner": {
+      "title": "Compartidas con tu espacio de trabajo.",
+      "body": "Cualquiera puede crear una habilidad, importar una desde una URL o una carpeta local, o copiar una de su runtime local, y todos los agentes pueden usarla.",
+      "highlight": "Las habilidades del runtime local siguen siendo privadas hasta que copies una aquí."
+    },
+    "list_error": {
+      "title": "No se pudieron cargar las habilidades",
+      "fallback": "Algo salió mal al obtener la lista de habilidades.",
+      "retry": "Reintentar"
+    },
+    "supporting_data_warning": "Algunos datos del espacio de trabajo no se pudieron cargar. La atribución del creador, los nombres de los runtimes o los permisos de edición pueden aparecer incompletos."
+  },
+  "table": {
+    "name": "Nombre",
+    "created_by": "Añadida por",
+    "used_by": "Usada por",
+    "source": "Origen",
+    "updated": "Actualizada",
+    "created": "Creada",
+    "lock_tooltip": "Solo lectura: solo el creador o un administrador puede editarla",
+    "unused": "— sin usar",
+    "by_creator": "por {{name}}",
+    "source_manual": "Creada manualmente",
+    "source_runtime_named": "Desde {{name}}",
+    "source_runtime_provider": "Desde el runtime de {{provider}}",
+    "source_runtime_unknown": "Desde un runtime",
+    "source_clawhub": "Desde ClawHub",
+    "source_skills_sh": "Desde Skills.sh",
+    "source_github": "Desde GitHub"
+  },
+  "actions": {
+    "row_menu": "Acciones",
+    "add_to_agent": "Añadir a agente",
+    "refresh": "Actualizar desde el origen",
+    "my_agents": "Mis agentes",
+    "other_agents": "Otros agentes",
+    "no_agents": "No hay agentes disponibles",
+    "search_placeholder": "Buscar agentes…",
+    "no_agents_match": "Ningún agente coincide con tu búsqueda.",
+    "has_partial": "{{owned}}/{{total}} añadidas",
+    "added_toast": "Añadida a {{name}}",
+    "add_failed_toast": "No se pudo añadir la habilidad",
+    "delete": "Eliminar",
+    "selected": "{{count}} seleccionadas",
+    "clear_selection": "Borrar selección",
+    "delete_no_permission": "La selección incluye habilidades que solo su creador o un administrador puede eliminar",
+    "delete_dialog_title_one": "¿Eliminar {{count}} habilidad?",
+    "delete_dialog_title_other": "¿Eliminar {{count}} habilidades?",
+    "delete_dialog_desc_one": "Se eliminará de forma permanente la habilidad seleccionada y se quitará de todos los agentes.",
+    "delete_dialog_desc_other": "Se eliminarán de forma permanente las {{count}} habilidades seleccionadas y se quitarán de todos los agentes.",
+    "deleted_toast_one": "{{count}} habilidad eliminada",
+    "deleted_toast_other": "{{count}} habilidades eliminadas",
+    "delete_failed_toast": "No se pudieron eliminar las habilidades",
+    "update": "Actualizar",
+    "update_none": "La selección no incluye habilidades importadas que puedas actualizar",
+    "update_dialog_title": "¿Actualizar habilidades desde el origen?",
+    "update_summary_selected_one": "{{count}} habilidad se actualizará desde su origen",
+    "update_summary_selected_other": "{{count}} habilidades se actualizarán desde sus orígenes",
+    "update_summary_skipped_one": "{{count}} no se puede actualizar desde un origen: omitida",
+    "update_summary_skipped_other": "{{count}} no se pueden actualizar desde un origen: omitidas",
+    "update_confirm": "Actualizar {{count}}",
+    "update_updating": "Actualizando {{done}}/{{total}}…",
+    "updated_toast_one": "{{count}} habilidad actualizada desde el origen",
+    "updated_toast_other": "{{count}} habilidades actualizadas desde el origen",
+    "update_partial_toast": "Actualizadas {{count}}, {{failed}} fallaron",
+    "cancel": "Cancelar",
+    "add_confirm": "Añadir ({{num}})",
+    "adding": "Añadiendo...",
+    "added_multi_toast_one": "Añadida a {{count}} agente",
+    "added_multi_toast_other": "Añadida a {{count}} agentes"
+  },
+  "toolbar": {
+    "result_count_title": "Habilidades coincidentes / todas las habilidades",
+    "filter_label": "Filtrar",
+    "filter_active_count_one": "{{count}} filtro",
+    "filter_active_count_other": "{{count}} filtros",
+    "clear_filters": "Borrar filtros",
+    "section_usage": "Uso",
+    "section_labels": "Etiquetas",
+    "filter_search_placeholder": "Filtrar...",
+    "no_labels": "Aún no hay etiquetas",
+    "no_results": "Sin resultados",
+    "display": "Mostrar",
+    "sort_by": "Ordenar por",
+    "direction_asc": "Ascendente",
+    "direction_desc": "Descendente",
+    "section_columns": "Columnas",
+    "manage_labels": "Gestionar etiquetas...",
+    "manage_labels_title": "Etiquetas de habilidades"
+  },
+  "detail": {
+    "all_skills": "Todas las habilidades",
+    "read_only": "Solo lectura",
+    "delete_aria": "Eliminar habilidad",
+    "delete_tooltip": "Eliminar habilidad",
+    "supporting_data_warning": "Algunos datos del espacio de trabajo no se pudieron cargar. La atribución del creador, los nombres de los runtimes o los permisos de edición pueden aparecer incompletos hasta la próxima actualización.",
+    "delete_file": "Eliminar archivo",
+    "name_placeholder": "nombre-de-la-habilidad",
+    "description_placeholder": "Una frase que describa cuándo debe usar un agente esta habilidad…",
+    "subline": {
+      "origin_runtime_named": "Runtime local · {{name}}",
+      "origin_runtime_provider": "Runtime local · {{provider}}",
+      "origin_runtime_unknown": "Runtime local",
+      "origin_clawhub": "Importada · ClawHub",
+      "origin_skills_sh": "Importada · Skills.sh",
+      "origin_github": "Importada · GitHub",
+      "origin_workspace": "Creada manualmente"
+    },
+    "conflict_banner": {
+      "title": "Otra persona ha actualizado esta habilidad",
+      "body": "Tus cambios se conservan. Descarta para obtener los suyos o guarda para sobrescribirlos."
+    },
+    "save_bar": {
+      "changed_summary": "Cambios: {{parts}}",
+      "changed_files_one": "{{count}} archivo",
+      "changed_files_other": "{{count}} archivos",
+      "discard": "Descartar",
+      "save": "Guardar cambios",
+      "saving": "Guardando…"
+    },
+    "not_found": {
+      "title": "Habilidad no encontrada",
+      "fallback": "Es posible que esta habilidad se haya eliminado o que hayas perdido el acceso.",
+      "back": "Volver a Habilidades"
+    },
+    "toast_saved": "Habilidad guardada",
+    "toast_save_failed": "No se pudo guardar la habilidad",
+    "toast_deleted": "Habilidad eliminada",
+    "toast_delete_failed": "No se pudo eliminar la habilidad",
+    "refresh": {
+      "button": "Actualizar",
+      "tooltip": "Volver a descargar esta habilidad desde su origen",
+      "source_github": "GitHub",
+      "source_skills_sh": "Skills.sh",
+      "source_clawhub": "ClawHub",
+      "toast_success": "Habilidad actualizada desde {{source}}",
+      "toast_failed": "No se pudo actualizar la habilidad",
+      "dialog": {
+        "title": "¿Actualizar desde el origen?",
+        "description": "Se volverá a descargar \"{{name}}\" desde {{source}} y se reemplazarán su nombre, descripción, SKILL.md y archivos por la última versión.",
+        "warning": "Se sobrescribirán las ediciones locales de esta habilidad. Se conservan las asignaciones a agentes, las etiquetas y el creador.",
+        "cancel": "Cancelar",
+        "confirm": "Actualizar",
+        "refreshing": "Actualizando…"
+      }
+    },
+    "delete_dialog": {
+      "title": "¿Eliminar habilidad?",
+      "description_with_agents_one": "Se eliminará de forma permanente \"{{name}}\" y se quitará de {{count}} agente que la usa actualmente.",
+      "description_with_agents_other": "Se eliminará de forma permanente \"{{name}}\" y se quitará de {{count}} agentes que la usan actualmente.",
+      "description_no_agents": "Se eliminará de forma permanente \"{{name}}\" y se quitará de todos los agentes.",
+      "warning": "Esta acción no se puede deshacer.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar permanentemente",
+      "deleting": "Eliminando…"
+    },
+    "add_file": {
+      "placeholder": "templates/review.md",
+      "add": "Añadir",
+      "cancel": "Cancelar",
+      "errors": {
+        "empty": "La ruta no puede estar vacía.",
+        "absolute": "No se permiten rutas absolutas.",
+        "double_dot": "Las rutas no pueden contener \"..\".",
+        "reserved": "SKILL.md está reservado para el archivo principal.",
+        "exists": "Ya existe un archivo en esta ruta.",
+        "is_directory": "Ya existe una carpeta con este nombre",
+        "under_file": "Ya existe un archivo en esa ubicación"
+      }
+    },
+    "header": {
+      "files_one": "{{count}} archivo",
+      "files_other": "{{count}} archivos",
+      "used_by_one": "{{count}} agente",
+      "used_by_other": "{{count}} agentes",
+      "updated": "Actualizada {{when}}",
+      "updated_by": "Actualizada {{when}} por {{name}}"
+    },
+    "tabs": {
+      "aria": "Secciones de la habilidad",
+      "overview": "Resumen",
+      "files_one": "Archivos {{count}}",
+      "files_other": "Archivos {{count}}"
+    },
+    "overview": {
+      "properties": "Propiedades",
+      "properties_hint": "Estos campos se mantienen sincronizados con el frontmatter de SKILL.md.",
+      "name": "Nombre",
+      "description": "Descripción",
+      "description_hint": "Los agentes lo usan para decidir cuándo cargar la habilidad.",
+      "labels": "Etiquetas",
+      "used_by_one": "Usada por {{count}} agente",
+      "used_by_other": "Usada por {{count}} agentes",
+      "used_by_empty": "Aún no está asignada a ningún agente. Abre la pestaña Habilidades de un agente para asignarla.",
+      "permissions_owner": "Puedes editar y eliminar esta habilidad. Los cambios surten efecto en la próxima ejecución del agente.",
+      "permissions_locked_creator": "Solo el creador ({{name}}) o un administrador del espacio de trabajo puede editar esta habilidad.",
+      "permissions_locked": "Solo el creador o un administrador del espacio de trabajo puede editar esta habilidad.",
+      "properties_help": "Acerca de las propiedades de la habilidad",
+      "character_count": "{{count}} caracteres"
+    },
+    "files": {
+      "list_aria": "Archivos de la habilidad",
+      "main": "Archivo principal",
+      "supporting_one": "Auxiliares {{count}}",
+      "supporting_other": "Auxiliares {{count}}",
+      "supporting_empty": "No hay archivos auxiliares.",
+      "add_file": "Nuevo archivo",
+      "mode_aria": "Vista del archivo",
+      "mode_preview": "Vista previa",
+      "mode_edit": "Editar",
+      "mode_raw": "Texto sin formato"
+    }
+  },
+  "create": {
+    "back": "Atrás",
+    "back_aria": "Volver al selector de método",
+    "close": "Cerrar",
+    "close_aria": "Cerrar",
+    "method": {
+      "chooser": {
+        "title": "Nueva habilidad",
+        "desc": "Elige cómo añadir una habilidad a este espacio de trabajo."
+      },
+      "manual": {
+        "title": "Crear manualmente",
+        "desc": "Empieza desde un SKILL.md en blanco."
+      },
+      "local": {
+        "title": "Importar desde local",
+        "desc": "Elige una carpeta con SKILL.md o un archivo .skill / .zip."
+      },
+      "url": {
+        "title": "Importar desde URL",
+        "desc": "Obtén una habilidad publicada mediante su URL."
+      },
+      "runtime": {
+        "title": "Copiar desde un runtime",
+        "desc": "Promociona una habilidad instalada en tu runtime local."
+      }
+    },
+    "manual": {
+      "name_label": "Nombre",
+      "name_placeholder": "p. ej. review-helper",
+      "name_hint": "Debe ser único dentro del espacio de trabajo.",
+      "description_label": "Descripción",
+      "description_placeholder": "Una frase sobre cuándo asignar esta habilidad a un agente.",
+      "name_conflict_hint": " Prueba con otro nombre y envía de nuevo.",
+      "fallback_error": "No se pudo crear la habilidad",
+      "cancel": "Cancelar",
+      "submit": "Crear habilidad",
+      "submitting": "Creando…",
+      "toast_created": "Habilidad creada"
+    },
+    "local": {
+      "choose_folder": "Elegir carpeta",
+      "choose_archive": "Elegir .skill / .zip",
+      "folder_label": "Carpeta",
+      "archive_label": "Archivo comprimido",
+      "files_one": "{{count}} archivo",
+      "files_other": "{{count}} archivos",
+      "missing_skill_md": "Esta carpeta no es una habilidad: no tiene SKILL.md.",
+      "too_large": "Esta habilidad es demasiado grande para importarla.",
+      "empty": "La carpeta está vacía.",
+      "too_many_files": "Esta habilidad tiene demasiados archivos para importarla.",
+      "name_conflict_hint": " El nombre de la habilidad importada ya existe: elimina la existente antes de reintentar.",
+      "fallback_error": "Error al importar",
+      "cancel": "Cancelar",
+      "import": "Importar",
+      "importing": "Importando…",
+      "toast_imported": "Habilidad importada"
+    },
+    "url": {
+      "url_label": "URL de la habilidad",
+      "supported_sources": "Orígenes compatibles",
+      "import": "Importar",
+      "importing": "Importando…",
+      "importing_clawhub": "Importando desde ClawHub…",
+      "importing_skills_sh": "Importando desde Skills.sh…",
+      "importing_github": "Importando desde GitHub…",
+      "name_conflict_hint": " El nombre de la habilidad importada ya existe: elimina la existente antes de reintentar.",
+      "fallback_error": "Error al importar",
+      "cancel": "Cancelar",
+      "toast_imported": "Habilidad importada"
+    }
+  },
+  "runtime_import": {
+    "runtime_label": "Runtime",
+    "runtime_placeholder": "Selecciona un runtime local",
+    "no_local_runtimes_title": "No hay runtimes locales disponibles",
+    "no_local_runtimes_hint": "Conecta un runtime local para explorar e importar sus habilidades locales.",
+    "choose_runtime": "Elige un runtime para continuar",
+    "must_be_online": "El runtime debe estar en línea para explorar las habilidades locales.",
+    "load_failed": "No se pudieron cargar las habilidades locales del runtime",
+    "not_supported": "Este proveedor de runtime aún no expone un inventario de habilidades locales.",
+    "no_skills_title": "No se encontraron habilidades locales",
+    "search_placeholder": "Buscar habilidades locales",
+    "no_search_results_hint": "Ninguna habilidad local coincide con \"{{query}}\".",
+    "ignored_files_hint": "Los enlaces simbólicos, los archivos ilegibles, los archivos demasiado grandes y los paquetes muy grandes se ignoran durante la importación.",
+    "ready": "Listo para importar",
+    "into_workspace": "a este espacio de trabajo.",
+    "select_skill": "Selecciona una habilidad para continuar.",
+    "import_button": "Importar al espacio de trabajo",
+    "importing": "Importando…",
+    "skill_files_one": "{{count}} archivo",
+    "skill_files_other": "{{count}} archivos",
+    "skill_name_label": "Nombre de la habilidad en el espacio de trabajo",
+    "skill_description_label": "Descripción",
+    "skill_description_placeholder": "Opcional: describe cuándo debe usar un agente esta habilidad.",
+    "toast_imported": "Habilidad importada",
+    "toast_import_failed": "No se pudo importar la habilidad",
+    "select_all": "Seleccionar todas ({{count}})",
+    "bulk_ready": "{{count}} habilidades seleccionadas",
+    "bulk_import_button": "Importar {{count}} habilidades",
+    "bulk_progress": "Importando {{completed}} / {{total}}…",
+    "bulk_cancel_button": "Cancelar",
+    "bulk_complete_hint": "Importación completada.",
+    "bulk_cancelled_hint": "Importación cancelada.",
+    "bulk_done_button": "Hecho",
+    "bulk_summary_created": "Creadas",
+    "bulk_summary_updated": "Actualizadas",
+    "bulk_summary_conflicts": "Conflictos",
+    "bulk_summary_skipped": "Omitidas",
+    "bulk_summary_failed": "Fallidas",
+    "conflict_single_title": "Ya existe una habilidad con este nombre",
+    "conflict_bulk_title": "{{count}} habilidades requieren una decisión",
+    "conflict_hint": "Elige si quieres sobrescribir la habilidad existente del espacio de trabajo, importarla con un nombre nuevo u omitirla.",
+    "conflict_locked_creator": "Esta habilidad fue creada por {{creator}}. Solo el creador puede sobrescribirla desde la importación local; edítala desde la página de detalle de la habilidad si necesitas cambiarla.",
+    "conflict_locked": "Solo el creador puede sobrescribir esta habilidad desde la importación local; edítala desde la página de detalle de la habilidad si necesitas cambiarla.",
+    "conflict_overwrite": "Sobrescribir",
+    "conflict_rename": "Renombrar",
+    "conflict_skip": "Omitir",
+    "conflict_cancel": "Cancelar",
+    "conflict_overwrite_all": "Sobrescribir todas",
+    "conflict_skip_all": "Omitir todas",
+    "conflict_rename_label": "Nuevo nombre de la habilidad",
+    "conflict_footer": "{{count}} decisiones de conflicto pendientes.",
+    "conflict_apply_button": "Aplicar decisiones",
+    "conflict_missing_resolution": "Elige cómo resolver este conflicto.",
+    "conflict_name_still_exists": "Ese nombre ya existe. Elige otro nombre u omite."
+  },
+  "file_tree": {
+    "no_files": "Sin archivos",
+    "actions": {
+      "label": "Acciones para {{path}}",
+      "edit": "Editar",
+      "rename": "Renombrar",
+      "delete": "Eliminar"
+    }
+  },
+  "file_viewer": {
+    "no_content": "*Aún no hay contenido*",
+    "markdown_placeholder": "Escribe contenido en markdown...",
+    "raw_placeholder": "Contenido del archivo...",
+    "raw_aria": "Contenido en texto sin formato de {{path}}"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "page": {
+    "title": "Bandeja de entrada",
+    "back": "Bandeja de entrada"
+  },
+  "menu": {
+    "mark_all_read": "Marcar todo como leído",
+    "archive_all": "Archivar todo",
+    "archive_all_read": "Archivar todo lo leído",
+    "archive_completed": "Archivar completadas"
+  },
+  "filters": {
+    "tooltip": "Filtrar bandeja de entrada",
+    "active_count_one": "{{count}} filtro activo",
+    "active_count_other": "{{count}} filtros activos",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "from": "De",
+    "unread_only": "Solo no leídas",
+    "no_agents_working": "Ningún agente trabajando",
+    "notification_count_one": "{{count}} notificación",
+    "notification_count_other": "{{count}} notificaciones",
+    "clear": "Borrar filtros",
+    "empty": "Ninguna notificación coincide con tus filtros"
+  },
+  "context_menu": {
+    "mark_read": "Marcar como leída",
+    "mark_unread": "Marcar como no leída",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "open_in_new_tab": "Abrir en una pestaña nueva"
+  },
+  "list": {
+    "loading_selection": "Cargando notificación…",
+    "empty": "No hay notificaciones",
+    "mark_done_tooltip": "Marcar como hecha",
+    "archive_tooltip": "Archivar",
+    "time": {
+      "just_now": "ahora mismo",
+      "minutes": "{{count}} min",
+      "hours": "{{count}} h",
+      "days": "{{count}} d"
+    },
+    "archived_title": "Archivadas",
+    "archived_empty": "No hay notificaciones archivadas",
+    "unarchive_tooltip": "Desarchivar",
+    "actions_aria": "Acciones de la notificación",
+    "load_more": "Cargar más",
+    "loading_more": "Cargando…",
+    "retry": "Reintentar"
+  },
+  "detail": {
+    "select_prompt": "Selecciona una notificación para ver los detalles",
+    "empty": "Tu bandeja de entrada está vacía",
+    "original_input": "Entrada original",
+    "retry_with_context": "Reintentar con contexto",
+    "edit_advanced": "Editar como formulario avanzado",
+    "autopilot_quota_exceeded_body": "Este espacio de trabajo ha alcanzado su límite de {{limit}} ejecuciones de piloto automático en el periodo actual. No se iniciarán más ejecuciones de piloto automático hasta que la cuota se restablezca {{resetAt}}.",
+    "autopilot_quota_upgrade": "Ver opciones de mejora",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar"
+  },
+  "types": {
+    "issue_assigned": "Asignada",
+    "issue_subscribed": "Suscrito",
+    "unassigned": "Sin asignar",
+    "assignee_changed": "Responsable cambiado",
+    "status_changed": "Estado cambiado",
+    "priority_changed": "Prioridad cambiada",
+    "start_date_changed": "Fecha de inicio cambiada",
+    "due_date_changed": "Fecha de vencimiento cambiada",
+    "new_comment": "Nuevo comentario",
+    "mentioned": "Mencionado",
+    "review_requested": "Revisión solicitada",
+    "task_completed": "Ejecución completada",
+    "task_failed": "Ejecución fallida",
+    "agent_blocked": "Agente bloqueado",
+    "agent_completed": "Agente completado",
+    "reaction_added": "Reacción",
+    "quick_create_done": "Creada con agente",
+    "quick_create_failed": "Falló la creación con agente",
+    "quick_create_unconfirmed": "Creación con agente sin confirmar",
+    "autopilot_paused": "Piloto automático en pausa",
+    "children_done": "Subtareas terminadas",
+    "autopilot_quota_exceeded": "Límite de ejecuciones de piloto automático alcanzado"
+  },
+  "labels": {
+    "set_status_to": "Estado cambiado a",
+    "set_priority_to": "Prioridad cambiada a",
+    "assigned_to": "Asignada a {{name}}",
+    "removed_assignee": "Responsable quitado",
+    "set_start_date_to": "Fecha de inicio cambiada a {{date}}",
+    "removed_start_date": "Fecha de inicio quitada",
+    "set_due_date_to": "Fecha de vencimiento cambiada a {{date}}",
+    "removed_due_date": "Fecha de vencimiento quitada",
+    "reacted_to_comment": "Reaccionó con {{emoji}} a tu comentario",
+    "created_with_agent": "Creada con agente: {{identifier}}",
+    "failed_with_detail": "Error: {{detail}}",
+    "autopilot_quota_blocked": "Ejecución bloqueada porque se alcanzó el límite",
+    "children_done_stage": "Las subtareas de la fase {{stage}} han terminado"
+  },
+  "toasts": {
+    "source_context_retry_started": "Reintento iniciado con el contexto original",
+    "archived": "Notificación archivada",
+    "unarchived": "Notificación restaurada"
+  },
+  "errors": {
+    "archived_lookup_failed": "No se pudo cargar la notificación vinculada",
+    "source_context_retry_failed": "No se pudo reintentar con el contexto original",
+    "source_context_retry_unavailable": "Este contexto ya no se puede reintentar. Empieza de nuevo desde el punto de bifurcación.",
+    "mark_read_failed": "No se pudo marcar como leída",
+    "mark_unread_failed": "No se pudo marcar como no leída",
+    "archive_failed": "No se pudo archivar",
+    "mark_done_failed": "No se pudo marcar como hecha",
+    "mark_all_read_failed": "No se pudo marcar todo como leído",
+    "archive_all_failed": "No se pudo archivar todo",
+    "archive_all_read_failed": "No se pudieron archivar los elementos leídos",
+    "archive_completed_failed": "No se pudieron archivar las completadas",
+    "unarchive_failed": "No se pudo desarchivar",
+    "archived_load_failed": "No se pudieron cargar las notificaciones archivadas",
+    "filters_load_failed": "No se pudieron cargar los filtros"
+  }
+}

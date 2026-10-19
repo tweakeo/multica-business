@@ -1,0 +1,1 @@
+DROP INDEX CONCURRENTLY IF EXISTS idx_biz_event_pending;
