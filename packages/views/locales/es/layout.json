@@ -11,7 +11,8 @@
     "usage": "Analíticas",
     "runtimes": "Runtimes",
     "skills": "Habilidades",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "empresa": "Empresa"
   },
   "tab": {
     "issue": "Tarea",
@@ -60,6 +61,7 @@
     "discord_card": {
       "title": "Únete a nuestro Discord",
       "dismiss": "Descartar"
-    }
+    },
+    "empresa_group": "Empresa"
   }
 }

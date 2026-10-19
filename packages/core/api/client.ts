@@ -985,6 +985,19 @@ export class ApiClient {
     return res.json() as Promise<T>;
   }
 
+  // TLS business layer ("Empresa"). Responses are validated by the callers
+  // in packages/core/biz against their own schemas.
+  async bizGet(path: string): Promise<unknown> {
+    return this.fetch<unknown>(`/api/biz${path}`);
+  }
+
+  async bizPost(path: string, body: unknown): Promise<unknown> {
+    return this.fetch<unknown>(`/api/biz${path}`, {
+      method: "POST",
+      body: JSON.stringify(body ?? {}),
+    });
+  }
+
   // Auth
   async sendCode(email: string): Promise<void> {
     await this.fetch("/auth/send-code", {

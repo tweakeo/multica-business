@@ -11,7 +11,8 @@
     "usage": "Analytics",
     "runtimes": "Runtimes",
     "skills": "Skills",
-    "settings": "Settings"
+    "settings": "Settings",
+    "empresa": "Company"
   },
   "tab": {
     "issue": "Issue",
@@ -60,6 +61,7 @@
     "discord_card": {
       "title": "Join our Discord",
       "dismiss": "Dismiss"
-    }
+    },
+    "empresa_group": "Company"
   }
 }

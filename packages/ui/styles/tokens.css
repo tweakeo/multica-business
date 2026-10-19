@@ -23,6 +23,13 @@
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar: var(--sidebar);
     --color-chart-5: var(--chart-5);
+    /* TLS business areas (Empresa). Identify an area; never the only signal. */
+    --color-area-direccion: var(--area-direccion);
+    --color-area-ventas: var(--area-ventas);
+    --color-area-entrega: var(--area-entrega);
+    --color-area-finanzas: var(--area-finanzas);
+    --color-area-marca: var(--area-marca);
+    --color-area-equipo: var(--area-equipo);
     --color-chart-4: var(--chart-4);
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
@@ -220,6 +227,12 @@
     --chart-3: oklch(0.76 0.10 255);
     --chart-4: oklch(0.85 0.06 255);
     --chart-5: oklch(0.92 0.03 255);
+    --area-direccion: oklch(0.55 0.2 300);
+    --area-ventas: oklch(0.58 0.16 150);
+    --area-entrega: oklch(0.56 0.18 255);
+    --area-finanzas: oklch(0.72 0.15 85);
+    --area-marca: oklch(0.63 0.2 350);
+    --area-equipo: oklch(0.58 0.2 27);
     --radius: 0.5rem;
     --issue-row-height: 36px;
     --sidebar: oklch(0.964435 0.001327 286.375);
@@ -292,6 +305,12 @@
     --chart-3: oklch(0.52 0.10 255);
     --chart-4: oklch(0.42 0.06 255);
     --chart-5: oklch(0.32 0.03 255);
+    --area-direccion: oklch(0.7 0.16 300);
+    --area-ventas: oklch(0.72 0.15 150);
+    --area-entrega: oklch(0.7 0.14 255);
+    --area-finanzas: oklch(0.8 0.14 85);
+    --area-marca: oklch(0.74 0.16 350);
+    --area-equipo: oklch(0.7 0.17 27);
     --sidebar: oklch(0.21 0.006 285.885);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);

@@ -71,7 +71,11 @@ func (s *Service) registerBrand() {
 			return in.Status == "publicado" || in.Status == "programado"
 		},
 		Describe: func(ctx context.Context, s *Service, ws string, p json.RawMessage) Description {
-			var in struct{ ID, Status, EvidenceURL string }
+			var in struct {
+				ID          string `json:"id"`
+				Status      string `json:"status"`
+				EvidenceURL string `json:"evidence_url"`
+			}
 			_ = json.Unmarshal(p, &in)
 			m, _ := rowMap(ctx, s.Pool, "content", in.ID)
 			return Description{Title: "Contenido «" + str(m["title"]) + "» → " + in.Status, Summary: str(m["body"]), EntityType: "content", EntityID: in.ID,

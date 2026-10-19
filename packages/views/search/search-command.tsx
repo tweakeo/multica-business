@@ -95,6 +95,7 @@ import { useSearchStore } from "./search-store";
 // keywords are filled in.
 const PAGE_KEYWORDS: Record<WorkspacePageKey, string[]> = {
   inbox: ["inbox", "notifications", "收件箱", "通知"],
+  empresa: ["empresa", "company", "areas", "áreas", "ventas", "finanzas", "dirección", "entrega", "marca", "equipo"],
   chat: ["chat", "messages", "conversation", "聊天", "消息", "对话"],
   myIssues: ["my", "issues", "assigned", "mine", "我的", "任务"],
   issues: ["issues", "tasks", "bugs", "任务"],

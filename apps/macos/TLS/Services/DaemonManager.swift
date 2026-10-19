@@ -340,10 +340,48 @@ final class DaemonManager {
 
     private struct CLIResult { let status: Int32; let stdout: String; let stderr: String }
 
+    /// Confines every agent process the daemon launches (macOS sandbox).
+    /// Agents keep network access to the TLS API but cannot read or write the
+    /// company folders, the daemon's credentials, host state, `.env` secrets or
+    /// the database, so business data only changes through the API, where
+    /// policies, approvals and audit apply.
+    static var agentSandboxProfile: URL { AppPaths.support.appendingPathComponent("agent-sandbox.sb") }
+
+    private func writeAgentSandboxProfile() -> URL? {
+        let home = FileManager.default.homeDirectoryForCurrentUser.path
+        func quoted(_ path: String) -> String { "\"" + path.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") + "\"" }
+        let profile = """
+        (version 1)
+        (allow default)
+        ; Company folders: agents reach business data only through the TLS API.
+        (deny file-read* file-write* (subpath \(quoted(home + "/TLS Empresas"))))
+        ; Daemon credentials (owner token) and host state.
+        (deny file-read* file-write* (subpath \(quoted(home + "/.multica/profiles"))))
+        (deny file-read* file-write* (subpath \(quoted(AppPaths.support.path))))
+        ; Server secrets.
+        (deny file-read* (regex #"/\\.env$"))
+        ; Direct database access would bypass policies and audit.
+        (deny network-outbound (remote tcp "*:5432"))
+        (deny network-outbound (remote unix-socket (path-regex #"\\.s\\.PGSQL\\.")))
+        (deny file-read* file-write* (regex #"\\.s\\.PGSQL\\."))
+        """
+        do {
+            try FileManager.default.createDirectory(at: AppPaths.support, withIntermediateDirectories: true)
+            try profile.write(to: Self.agentSandboxProfile, atomically: true, encoding: .utf8)
+            return Self.agentSandboxProfile
+        } catch {
+            NSLog("[daemon] could not write agent sandbox profile: \(error)")
+            return nil
+        }
+    }
+
     private func runCLI(_ args: [String], timeout: TimeInterval) async throws -> CLIResult {
         guard let cliURL else { throw CocoaError(.fileNoSuchFile) }
         var env = ProcessInfo.processInfo.environment
         env["PATH"] = spawnPath
+        if args.first == "daemon", let profile = writeAgentSandboxProfile() {
+            env["MULTICA_AGENT_SANDBOX_PROFILE"] = profile.path
+        }
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()
             process.executableURL = cliURL

@@ -848,6 +848,15 @@ export function useRealtimeSync(
           qc.invalidateQueries({ queryKey: issueKeys.all(wsId) });
         }
       },
+      biz: () => {
+        // TLS business layer: any business change refreshes the projection,
+        // and actions may have created issues or projects.
+        const wsId = getCurrentWsId();
+        if (wsId) {
+          qc.invalidateQueries({ queryKey: ["biz", wsId] });
+          qc.invalidateQueries({ queryKey: issueKeys.all(wsId) });
+        }
+      },
       label: () => {
         // Label catalogs are independently scoped to issues, agents, and
         // skills. The generic event prefix does not carry the scope into this

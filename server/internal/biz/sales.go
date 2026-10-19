@@ -173,7 +173,13 @@ func (s *Service) registerSales() {
 		Action: "contact.create", Capability: "VEN-01", Area: "ventas",
 		Exec: func(ctx context.Context, tx pgx.Tx, s *Service, ws string, a Actor, p json.RawMessage) (any, error) {
 			in, err := decode[struct {
-				OrganizationID, Name, Email, Phone, Position, Kind, Notes string
+				OrganizationID string `json:"organization_id"`
+				Name           string `json:"name"`
+				Email          string `json:"email"`
+				Phone          string `json:"phone"`
+				Position       string `json:"position"`
+				Kind           string `json:"kind"`
+				Notes          string `json:"notes"`
 			}](p)
 			if err != nil {
 				return nil, err
@@ -391,7 +397,10 @@ func (s *Service) registerSales() {
 		Action: "message.send", Capability: "VEN-08", Area: "ventas", Sensitive: always(true),
 		Describe: func(ctx context.Context, s *Service, ws string, p json.RawMessage) Description {
 			in, _ := decode[struct {
-				OpportunityID, To, Subject, Body string
+				OpportunityID string `json:"opportunity_id"`
+				To            string `json:"to"`
+				Subject       string `json:"subject"`
+				Body          string `json:"body"`
 			}](p)
 			return Description{Title: "Enviar mensaje a " + in.To, Summary: in.Subject + "\n\n" + in.Body, EntityType: "opportunity", EntityID: in.OpportunityID,
 				Effects: []Effect{{Field: "destinatario", After: in.To}, {Field: "asunto", After: in.Subject}}}

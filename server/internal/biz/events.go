@@ -22,9 +22,8 @@ type eventRow struct {
 // ProcessEvents drains due events. Delivery is at-least-once: every handler
 // is idempotent (unique links, existence checks, idempotency keys).
 func (s *Service) ProcessEvents(ctx context.Context) {
-	if !processMu.TryLock() {
-		return
-	}
+	// Serialised in-process; SKIP LOCKED keeps other processes safe too.
+	processMu.Lock()
 	defer processMu.Unlock()
 	for i := 0; i < 20; i++ {
 		batch, err := s.claimEvents(ctx)

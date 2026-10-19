@@ -145,6 +145,11 @@ const labelsByLocale: Record<string, ContextMenuLabels> = {
     copyLinkAddress: "링크 주소 복사",
     copyImage: "이미지 복사",
   },
+  es: {
+    openLink: "Abrir enlace en el navegador",
+    copyLinkAddress: "Copiar dirección del enlace",
+    copyImage: "Copiar imagen",
+  },
 };
 
 // pickLabels resolves the OS-preferred language to one of the four
@@ -163,5 +168,6 @@ function pickLabels(): ContextMenuLabels {
   }
   if (preferred.startsWith("ja")) return labelsByLocale.ja;
   if (preferred.startsWith("ko")) return labelsByLocale.ko;
+  if (preferred.startsWith("es")) return labelsByLocale.es;
   return labelsByLocale.en;
 }

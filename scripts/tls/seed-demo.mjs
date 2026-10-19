@@ -462,7 +462,7 @@ async function main() {
   add("2026-08-14", "TRASPASO A CUENTA AHORRO", -2000);
   add("2026-09-18", "TRANSFERENCIA DE ANDRES VIDAL F-2026-0006", 108.9);
   add("2026-09-30", "RETIRADA SOCIO DISPOSICION TITULAR", -800);
-  add("2026-10-08", "TRANSFERENCIA DE TALLERES MARTIN E HIJOS SL", 181.5);
+  add("2026-10-17", "TRANSFERENCIA DE TALLERES MARTIN E HIJOS SL", 181.5);
   ccRows.sort((a, b) => a.d.localeCompare(b.d));
   let bal = 18400;
   const csv = ["fecha;fecha_valor;concepto;importe;saldo"];
@@ -528,7 +528,9 @@ async function main() {
   const andresP = byOpp(andres);
   shift(andresP.id, 6);
   await setStatus(andresP.id, ["done", "done", "renta_preparacion"]);
-  sql(`UPDATE issue SET updated_at = now() - interval '9 days' WHERE project_id IN ('${pan.id}','${cli.id}','${andresP.id}') AND status='done'`);
+  // Done tasks were finished on their planned day (before the due date).
+  const shifted = [...rentaClosed.map((o) => byOpp(o).id), pan.id, cli.id, andresP.id].map((id) => `'${id}'`).join(",");
+  sql(`UPDATE issue SET updated_at = (start_date + 1)::timestamp + interval '11 hours' WHERE project_id IN (${shifted}) AND status='done'`);
   sql(`UPDATE biz_opportunity SET last_contact_at = now() - interval '21 days', created_at = now() - interval '30 days' WHERE id='${javier.id}';
        UPDATE biz_opportunity SET created_at = now() - interval '12 days', last_contact_at = now() - interval '5 days' WHERE id IN ('${nexo.id}','${frutas.id}');
        UPDATE biz_conversation SET created_at = now() - interval '5 days' WHERE qualified = false AND workspace_id='${ws}'`);

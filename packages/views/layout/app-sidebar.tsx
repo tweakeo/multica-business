@@ -65,6 +65,7 @@ import {
   useActiveIssueViewStore,
 } from "@multica/core/issue-views/active-view-store";
 import { useCurrentWorkspace, useWorkspacePaths, paths } from "@multica/core/paths";
+import { EmpresaNavGroup } from "./empresa-nav-group";
 import { workspaceListOptions, myInvitationListOptions, workspaceKeys } from "@multica/core/workspace/queries";
 import { resolvePublicFileUrl } from "@multica/core/workspace/avatar-url";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -856,6 +857,8 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
               </SidebarGroup>
             </Collapsible>
           )}
+
+          <EmpresaNavGroup pathname={pathname} />
 
           <SidebarGroup>
             <SidebarGroupLabel>{t(($) => $.sidebar.work_group)}</SidebarGroupLabel>

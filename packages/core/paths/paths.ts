@@ -67,6 +67,9 @@ function workspaceScoped(slug: string) {
     skills: () => `${ws}/skills`,
     skillDetail: (id: string) => `${ws}/skills/${encode(id)}`,
     settings: () => `${ws}/settings`,
+    // TLS business layer ("Empresa"): overview and the six business areas.
+    empresa: () => `${ws}/empresa`,
+    empresaArea: (area: string) => `${ws}/empresa/${encode(area)}`,
     attachmentPreview: (id: string) => `${ws}/attachments/${encode(id)}/preview`,
   };
 }

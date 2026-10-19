@@ -78,6 +78,12 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 	}
 	mStart, mEnd, elapsed := monthBounds()
 	cumulative := false
+	partial := false
+	defer func() {
+		if partial && k.Value != nil {
+			k.Status = "partial"
+		}
+	}()
 	switch k.Code {
 	case "DIR-OBJ":
 		k.Value, k.Explanation = s.objectivesOnTrack(ctx, ws)
@@ -149,6 +155,13 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 			k.Value = pf(math.Round((inc - exp) / inc * 100))
 		}
 		k.Explanation = fmt.Sprintf("Devengo del mes: ingresos %s, gastos %s. No es resultado de caja.", eur(int64(inc)), eur(int64(exp)))
+		var uninvoiced float64
+		_ = s.Pool.QueryRow(ctx, `SELECT coalesce(sum(amount_minor),0) FROM biz_bank_movement WHERE workspace_id=$1 AND amount_minor > 0 AND nature='operating_income'
+			AND invoice_id IS NULL AND booked_on >= $2 AND booked_on < $3`, ws, mStart, mEnd).Scan(&uninvoiced)
+		if uninvoiced > 0 {
+			partial = true
+			k.Coverage = fmt.Sprintf("Datos parciales: %s cobrados este mes sin factura registrada en TLS (p. ej., cartera anterior).", eur(int64(uninvoiced)))
+		}
 		k.Source = "/empresa/finanzas?tab=analisis"
 	case "MAR-QCONV":
 		cumulative = true
@@ -663,13 +676,20 @@ func (s *Service) maturity(ctx context.Context, ws, area string) Maturity {
 		stage = 3
 		ev = append(ev, "Procesos esenciales sistematizados")
 	}
-	if stage >= 3 && agentAssigned {
+	if stage >= 3 && agentAssigned && delegated >= 1 {
 		stage = 4
-		ev = append(ev, "Agente de área con permisos acotados")
+		ev = append(ev, fmt.Sprintf("Agente de área con %d capacidad(es) delegadas por política explícita", delegated))
+	} else if agentAssigned {
+		ev = append(ev, "Agente asignado, pero ninguna capacidad delegada por política explícita")
 	}
-	if stage >= 4 && roleOccupied && delegated >= 2 {
+	var notOwner bool
+	_ = s.Pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM biz_role r WHERE r.workspace_id=$1 AND r.area=$2 AND r.occupant_id IS NOT NULL
+		AND NOT EXISTS (SELECT 1 FROM member m WHERE m.workspace_id=r.workspace_id AND m.user_id=r.occupant_id AND m.role='owner'))`, ws, area).Scan(&notOwner)
+	if stage >= 4 && roleOccupied && notOwner && delegated >= 2 {
 		stage = 5
-		ev = append(ev, fmt.Sprintf("%d capacidades delegadas en modo supervisado o autónomo", delegated))
+		ev = append(ev, "Rol ocupado por alguien distinto del dueño y delegación en varias capacidades")
+	} else if roleOccupied && !notOwner {
+		ev = append(ev, "El rol lo ocupa el dueño: el área depende de él")
 	}
 	return Maturity{Stage: stage, Label: stageLabels[stage], Evidence: ev, Note: "Estimación explicable; revísala en la revisión trimestral."}
 }

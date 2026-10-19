@@ -5,7 +5,9 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -111,7 +113,23 @@ func (c Command) Argv(args ...string) []string {
 // reintroduce GH #7046. TestOnlyLaunchGoSpawnsRuntimeProcesses enforces it.
 func (c Command) exec(ctx context.Context, args ...string) *exec.Cmd {
 	warnLaunchPrefixOverlap(c.Prefix, args, c.logger)
-	return newRuntimeCmd(exec.CommandContext(ctx, c.Path, c.Argv(args...)...))
+	return newRuntimeCmd(sandboxedCommand(ctx, c.Path, c.Argv(args...)))
+}
+
+// AgentSandboxProfileEnv names a macOS sandbox profile (.sb) that every runtime
+// process is launched under (TLS). The host writes the profile; it denies the
+// company folders, daemon credentials and direct database access so an agent
+// can only change business data through the API, where policy, approvals and
+// audit apply. Unset (or non-macOS) keeps the upstream behaviour.
+const AgentSandboxProfileEnv = "MULTICA_AGENT_SANDBOX_PROFILE"
+
+func sandboxedCommand(ctx context.Context, path string, args []string) *exec.Cmd {
+	if profile := os.Getenv(AgentSandboxProfileEnv); profile != "" && runtime.GOOS == "darwin" {
+		if _, err := os.Stat(profile); err == nil {
+			return exec.CommandContext(ctx, "/usr/bin/sandbox-exec", append([]string{"-f", profile, path}, args...)...)
+		}
+	}
+	return exec.CommandContext(ctx, path, args...)
 }
 
 // newRuntimeCmd applies the process-lifecycle defaults every runtime process in
@@ -269,7 +287,7 @@ type invocationChooser func(execName, lookedUp string, args []string, logger *sl
 func (c Command) execVia(ctx context.Context, choose invocationChooser, lookedUp string, args []string, logger *slog.Logger) (*exec.Cmd, string, []string) {
 	warnLaunchPrefixOverlap(c.Prefix, args, logger)
 	argv0, cmdArgs := choose(c.Path, lookedUp, c.Argv(args...), logger)
-	return newRuntimeCmd(exec.CommandContext(ctx, argv0, cmdArgs...)), argv0, cmdArgs
+	return newRuntimeCmd(sandboxedCommand(ctx, argv0, cmdArgs)), argv0, cmdArgs
 }
 
 // withFilteredPrefix returns a copy of the command whose prefix has been
