@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import { CollectionPageHeader } from "../layout/collection-page";
 import { PAGE_GUTTER } from "../layout/page-header";
 import { useNavigation } from "../navigation";
+import { AreaPaceCard, AreaPaceChart, PaceLegend } from "./area-pace";
 import { ApprovalCard, ExceptionList } from "./blocks";
 import { RecordSheet } from "./record-sheet";
 import {
@@ -44,7 +45,6 @@ import {
   Pill,
   RecordLink,
   Section,
-  StatusBadge,
   str,
   useAction,
 } from "./shared";
@@ -189,38 +189,20 @@ function CompanyView() {
         </div>
       </div>
 
-      <Section title="Seis áreas">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {o.areas.map((a) => {
-            const info = AREAS.find((x) => x.code === a.code)!;
-            return (
-              <button
-                key={a.code}
-                type="button"
-                onClick={() => nav.push(p.empresaArea(a.code))}
-                className={cn("group flex flex-col gap-2 rounded-lg border border-l-4 bg-card p-3 text-left transition-colors hover:bg-accent/40", info.border)}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-body font-semibold">{a.name}</span>
-                  <span className="text-caption text-muted-foreground">{a.transforms}</span>
-                  <span className="ml-auto"><StatusBadge status={a.paused ? "paused" : a.status} /></span>
-                </div>
-                <p className="text-caption text-muted-foreground">{a.explanation}</p>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                  {(a.kpis ?? []).slice(0, 4).map((k) => (
-                    <div key={k.code} className="flex min-w-0 items-center justify-between gap-1 text-caption">
-                      <span className="truncate text-muted-foreground" title={k.name}>{k.name}</span>
-                      <span className="shrink-0 tabular-nums">{formatKpiValue(k.value, k.unit)}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-auto flex items-center gap-2 text-micro text-muted-foreground">
-                  <Pill>Etapa {a.maturity.stage}: {a.maturity.label}</Pill>
-                  {a.exceptions > 0 ? <Pill>{a.exceptions} excepciones</Pill> : <Pill>Sin excepciones</Pill>}
-                </div>
-              </button>
-            );
-          })}
+      <Section title="Seis áreas · ritmo">
+        <div className="space-y-3">
+          <div className="rounded-lg border bg-card p-4">
+            <AreaPaceChart areas={o.areas} onSelect={(code) => nav.push(p.empresaArea(code))} />
+            <PaceLegend className="mt-2 border-t pt-3" />
+            <p className="mt-1.5 text-micro text-muted-foreground">
+              Ritmo = valor real frente a lo esperado a fecha de hoy. Cada área muestra su indicador más atrasado, que es el que manda.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {o.areas.map((a) => (
+              <AreaPaceCard key={a.code} area={a} onOpen={() => nav.push(p.empresaArea(a.code))} />
+            ))}
+          </div>
         </div>
       </Section>
 

@@ -40,6 +40,7 @@
     --color-destructive: var(--destructive);
     --color-success: var(--success);
     --color-warning: var(--warning);
+    --color-critical: var(--critical);
     --color-info: var(--info);
     --color-brand: var(--brand);
     --color-brand-foreground: var(--brand-foreground);
@@ -247,6 +248,8 @@
     --brand-foreground: oklch(0.985 0 0);
     --success: oklch(0.55 0.16 145);
     --warning: oklch(0.75 0.16 85);
+    /* Deeper than destructive: the "crítico" pace band (TLS grana). */
+    --critical: oklch(0.48 0.19 5);
     --info: oklch(0.55 0.18 250);
     --scrollbar-thumb: oklch(0 0 0 / 10%);
     --scrollbar-thumb-hover: oklch(0 0 0 / 18%);
@@ -324,6 +327,7 @@
     --brand-foreground: oklch(0.985 0 0);
     --success: oklch(0.65 0.15 145);
     --warning: oklch(0.70 0.16 85);
+    --critical: oklch(0.6 0.2 2);
     --info: oklch(0.65 0.18 250);
     --scrollbar-thumb: oklch(1 0 0 / 8%);
     --scrollbar-thumb-hover: oklch(1 0 0 / 18%);
