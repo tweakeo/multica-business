@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Starts everything the TLS demo needs on this Mac and opens the app:
-#   PostgreSQL (Homebrew) → Go backend (background, logs in ~/Library/Logs/TLS)
-#   → TLS.app (Release if built, else Debug).
+# Development mode with an external server: PostgreSQL (Homebrew) → Go
+# backend on :8080 (logs in ~/Library/Logs/TLS) → TLS.app switched to
+# "external" mode. The installable app (DMG) uses embedded mode instead; to
+# go back, set "mode": "embedded" in ~/Library/Application Support/TLS/runtime-config.json.
 #   scripts/tls/start-demo.sh          # start
 #   scripts/tls/start-demo.sh stop     # stop the backend (database keeps running)
 set -euo pipefail
@@ -30,6 +31,12 @@ else
   for _ in $(seq 1 120); do curl -sf -o /dev/null http://localhost:8080/health && break; sleep 1; done
   curl -sf -o /dev/null http://localhost:8080/health || { echo "El backend no arrancó; revisa $LOGS/backend.log"; exit 1; }
 fi
+
+CONFIG="$HOME/Library/Application Support/TLS/runtime-config.json"
+mkdir -p "$(dirname "$CONFIG")"
+cat >"$CONFIG" <<'JSON'
+{ "schemaVersion": 1, "mode": "external", "apiUrl": "http://localhost:8080", "wsUrl": "ws://localhost:8080/ws", "appUrl": "http://localhost:3000" }
+JSON
 
 APP="$ROOT/apps/macos/build/DerivedData/Build/Products/Release/TLS.app"
 [ -d "$APP" ] || APP="$ROOT/apps/macos/build/DerivedData/Build/Products/Debug/TLS.app"

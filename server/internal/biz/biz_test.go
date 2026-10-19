@@ -481,3 +481,11 @@ func TestDecisionsAreAppendOnly(t *testing.T) {
 	}
 	_ = http.StatusOK
 }
+
+func TestRebindAgentsSQLIsValid(t *testing.T) {
+	f := newFixture(t)
+	// A silently failing rebind would strand agents on another Mac.
+	if _, err := f.s.rebindAgents(context.Background()); err != nil {
+		t.Fatalf("rebind statement failed: %v", err)
+	}
+}

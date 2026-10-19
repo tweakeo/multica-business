@@ -37,6 +37,11 @@ enum DebugHooks {
                     }
                     try? JSONText.encode(output).write(to: directory.appendingPathComponent("eval-result.json"), atomically: true, encoding: .utf8)
                 }
+            case "cookies":
+                WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
+                    let rows = cookies.map { ["domain": $0.domain, "name": $0.name, "path": $0.path, "value_prefix": String($0.value.prefix(16))] }
+                    try? JSONText.encode(rows).write(to: directory.appendingPathComponent("cookies.json"), atomically: true, encoding: .utf8)
+                }
             default:
                 break
             }

@@ -39,9 +39,16 @@ type Folder struct {
 
 const folderSchema = 1
 
+// Root is the company folder. A leading "~/" is the current user's home, so
+// a company (and the bundled demo) moves between Macs without rewriting it.
 func (f *Folder) Root(ctx context.Context, q Querier, ws string) string {
 	var root string
 	_ = json.Unmarshal(f.svc.Setting(ctx, q, ws, "company_folder"), &root)
+	if strings.HasPrefix(root, "~/") {
+		if home, err := os.UserHomeDir(); err == nil {
+			root = filepath.Join(home, root[2:])
+		}
+	}
 	return root
 }
 

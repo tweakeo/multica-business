@@ -18,6 +18,7 @@ import (
 	"github.com/multica-ai/multica/server/internal/dbstartup"
 	"github.com/multica-ai/multica/server/internal/logger"
 	"github.com/multica-ai/multica/server/internal/migrations"
+	"github.com/multica-ai/multica/server/internal/secretsfile"
 	"github.com/multica-ai/multica/server/internal/taskusagebackfill"
 )
 
@@ -792,6 +793,10 @@ type runOptions struct {
 
 func main() {
 	logger.Init()
+	if err := secretsfile.Load(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run ./cmd/migrate <up|down>")

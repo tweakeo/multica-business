@@ -1,5 +1,6 @@
 import AppKit
 import UserNotifications
+import WebKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private(set) var mainWindow: BrowserWindowController?
@@ -15,8 +16,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         DaemonManager.shared.onLogLine = { [weak self] line in
             self?.mainWindow?.emit("daemon:log-line", line)
         }
-        showMainWindow()
         installMouseNavigationMonitor()
+        if RuntimeConfigStore.isEmbedded {
+            startEmbeddedStack()
+        } else {
+            showMainWindow()
+        }
         #if DEBUG
         DebugHooks.install { [weak self] in
             (NSApp.keyWindow?.windowController as? BrowserWindowController)?.webView ?? self?.mainWindow?.webView
@@ -34,14 +39,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        // Only stop the daemon when the user opted into it; otherwise it keeps
-        // serving agent tasks in the background as Electron's build does.
-        guard DaemonManager.shared.prefs.autoStop else { return .terminateNow }
+        // Embedded mode owns the server: stop the daemon, the API and the
+        // database together. Otherwise only stop the daemon when the user opted
+        // into it, as Electron's build does.
+        let embedded = RuntimeConfigStore.isEmbedded
+        guard embedded || DaemonManager.shared.prefs.autoStop else { return .terminateNow }
         Task { @MainActor in
             await DaemonManager.shared.stopForQuit()
+            if embedded { LocalStack.shared.stop() }
             sender.reply(toApplicationShouldTerminate: true)
         }
         return .terminateLater
+    }
+
+    // MARK: Embedded stack
+
+    private var startupWindow: StartupWindowController?
+    /// Session token from the automatic local login, consumed by the first window.
+    var bootToken: String?
+
+    private func startEmbeddedStack() {
+        let startup = StartupWindowController()
+        startupWindow = startup
+        startup.showWindow(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        Task { @MainActor in
+            do {
+                bootToken = try await LocalStack.shared.start { startup.setStatus($0) }
+                startup.close()
+                startupWindow = nil
+                showMainWindow()
+            } catch {
+                startup.close()
+                startupWindow = nil
+                let alert = NSAlert()
+                alert.messageText = "TLS no ha podido arrancar"
+                alert.informativeText = error.localizedDescription
+                alert.addButton(withTitle: "Abrir registros")
+                alert.addButton(withTitle: "Salir")
+                if alert.runModal() == .alertFirstButtonReturn {
+                    NSWorkspace.shared.open(LocalStack.logsDir)
+                }
+                NSApp.terminate(nil)
+            }
+        }
     }
 
     func showMainWindow() {

@@ -4,14 +4,16 @@ Esta guía explica cómo se trabaja con TLS como si la gestoría ya funcionara c
 
 ## 1. Arrancar
 
-```bash
-scripts/tls/start-demo.sh        # base de datos + servidor + TLS.app
-```
+**Instalada desde el DMG (lo normal):**
+1. Abre `TLS-0.1.0.dmg` y arrastra TLS a Aplicaciones.
+2. La primera vez, permite abrirla en *Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente*.
+3. TLS arranca sola su base de datos y su servidor y entra en la demo como **Elena Ribera**, la dueña de la gestoría. No pide usuario ni código.
 
-- Entra con `demo@tls.local` y el código `888888` (solo para uso local). Eres **Elena Ribera**, la dueña de la gestoría.
-- La app es `apps/macos/build/DerivedData/Build/Products/Release/TLS.app`. Se puede abrir desde Finder o compilar en Xcode con `apps/macos/TLS.xcodeproj` (scheme `TLS`).
-- Para recrear la demo desde cero: `node scripts/tls/seed-demo.mjs --reset`. Al terminar arrancan algunos agentes de verdad. Con `--offline` se recrea sin agentes.
-- Para detener el servidor: `scripts/tls/start-demo.sh stop`.
+Volver a la demo inicial: cierra TLS y borra `~/Library/Application Support/TLS/runtime` y `~/TLS Empresas/DEMO - Asesoría Ribera`.
+
+**Desarrollo con servidor externo:**
+- `scripts/tls/start-demo.sh` arranca el servidor de desarrollo en `:8080` y pone la app en modo externo. En este modo se entra con `demo@tls.local` y el código fijo de desarrollo.
+- `node scripts/tls/seed-demo.mjs --reset` recrea la demo en ese servidor (añade `--offline` para no lanzar agentes).
 
 ## 2. La empresa en la demo
 

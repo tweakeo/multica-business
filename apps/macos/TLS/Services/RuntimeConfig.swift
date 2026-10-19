@@ -6,11 +6,15 @@ struct RuntimeConfig: Codable, Equatable {
     var apiUrl: String
     var wsUrl: String
     var appUrl: String
+    /// "embedded" runs PostgreSQL and the API inside the app (LocalStack);
+    /// "external" (or absent, for configs written before 0.1) uses the URLs.
+    var mode: String?
 
-    static let localDefault = RuntimeConfig(
-        apiUrl: "http://localhost:8080",
-        wsUrl: "ws://localhost:8080/ws",
-        appUrl: "http://localhost:3000"
+    static let embeddedDefault = RuntimeConfig(
+        apiUrl: LocalStack.apiURL,
+        wsUrl: "ws://127.0.0.1:\(LocalStack.apiPort)/ws",
+        appUrl: LocalStack.apiURL,
+        mode: "embedded"
     )
 }
 
@@ -29,23 +33,29 @@ struct ConfigError: Error {
 }
 
 enum RuntimeConfigStore {
-    /// Loads `runtime-config.json`, creating it with local defaults on first
-    /// launch. The server is configured explicitly; nothing is discovered.
+    /// Loads `runtime-config.json`. A new install gets embedded mode; an
+    /// external server is configured explicitly; nothing is discovered.
     static func load() -> Result<RuntimeConfig, ConfigError> {
         let url = AppPaths.runtimeConfig
         let fm = FileManager.default
         do {
             if !fm.fileExists(atPath: url.path) {
                 try fm.createDirectory(at: AppPaths.support, withIntermediateDirectories: true)
-                let data = try JSONEncoder.pretty.encode(RuntimeConfig.localDefault)
+                let data = try JSONEncoder.pretty.encode(RuntimeConfig.embeddedDefault)
                 try data.write(to: url, options: .atomic)
             }
             let config = try JSONDecoder().decode(RuntimeConfig.self, from: Data(contentsOf: url))
+            if config.mode == "embedded" { return .success(.embeddedDefault) }
             if let problem = validate(config) { return .failure(ConfigError(message: "\(url.path): \(problem)")) }
             return .success(config)
         } catch {
             return .failure(ConfigError(message: "\(url.path): \(error.localizedDescription)"))
         }
+    }
+
+    static var isEmbedded: Bool {
+        if case let .success(config) = load() { return config.mode == "embedded" }
+        return false
     }
 
     private static func validate(_ config: RuntimeConfig) -> String? {

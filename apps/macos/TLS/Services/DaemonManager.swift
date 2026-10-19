@@ -37,7 +37,8 @@ final class DaemonManager {
     }
 
     /// Host-owned profile; never the user's default `~/.multica` profile.
-    static let profile = "tls-local"
+    /// One per server so a token minted for one never reaches the other.
+    nonisolated static var profile: String { RuntimeConfigStore.isEmbedded ? "tls-embedded" : "tls-local" }
 
     var onStatusChange: ((Any) -> Void)?
     var onLogLine: ((String) -> Void)?

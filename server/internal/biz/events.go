@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"os"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -229,6 +230,13 @@ func (s *Service) Tick(ctx context.Context) {
 		workspaces = append(workspaces, ws)
 	}
 	rows.Close()
+	if os.Getenv("TLS_REBIND_AGENTS") == "1" {
+		if n, err := s.rebindAgents(ctx); err != nil {
+			s.Log.Warn("biz: agent runtime rebind failed", "error", err)
+		} else if n > 0 {
+			s.Log.Info("biz: agents rebound to an online runtime", "count", n)
+		}
+	}
 	workday := now.Weekday() != time.Saturday && now.Weekday() != time.Sunday
 	for _, ws := range workspaces {
 		date := now.Format("2006-01-02")
@@ -248,6 +256,24 @@ func (s *Service) Tick(ctx context.Context) {
 		}
 	}
 	s.ProcessEvents(ctx)
+}
+
+// rebindAgents (single-user local install) moves business agents whose
+// runtime is offline to an online runtime of the same provider in the same
+// workspace — e.g. after restoring a company on another Mac.
+func (s *Service) rebindAgents(ctx context.Context) (int64, error) {
+	tag, err := s.Pool.Exec(ctx, `WITH m AS (
+			SELECT a.id AS agent_id,
+				(SELECT r.id FROM agent_runtime r WHERE r.workspace_id = a.workspace_id AND r.provider = cur.provider AND r.status = 'online'
+				 ORDER BY r.last_seen_at DESC NULLS LAST LIMIT 1) AS new_id
+			FROM agent a JOIN biz_agent g ON g.agent_id = a.id JOIN agent_runtime cur ON cur.id = a.runtime_id
+			WHERE cur.status <> 'online')
+		UPDATE agent SET runtime_id = m.new_id, updated_at = now() FROM m
+		WHERE agent.id = m.agent_id AND m.new_id IS NOT NULL AND m.new_id <> agent.runtime_id`)
+	if err != nil {
+		return 0, err
+	}
+	return tag.RowsAffected(), nil
 }
 
 func (s *Service) emitRitual(ctx context.Context, ws, kind, key string) {

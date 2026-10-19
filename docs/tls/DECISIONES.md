@@ -30,6 +30,19 @@ Decisiones tomadas al construir TLS sobre Multica, con su motivo. Las que depend
 | Modo importación (`import_mode`) | Cargar histórico no dispara agentes ni efectos de negocio (§19). |
 | Rituales generados una vez por periodo aunque el Mac estuviera apagado; no se rellenan días pasados | §17: recuperar lo pendiente según política. |
 
+## App instalable (modo embebido)
+
+| Decisión | Motivo |
+|---|---|
+| La app lleva PostgreSQL 17 (binarios reubicables de zonky, solo arm64), el servidor Go y las migraciones | Funciona en un Mac sin Node, Go, Homebrew ni Docker (§4). |
+| PostgreSQL sin puertos TCP: solo un socket Unix dentro de `Application Support/TLS` | Nadie más (ni los agentes) puede conectarse a la base de datos. |
+| Servidor solo en `127.0.0.1:18080` (`BIND_HOST`) | Una app de un usuario no se expone a la red local. |
+| Clave JWT y código de acceso aleatorios por instalación en `secrets.env` (0600), cargados con `MULTICA_SECRETS_FILE` | Los secretos pasados por entorno los lee cualquier proceso del usuario (`KERN_PROCARGS2`), incluso desde el sandbox; el fichero, no. |
+| Inicio de sesión automático e inyección del token al arrancar; cookies locales antiguas eliminadas antes de cargar | Experiencia de app de escritorio; evita cookies de instalaciones anteriores firmadas con otra clave. |
+| La demo viaja como clúster ya inicializado + carpeta; `company_folder` relativo a `~` | El otro Mac no necesita herramientas de restauración. |
+| Agentes reasignados al runtime en línea del mismo proveedor (`TLS_REBIND_AGENTS`) | Al llevar una empresa a otro Mac, los agentes siguen funcionando. |
+| Perfil del daemon por servidor (`tls-embedded` / `tls-local`) | Un token del servidor de desarrollo nunca se usa contra el embebido ni al revés. |
+
 ## Datos portables
 
 | Decisión | Motivo |
@@ -52,4 +65,4 @@ Decisiones tomadas al construir TLS sobre Multica, con su motivo. Las que depend
 
 - Licencia comercial / dispensa de marca de Multica: **no necesaria** para la prueba interna (confirmado por el titular el 19/10/2026).
 - Distribución, Developer ID y notarización: fuera de alcance por ahora (uso interno).
-- PostgreSQL embebido o servidor remoto para una versión instalable sin herramientas.
+- PostgreSQL embebido o servidor remoto: **embebido** en la release 0.1 (ver «App instalable»). Un servidor compartido quedaría para trabajar varias personas.

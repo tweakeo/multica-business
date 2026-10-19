@@ -1,284 +1,130 @@
-<div align="center">
+# Multica Business (TLS)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo-light.svg">
-  <img alt="Multica" src="docs/assets/logo-light.svg" width="50">
-</picture>
+Sistema operativo de empresa para macOS: seis áreas de negocio, CRM, entrega por servicios, finanzas con conciliación y paquete trimestral, y agentes de IA que trabajan con aprobaciones, auditoría e interruptor global.
 
-# Multica
+Construido sobre [Multica](https://github.com/multica-ai/multica) (fork de `e752b971b`). La interfaz, las tareas, los proyectos, los agentes y su runtime son los de Multica; TLS añade la capa de empresa y una app nativa de macOS.
 
-**Agents that show up on the board.**
+> **Uso interno.** La versión 0.1 es una demostración funcional con una empresa ficticia: **Asesoría Ribera**, una gestoría con los servicios de Renta y Trimestrales. Ver [Licencia y atribución](#licencia-y-atribución).
 
-Multica is a source-available workspace where you assign work to AI coding agents the way you'd
-assign it to a teammate — they pick up the issue, report progress, raise blockers, and hand it
-back for review. Self-hostable, works with the agent CLIs you already use, no lock-in.
+![Vista general de la empresa](docs/tls/img/empresa-vista-general.png)
 
-[![CI](https://github.com/multica-ai/multica/actions/workflows/ci.yml/badge.svg)](https://github.com/multica-ai/multica/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/multica-ai/multica?style=flat)](https://github.com/multica-ai/multica/releases)
-[![GitHub stars](https://img.shields.io/github/stars/multica-ai/multica?style=flat)](https://github.com/multica-ai/multica/stargazers)
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/W8gYBn226t)
+## Qué hace
 
-<p align="center">
-  <a href="https://www.star-history.com/multica-ai/multica">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=rank&amp;theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=rank" />
-      <img alt="Star History Rank" src="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=rank" />
-    </picture>
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=trending&amp;theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=trending" />
-      <img alt="GitHub Trending Repository of the Day" src="https://api.star-history.com/badge?repo=multica-ai/multica&amp;type=trending" />
-    </picture>
-  </a>
-</p>
+| Área | Qué incluye |
+|---|---|
+| **Dirección** | Objetivos con KPI, decisiones solo añadibles (porqué y para qué), rituales de día, semana, mes y trimestre, madurez por evidencias, interruptor global y modo lectura |
+| **Ventas** | Alta en un paso (empresa + contacto + oportunidad, sin duplicados), embudo con reglas por etapa, propuesta con instantánea de precio, aceptación con evidencia, previsión ponderada, atribución |
+| **Entrega** | Un **canvas** (tablero con las etapas del proceso) por servicio. El proyecto nace solo al confirmarse el cobro, con tareas de plantilla que tienen fecha de planificación y de vencimiento. Cierre con evidencia |
+| **Finanzas** | Facturas (borrador → emitida, numeradas), cobros y pagos, importación de extractos CSV sin duplicados, conciliación propuesta y confirmada, caja y meses de caja, paquete trimestral para la gestoría |
+| **Marca** | Contenidos con estados y evidencia de publicación, escucha → conversación → interesado con su origen |
+| **Equipo** | Roles con misión, decisiones y límites; personas y agentes; salud, coste y presupuesto de cada agente |
 
-[Website](https://multica.ai) · [Docs](https://multica.ai/docs) · [Quickstart](https://multica.ai/docs/cloud-quickstart) · [Download](https://multica.ai/download) · [Vision](VISION.md) · [Self-Hosting](SELF_HOSTING.md) · [Discord](https://discord.gg/W8gYBn226t) · [X](https://x.com/MulticaAI)
+**Agentes.** Uno por área, coordinados por el de Dirección. Actúan solo a través de la API con el CLI `multica biz`:
+- **Aprobación:** las acciones sensibles (enviar, emitir, confirmar dinero, publicar) se convierten en una aprobación que muestra el antes y el después.
+- **Modo por capacidad:** cada una de las 78 capacidades tiene su modo (manual, asistido, supervisado o autónomo).
+- **Confinamiento:** cada ejecución corre en un sandbox de macOS, sin acceso a la carpeta de la empresa, a las credenciales ni a la base de datos.
 
-**English | [简体中文](README.zh.md)**
+**Datos portables.** Cada empresa tiene una carpeta legible (Markdown con frontmatter, CSV y PDF) que se escribe mediante un diario de recuperación. Se puede reconstruir la base de datos desde ella campo a campo.
 
-</div>
+| Ventas | Aprobaciones | Bancos y conciliación |
+|---|---|---|
+| ![Embudo](docs/tls/img/ventas-embudo.png) | ![Aprobaciones](docs/tls/img/aprobaciones.png) | ![Bancos](docs/tls/img/finanzas-bancos.png) |
 
-<p align="center">
-  <img src="apps/docs/public/images/docs/workspace-overview.webp" alt="A Multica board where agents and their human teammates are moving work across columns" width="100%">
-</p>
+## Instalar (release)
 
-<p align="center">
-  <sub><em>Your next 10 hires won't be human.</em></sub>
-</p>
+Descarga desde **Releases**:
 
----
+| Fichero | Para qué |
+|---|---|
+| `TLS-0.1.0.dmg` | Uso normal (configuración Release) |
+| `TLS-0.1.0-debug.dmg` | Desarrollo: build Debug con el inspector web de Safari activado y ganchos de automatización (`apps/macos/scripts/debug-hook.sh`) |
 
-## What is Multica?
+Requisitos:
+- Mac con **Apple Silicon** y **macOS 13 o posterior**.
+- No hace falta instalar nada más: la app lleva dentro su base de datos (PostgreSQL 17), su servidor y la demo.
+- Opcional, para que trabajen los agentes: tener [Claude Code](https://docs.anthropic.com/claude-code) instalado y con sesión iniciada (`claude`). Sin él, todo funciona salvo las ejecuciones de agentes.
 
-You already run Claude Code, Codex, and three other agents. Each one lives in its own terminal
-tab, forgets everything when the session ends, and leaves you re-explaining the same context for
-the fourth time today. The more agents you add, the more of your day goes to babysitting them.
+Pasos:
+1. Abre el `.dmg` y arrastra **TLS** a *Aplicaciones*.
+2. **Primera apertura:** la app está firmada para desarrollo, pero no notarizada. macOS la bloqueará la primera vez. Hay dos formas de abrirla:
+   - Ve a *Ajustes del Sistema → Privacidad y seguridad* y pulsa **Abrir igualmente** junto al aviso de TLS.
+   - O, en Terminal: `xattr -dr com.apple.quarantine /Applications/TLS.app`.
+3. Al arrancar, TLS prepara la base de datos, aplica las migraciones e inicia sesión solo (unos segundos la primera vez). Entras como **Elena Ribera**, la dueña de la demo.
 
-Multica puts those agents and your teammates in one workspace. An agent gets assigned an issue,
-picks it up on its own, works on a runtime you control, comments as it goes, and hands the result
-back for review. The intent, the run, the decisions, and the diff stay connected to the same
-issue — so nobody reconstructs context, and nothing ships without a human saying so.
+Dónde guarda las cosas:
 
----
+| Qué | Dónde |
+|---|---|
+| Datos y secretos | `~/Library/Application Support/TLS/` (base de datos, `secrets.env`, configuración) |
+| Registros | `~/Library/Logs/TLS/` |
+| Carpeta de la empresa | `~/TLS Empresas/DEMO - Asesoría Ribera/` |
+| Daemon de agentes | `~/.multica/profiles/tls-embedded/` |
 
-## Build the team.
+Para empezar de cero, cierra TLS y borra `~/Library/Application Support/TLS/runtime` y la carpeta de la demo. Se restaurarán en el siguiente arranque.
 
-*Claude Code, Codex, Cursor, Kimi — you don't pick one. You hire them all.*
+Cómo usarla: **[Guía de la demo](docs/tls/GUIA-DEMO.md)**.
 
-- **[The agent CLIs you already use](#runtimes) →** Claude Code, Codex, Cursor, Copilot, Kimi, OpenCode, and more.
-- **[Agents as teammates](https://multica.ai/docs/agents) →** Give each one a name, a provider, and a runtime — they show up on the board like anyone else.
-- **[Squads](https://multica.ai/docs/squads) →** Put agents and people on one team; the leader routes the work.
-- **[Skills](https://multica.ai/docs/skills) →** Turn a solved problem into a playbook every agent reuses.
-- **[Your own runtime](https://multica.ai/docs/daemon-runtimes) →** Their desk is your machine — a daemon on your laptop or cloud box. Code never leaves it.
+## Arquitectura
 
-## Hand off the work.
+```
+TLS.app (Swift/AppKit, proyecto Xcode)
+├─ WKWebView ── tls-app://app/   interfaz de Multica (React) servida desde el bundle
+│   └─ bridge.js               desktopAPI / daemonAPI sobre un puente nativo cerrado
+├─ LocalStack                  PostgreSQL embebido (solo socket Unix) → migraciones
+│                              → servidor Go en 127.0.0.1:18080 → sesión local automática
+├─ DaemonManager               daemon de agentes (`multica`) con perfil de sandbox
+└─ Resources/                  renderer, bin/{multica, multica-server, multica-migrate},
+                               postgres/, migrations/, demo/
+Servidor Go (server/)          Multica + capa de empresa `internal/biz` (/api/biz)
+```
 
-*It starts as three rough sentences in an issue. It ends as a pull request.*
+## Desarrollo
 
-- **[Assign an issue](https://multica.ai/docs/assigning-issues) →** Pick an agent as assignee the way you'd pick a colleague — it takes the work from there.
-- **[Autopilots](https://multica.ai/docs/autopilots) →** Run standups, audits, and reports on a cron — nobody to remind.
-- **[Chat](https://multica.ai/docs/chat) →** Ask your workspace a question, or start work without filing anything.
-- **[Projects](https://multica.ai/docs/projects) →** Group work and attach the repos and docs agents need as context.
-
-## Stay in the loop.
-
-*Which agent touched this? What did it run? What did it cost? Open the run.*
-
-- **[Execution log](https://multica.ai/docs/tasks) →** Replay every tool call, command, and error, timestamped.
-- **Steer a running agent →** Reply while it works and the message lands in the current run, not the next one. Claude Code, Codex, and Grok today.
-- **Usage analytics →** See what each run cost, per agent and per issue.
-- **[Review gates](https://multica.ai/docs/issues) →** Work lands in review, not in main. You decide what ships.
-- **[Inbox](https://multica.ai/docs/inbox) →** Get pinged when an agent needs a call, not for every step.
-- **[Retries and timeouts](https://multica.ai/docs/tasks#failures-and-automatic-retries) →** Failed runs retry on their own, or stop and tell you why.
-
-## Make it yours.
-
-*Your machines, your Git host, your rules — with an audit trail that includes the robots.*
-
-- **[Self-host everything](SELF_HOSTING.md) →** Docker Compose or Helm, on your own infrastructure.
-- **[Your Git host](https://multica.ai/docs/vcs-integration) →** GitHub, GitLab, Gitea, or Forgejo — self-hosted included.
-- **[Workspaces](https://multica.ai/docs/workspaces) →** Separate agents, issues, and settings per team.
-- **[Roles](https://multica.ai/docs/members-roles) and [access scopes](https://multica.ai/docs/agents#permissions-and-access) →** `owner`, `admin`, and `member` — and exactly which agents each member can run.
-- **[Security model](https://multica.ai/docs/security-model) →** What an agent can reach, and what it can't.
-- **[Slack, Feishu/Lark, DingTalk, WeCom, and Telegram](https://multica.ai/docs/channels) →** Trigger and follow agent work where your team already talks. New Feishu/Lark connections are open to mainland-China Feishu only for now; DingTalk, WeCom, and Telegram are [community-maintained](https://multica.ai/docs/community-maintained).
-- **Web, [desktop](https://multica.ai/docs/desktop-app), and [mobile](https://multica.ai/docs/mobile-app) →** The same workspace on macOS, Windows, Linux, iPhone, and iPad — the iOS app builds from source today, not yet on the App Store.
-- **[CLI and API](https://multica.ai/docs/cli) →** Every surface is scriptable. Agents drive Multica through the same CLI you do.
-
----
-
-## Get started
-
-- **Cloud** — sign up at **[multica.ai](https://multica.ai)**. No terminal required.
-- **Desktop** — download **[Multica Desktop](https://multica.ai/download)** for macOS, Windows, or
-  Linux. It connects the computer it runs on as a runtime automatically.
-- **Self-host** — run the whole stack on your own infrastructure; see below.
-
-The one prerequisite: the machine that will run agents needs at least one
-[supported agent CLI](#runtimes) installed and signed in — Claude Code, Codex, Cursor, and
-friends. Multica drives them; it doesn't ship them.
-
-<details>
-<summary><b>Self-hosting the whole thing</b></summary>
-
-<br/>
+Requisitos: Node 22+ (pnpm vía corepack), Go 1.26+, PostgreSQL 17 (Homebrew), Xcode 26, XcodeGen.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash -s -- --with-server
-multica setup self-host
+pnpm install
+brew services start postgresql@17
+cp .env.example .env    # APP_ENV=development, MULTICA_DEV_VERIFICATION_CODE, JWT_SECRET,
+                        # CORS_ALLOWED_ORIGINS=...,tls-app://app, FF_PROJECT_WORKFLOWS_V1=true
+scripts/tls/run-backend.sh                    # migraciones + servidor en :8080
+node scripts/tls/seed-demo.mjs --reset        # demo (añade --offline para no lanzar agentes)
+
+apps/macos/scripts/prepare-artifacts.sh       # renderer, binarios Go, PostgreSQL embebido
+scripts/tls/build-demo-snapshot.sh            # congela la demo para el bundle
+apps/macos/scripts/build.sh                   # .app Release firmada
+scripts/tls/build-dmg.sh                      # TLS-<versión>.dmg y -debug.dmg
 ```
 
-On Windows, set `$env:MULTICA_MODE="with-server"`, then run the PowerShell installer:
-`irm https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.ps1 | iex`.
+- La app en modo **externo** usa el servidor de desarrollo: `~/Library/Application Support/TLS/runtime-config.json` sin `"mode": "embedded"` y con `apiUrl` = `http://localhost:8080`.
+- Pruebas:
+  - Go: `cd server && go test ./internal/biz ./pkg/agent ./internal/handler` (con `DATABASE_URL`).
+  - Frontend: `pnpm --filter @multica/views exec vitest run` y `pnpm --filter @multica/core exec vitest run`.
+- Para seguir trayendo cambios de Multica: `git remote add upstream https://github.com/multica-ai/multica.git` y luego `git merge upstream/main`. La capa de empresa vive aislada en `server/internal/biz`, `packages/{core,views}/…/empresa|biz`, `apps/macos` y `scripts/tls`.
 
-This pulls the official images from GHCR and requires Docker. See the
-[Self-Hosting Guide](SELF_HOSTING.md); if the selected GHCR tag has not been published yet,
-fall back to `make selfhost-build` from a checkout.
+## Documentación
 
-A self-hosted server sends one anonymous, deployment-level snapshot a day: the release version
-plus bucketed counts, with no names, content, or IDs. Set `DO_NOT_TRACK=1` on the API server to
-turn it off — [what's collected](SELF_HOSTING.md#anonymous-deployment-telemetry).
+| Documento | Contenido |
+|---|---|
+| [docs/tls/GUIA-DEMO.md](docs/tls/GUIA-DEMO.md) | Cómo se trabaja con TLS: el viaje del cliente paso a paso, agentes y controles |
+| [docs/tls/ESTADO.md](docs/tls/ESTADO.md) | Estado por fases, criterios de aceptación con evidencia, pruebas y limitaciones |
+| [docs/tls/DECISIONES.md](docs/tls/DECISIONES.md) | Decisiones de diseño y su motivo |
+| [docs/tls/FORMATOS.md](docs/tls/FORMATOS.md) | Extracto bancario CSV, carpeta de la empresa y paquete trimestral |
+| [docs/tls/FASE-0.md](docs/tls/FASE-0.md) | Auditoría de Multica y prueba Xcode/WebKit |
+| [apps/macos/README.md](apps/macos/README.md) | La app nativa |
+| [README.multica.md](README.multica.md) | README original de Multica |
 
-</details>
+## Seguridad
 
-### Your first agent in five minutes
+- **Red:**
+  - El servidor embebido solo escucha en `127.0.0.1`.
+  - PostgreSQL no abre puertos de red: solo un socket dentro de `Application Support`.
+- **Secretos:** la clave JWT y el código de acceso local son aleatorios por instalación y están en `secrets.env` (permisos 0600). Ese fichero no se pasa por el entorno del proceso.
+- **Agentes confinados con `sandbox-exec`:** no pueden leer `~/TLS Empresas`, `~/.multica/profiles` ni `Application Support/TLS`, ni ficheros `.env`, ni conectar con PostgreSQL. Solo usan la API, que aplica políticas, aprobaciones y auditoría.
 
-**1. Connect a computer.** A *runtime* is any machine agents can work on — your laptop, or a
-cloud box. Desktop registers the computer it's running on automatically and detects the agent
-CLIs installed there. On the web — or to add another machine — open **Runtimes** in the sidebar,
-click **Add a computer**, and paste the two commands it shows into a terminal on that machine.
+## Licencia y atribución
 
-**2. Create an agent.** Open **Agents** in the sidebar and click **New agent**. Pick the runtime
-you just connected, pick a provider, and give it a name — or let **Build with AI** generate the
-configuration from a description. That name is how it shows up on the board and in comments.
-
-**3. Assign it something.** File an issue and set the agent as assignee. It picks the task up,
-runs it on your machine, comments as it goes, and moves the issue to review when it's done.
-
-Full walkthrough: [Quickstart](https://multica.ai/docs/cloud-quickstart) · [Tutorial](https://multica.ai/docs/tutorial)
-
----
-
-## Runtimes
-
-Multica does not ship a model. It drives the agent CLIs you already have installed and
-authenticated — 26 of them today — so switching providers is a dropdown, not a migration.
-
-| Provider | CLI | Provider | CLI |
-| --- | --- | --- | --- |
-| Claude Code | `claude` | OpenAI Codex | `codex` |
-| Cursor Agent | `cursor-agent` | GitHub Copilot CLI | `copilot` |
-| OpenCode | `opencode` | OpenClaw | `openclaw` |
-| Hermes | `hermes` | Pi | `pi` |
-| Antigravity | `agy` | CodeBuddy | `codebuddy` |
-| DevEco Code | `deveco` | Grok | `grok` |
-| Kimi | `kimi` | Kiro CLI | `kiro-cli` |
-| Qoder CLI | `qodercli` | Qoder CN | `qoderclicn` |
-| Qwen Code | `qwen` | QwenPaw | `qwenpaw` |
-| Reasonix | `reasonix` | Trae CLI | `traecli` |
-| DeepSeek Harness | `dsh` | Oh-My-Pi | `omp` |
-| MiniMax Code | `mcode` | Dim | `dim` |
-| Huawei Cloud CodeArts | `codearts` | ZeroClaw | `zeroclaw` |
-
-Installing and authenticating them: [Install an agent runtime](https://multica.ai/docs/install-agent-runtime) ·
-[Providers](https://multica.ai/docs/providers)
-
----
-
-## Documentation
-
-| I want to… | Start here |
-| --- | --- |
-| Get an agent doing something today | [Quickstart](https://multica.ai/docs/cloud-quickstart) · [Tutorial](https://multica.ai/docs/tutorial) |
-| Understand how the pieces fit | [Core concepts](https://multica.ai/docs/concepts) · [How Multica works](https://multica.ai/docs/how-multica-works) |
-| Create and configure agents | [Agents](https://multica.ai/docs/agents) · [Create an agent](https://multica.ai/docs/agents-create) · [Skills](https://multica.ai/docs/skills) |
-| Get work to an agent | [Triggering agents](https://multica.ai/docs/triggering-agents) · [Assigning issues](https://multica.ai/docs/assigning-issues) · [Mentions](https://multica.ai/docs/mentioning-agents) |
-| Connect my machines | [Daemon and runtimes](https://multica.ai/docs/daemon-runtimes) · [Install an agent runtime](https://multica.ai/docs/install-agent-runtime) |
-| Connect Git and chat tools | [GitHub](https://multica.ai/docs/github-integration) · [Self-hosted Git](https://multica.ai/docs/vcs-integration) · [Channels](https://multica.ai/docs/channels) |
-| Run it on my own infrastructure | [Self-hosting](SELF_HOSTING.md) · [Security model](https://multica.ai/docs/security-model) · [Environment variables](https://multica.ai/docs/environment-variables) |
-| Script it | [CLI reference](https://multica.ai/docs/cli) · [CLI and daemon guide](CLI_AND_DAEMON.md) · [Auth tokens](https://multica.ai/docs/auth-tokens) |
-| Drive Multica from Codex, Claude Code, or Cursor | [Multica CLI skill](https://github.com/multica-ai/multica-cli) |
-| Work out why an agent is stuck | [Runs](https://multica.ai/docs/tasks) · [Troubleshooting](https://multica.ai/docs/troubleshooting) |
-
-The docs are also available in [简体中文](https://multica.ai/docs/zh), [日本語](https://multica.ai/docs/ja),
-[한국어](https://multica.ai/docs/ko), and [Français](https://multica.ai/docs/fr).
-
----
-
-## Architecture
-
-```
-   Web (browser)        Desktop (Electron)        iPhone · iPad (Expo)
-         │                      │                          │
-         ▼                      │                          │
-  ┌──────────────┐              │                          │
-  │   Next.js    │              │                          │
-  │ pages + API  │              │                          │
-  │    proxy     │              │                          │
-  └──────┬───────┘              │  HTTPS + WebSocket       │
-         ▼                      ▼                          ▼
-  ┌───────────────────────────────────────────────────────────┐   ┌───────────────┐
-  │                Go backend  (Chi + WebSocket)              │──>│ PostgreSQL 17 │
-  └─────────────────────────────┬─────────────────────────────┘   └───────────────┘
-                                │  runs over WebSocket
-                        ┌───────┴────────┐
-                        │  Agent daemon  │  runs on your machine, next to your code
-                        └───────┬────────┘
-                                │  spawns
-              ┌─────────────────┴──────────────────┐
-              │  Claude Code · Codex · Cursor · …  │
-              └────────────────────────────────────┘
-```
-
-| Layer | Stack |
-| --- | --- |
-| Web | Next.js 16 (App Router) |
-| Desktop | Electron, sharing the web UI packages |
-| Mobile | Expo / React Native (iPhone and iPad) |
-| Backend | Go (Chi router, sqlc, gorilla/websocket) |
-| Database | PostgreSQL 17 (`pgcrypto` + `pg_trgm`) |
-| Agent runtime | Local daemon executing any [supported agent CLI](#runtimes) |
-
----
-
-## Development
-
-Contributors: start with the [Contributing Guide](CONTRIBUTING.md).
-
-**Prerequisites:** [Node.js](https://nodejs.org/) 22, [pnpm](https://pnpm.io/) 10.28.2, [Go](https://go.dev/) 1.26.9, [Docker](https://www.docker.com/)
-
-```bash
-make dev
-```
-
-`make dev` auto-detects your environment (main checkout or worktree), creates the env file,
-installs dependencies, sets up the database, runs migrations, and starts every service.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, worktree support, testing, and
-troubleshooting. The iOS client lives in [`apps/mobile/`](apps/mobile/) — its
-[README](apps/mobile/README.md) covers building it onto your own device.
-
-We release most weekdays, so `main` moves quickly — pull often.
-
----
-
-## Why "Multica"?
-
-**Mult**iplexed **I**nformation and **C**omputing **A**gent — a nod to Multics, the 1960s
-operating system that introduced time-sharing so several people could use one machine as if each
-had it to themselves.
-
-Software teams have been single-threaded ever since: one engineer, one task, one context switch
-at a time. We think agents make time-sharing relevant again, except the users multiplexing the
-system are now both humans and machines. A small team shouldn't feel small.
-
-The longer argument, and where we think this goes: **[VISION.md](VISION.md)**.
-
----
-
-## License
-
-[Multica License](LICENSE) — the complete Apache License 2.0 text plus additional conditions
-covering hosted services, commercial embedding, and branding. Self-host it, modify it, build on
-it; the exact terms are in the [LICENSE](LICENSE), attribution notices in [NOTICE](NOTICE).
+Este proyecto deriva de **Multica** © Index Labs (Hong Kong) Limited, distribuido bajo la [Multica License](LICENSE) (Apache 2.0 con condiciones adicionales) con su [NOTICE](NOTICE).
+- Su uso aquí es **interno**: alojarlo para terceros o venderlo como producto requiere una licencia comercial del productor.
+- La interfaz conserva el logo, el nombre y los avisos de Multica, como exige la licencia.
+- PostgreSQL embebido: binarios de [zonky embedded-postgres-binaries](https://github.com/zonkyio/embedded-postgres-binaries), con licencia PostgreSQL.

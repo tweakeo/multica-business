@@ -68,7 +68,24 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, WKNav
             window.center()
         }
         layoutTrafficLights()
-        webView.load(URLRequest(url: AppSchemeHandler.entryURL))
+        if (NSApp.delegate as? AppDelegate)?.bootToken != nil {
+            // Embedded mode: cookies for the local server may be signed with the
+            // key of a previous install and would break the realtime socket. The
+            // cookie store only works once a web view exists, so clear it here,
+            // before the first load; the fresh token is injected at boot.
+            let store = webView.configuration.websiteDataStore.httpCookieStore
+            store.getAllCookies { [weak self] cookies in
+                let stale = cookies.filter { $0.domain == "127.0.0.1" || $0.domain == "localhost" }
+                let group = DispatchGroup()
+                for cookie in stale {
+                    group.enter()
+                    store.delete(cookie) { group.leave() }
+                }
+                group.notify(queue: .main) { self?.webView.load(URLRequest(url: AppSchemeHandler.entryURL)) }
+            }
+        } else {
+            webView.load(URLRequest(url: AppSchemeHandler.entryURL))
+        }
     }
 
     @available(*, unavailable)
@@ -120,7 +137,12 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, WKNav
             "runtimeConfig": runtimeConfig,
             "windowContext": context.json,
         ]
-        return "Object.defineProperty(window, '__TLS_BOOT__', { value: Object.freeze(\(JSONText.encode(boot))) });"
+        var script = "Object.defineProperty(window, '__TLS_BOOT__', { value: Object.freeze(\(JSONText.encode(boot))) });"
+        // Embedded mode: the host already signed in to the local server.
+        if case .main = context, let token = (NSApp.delegate as? AppDelegate)?.bootToken {
+            script += "try { localStorage.setItem('multica_token', \(JSONText.encode(token))); } catch (e) {}"
+        }
+        return script
     }
 
     /// Pushes a main → renderer event (see bridge.js `__tlsEmit`).

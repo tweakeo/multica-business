@@ -18,7 +18,7 @@ Quedan pendientes las integraciones externas reales (correo, calendario, redes, 
 | 3 Cadena comercial y de entrega, eventos durables, idempotencia | ✅ | Outbox `biz_event`, reintentos, `dead`; el proyecto se crea una sola vez |
 | 4 Finanzas, importación bancaria, conciliación, paquete trimestral | ✅ | Importación CSV sin duplicados, conciliación propuesta y confirmada, paquete con trazabilidad |
 | 5 Dirección, KPI, rituales, Marca, Equipo | ✅ | 21 KPI calculados, rituales diario, semanal, mensual y trimestral, madurez por evidencias |
-| 6 Adaptadores reales, colaboración, distribución | ⏳ | Pendiente: correo, calendario, redes, banca API, Notion. Una sola persona en la demo. Build local firmada con «Apple Development», sin notarizar |
+| 6 Adaptadores reales, colaboración, distribución | ◐ | **Release 0.1 instalable** (DMG con base de datos, servidor y demo embebidos; versión Release y Debug). Pendiente: correo, calendario, redes, banca API, Notion; varias personas; notarización |
 
 ## Capacidades (78)
 
@@ -67,7 +67,8 @@ Quedan pendientes las integraciones externas reales (correo, calendario, redes, 
 
 ## Limitaciones conocidas
 
-- **Instalación:** la app necesita el servidor Go y PostgreSQL locales (`scripts/tls/start-demo.sh`). No es autónoma.
+- **Instalación:** el DMG es autónomo (PostgreSQL, servidor y demo embebidos), pero solo para **Apple Silicon** y está firmado para desarrollo, no notarizado. La primera apertura requiere «Abrir igualmente».
+- **Un solo usuario por Mac:** la app inicia sesión sola como la dueña de la demo; no hay gestión de varios usuarios en la instalación embebida.
 - **Credenciales:** el token de sesión sigue en el almacenamiento web (como en Multica); el del daemon, en `~/.multica` con permisos 0600. No usan el Llavero.
 - **Presupuesto y profundidad de delegación:** se registran y se muestran, pero no detienen una ejecución.
 - **Integraciones:** no se envía correo ni se publica; se registra como pendiente manual.

@@ -60,25 +60,33 @@ targets:
         script: |
           set -e
           ART="${SRCROOT}/build/artifacts"
-          if [ ! -f "$ART/renderer/index.html" ] || [ ! -x "$ART/bin/multica" ]; then
+          if [ ! -f "$ART/renderer/index.html" ] || [ ! -x "$ART/bin/multica" ] || [ ! -x "$ART/bin/multica-server" ] || [ ! -x "$ART/postgres/bin/postgres" ]; then
             echo "error: missing $ART. Run apps/macos/scripts/prepare-artifacts.sh first." >&2
             exit 1
           fi
     postBuildScripts:
-      - name: Embed renderer, CLI and notices
+      - name: Embed renderer, binaries, PostgreSQL, demo and notices
         basedOnDependencyAnalysis: false
         script: |
           set -e
           ART="${SRCROOT}/build/artifacts"
           DEST="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-          rm -rf "$DEST/renderer" "$DEST/bin"
+          rm -rf "$DEST/renderer" "$DEST/bin" "$DEST/postgres" "$DEST/demo" "$DEST/migrations"
           mkdir -p "$DEST/bin"
           /usr/bin/rsync -a --delete "$ART/renderer/" "$DEST/renderer/"
-          /bin/cp "$ART/bin/multica" "$DEST/bin/multica"
+          /bin/cp "$ART/bin/multica" "$ART/bin/multica-server" "$ART/bin/multica-migrate" "$DEST/bin/"
+          /usr/bin/rsync -a "$ART/postgres/" "$DEST/postgres/"
+          /usr/bin/rsync -a --delete "$ART/migrations/" "$DEST/migrations/"
+          if [ -d "$ART/demo" ]; then /usr/bin/rsync -a "$ART/demo/" "$DEST/demo/"; fi
           /bin/cp "${SRCROOT}/../../LICENSE" "${SRCROOT}/../../NOTICE" "$DEST/"
           if [ "${CODE_SIGNING_ALLOWED}" != "NO" ] && [ -n "${EXPANDED_CODE_SIGN_IDENTITY}" ]; then
-            /usr/bin/codesign --force --options runtime --timestamp=none \
-              --sign "${EXPANDED_CODE_SIGN_IDENTITY}" "$DEST/bin/multica"
+            # Every nested Mach-O must carry the same signature as the app, or
+            # Gatekeeper treats the bundle as damaged on another Mac.
+            /usr/bin/find "$DEST/bin" "$DEST/postgres" -type f | while read -r f; do
+              if /usr/bin/file -b "$f" | /usr/bin/grep -q "Mach-O"; then
+                /usr/bin/codesign --force --timestamp=none --sign "${EXPANDED_CODE_SIGN_IDENTITY}" "$f"
+              fi
+            done
           fi
 schemes:
   TLS:

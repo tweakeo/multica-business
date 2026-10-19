@@ -17,6 +17,8 @@
 		6C700EB7AA9D61249B3255F6 /* AppSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC138ADB4F36AF6EEA4820B /* AppSchemeHandler.swift */; };
 		8AE465B7477E318615ED8760 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967755F40EA33E7C17E7B675 /* MainMenu.swift */; };
 		9B37EE236C0D6FC3E18AEF8F /* DebugHooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D343742C8F094C57B70A8B2 /* DebugHooks.swift */; };
+		B4D667D09316850A7D9F304A /* LocalStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B2F0EAE11D59FA09174730 /* LocalStack.swift */; };
+		B7F8DB212CD9198E29C4082A /* StartupWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CED2D1F3838CCFFBDE2DD4 /* StartupWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,8 +27,10 @@
 		30D3F2C66D124275A58534BE /* bridge.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bridge.js; sourceTree = "<group>"; };
 		3D343742C8F094C57B70A8B2 /* DebugHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugHooks.swift; sourceTree = "<group>"; };
 		519660B783E185C81E72A537 /* TLS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TLS.entitlements; sourceTree = "<group>"; };
+		51CED2D1F3838CCFFBDE2DD4 /* StartupWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupWindowController.swift; sourceTree = "<group>"; };
 		556543FD298373F97004184F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		840E01F8D5126CE3FB97F4CE /* NativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridge.swift; sourceTree = "<group>"; };
+		89B2F0EAE11D59FA09174730 /* LocalStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStack.swift; sourceTree = "<group>"; };
 		92C5D2A610D83181C6AD33C5 /* RuntimeConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeConfig.swift; sourceTree = "<group>"; };
 		967755F40EA33E7C17E7B675 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		9C2F1F6CE75B6A4F72D331AC /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -76,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				1487E1A6DA2CCA06D14A9F70 /* DaemonManager.swift */,
+				89B2F0EAE11D59FA09174730 /* LocalStack.swift */,
 				92C5D2A610D83181C6AD33C5 /* RuntimeConfig.swift */,
 			);
 			path = Services;
@@ -97,6 +102,7 @@
 				3D343742C8F094C57B70A8B2 /* DebugHooks.swift */,
 				9C2F1F6CE75B6A4F72D331AC /* main.swift */,
 				967755F40EA33E7C17E7B675 /* MainMenu.swift */,
+				51CED2D1F3838CCFFBDE2DD4 /* StartupWindowController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -121,7 +127,7 @@
 				7B8023B16342B8CDA322590F /* Check web and Go artifacts */,
 				C4C8204E8E01DC3EF17D62F2 /* Sources */,
 				CBD5A1F597673748F1FA7FEA /* Resources */,
-				8807C2B9AE127D89C28FF689 /* Embed renderer, CLI and notices */,
+				BB391312B87FAC486DF51AF4 /* Embed renderer, binaries, PostgreSQL, demo and notices */,
 			);
 			buildRules = (
 			);
@@ -197,9 +203,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nART=\"${SRCROOT}/build/artifacts\"\nif [ ! -f \"$ART/renderer/index.html\" ] || [ ! -x \"$ART/bin/multica\" ]; then\n  echo \"error: missing $ART. Run apps/macos/scripts/prepare-artifacts.sh first.\" >&2\n  exit 1\nfi\n";
+			shellScript = "set -e\nART=\"${SRCROOT}/build/artifacts\"\nif [ ! -f \"$ART/renderer/index.html\" ] || [ ! -x \"$ART/bin/multica\" ] || [ ! -x \"$ART/bin/multica-server\" ] || [ ! -x \"$ART/postgres/bin/postgres\" ]; then\n  echo \"error: missing $ART. Run apps/macos/scripts/prepare-artifacts.sh first.\" >&2\n  exit 1\nfi\n";
 		};
-		8807C2B9AE127D89C28FF689 /* Embed renderer, CLI and notices */ = {
+		BB391312B87FAC486DF51AF4 /* Embed renderer, binaries, PostgreSQL, demo and notices */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -209,14 +215,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Embed renderer, CLI and notices";
+			name = "Embed renderer, binaries, PostgreSQL, demo and notices";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nART=\"${SRCROOT}/build/artifacts\"\nDEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nrm -rf \"$DEST/renderer\" \"$DEST/bin\"\nmkdir -p \"$DEST/bin\"\n/usr/bin/rsync -a --delete \"$ART/renderer/\" \"$DEST/renderer/\"\n/bin/cp \"$ART/bin/multica\" \"$DEST/bin/multica\"\n/bin/cp \"${SRCROOT}/../../LICENSE\" \"${SRCROOT}/../../NOTICE\" \"$DEST/\"\nif [ \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ] && [ -n \"${EXPANDED_CODE_SIGN_IDENTITY}\" ]; then\n  /usr/bin/codesign --force --options runtime --timestamp=none \\\n    --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" \"$DEST/bin/multica\"\nfi\n";
+			shellScript = "set -e\nART=\"${SRCROOT}/build/artifacts\"\nDEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nrm -rf \"$DEST/renderer\" \"$DEST/bin\" \"$DEST/postgres\" \"$DEST/demo\" \"$DEST/migrations\"\nmkdir -p \"$DEST/bin\"\n/usr/bin/rsync -a --delete \"$ART/renderer/\" \"$DEST/renderer/\"\n/bin/cp \"$ART/bin/multica\" \"$ART/bin/multica-server\" \"$ART/bin/multica-migrate\" \"$DEST/bin/\"\n/usr/bin/rsync -a \"$ART/postgres/\" \"$DEST/postgres/\"\n/usr/bin/rsync -a --delete \"$ART/migrations/\" \"$DEST/migrations/\"\nif [ -d \"$ART/demo\" ]; then /usr/bin/rsync -a \"$ART/demo/\" \"$DEST/demo/\"; fi\n/bin/cp \"${SRCROOT}/../../LICENSE\" \"${SRCROOT}/../../NOTICE\" \"$DEST/\"\nif [ \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ] && [ -n \"${EXPANDED_CODE_SIGN_IDENTITY}\" ]; then\n  # Every nested Mach-O must carry the same signature as the app, or\n  # Gatekeeper treats the bundle as damaged on another Mac.\n  /usr/bin/find \"$DEST/bin\" \"$DEST/postgres\" -type f | while read -r f; do\n    if /usr/bin/file -b \"$f\" | /usr/bin/grep -q \"Mach-O\"; then\n      /usr/bin/codesign --force --timestamp=none --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" \"$f\"\n    fi\n  done\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -230,9 +236,11 @@
 				5C08BF72DACEA9769C05B059 /* BrowserWindowController.swift in Sources */,
 				46944F2FE8D88F70591271EF /* DaemonManager.swift in Sources */,
 				9B37EE236C0D6FC3E18AEF8F /* DebugHooks.swift in Sources */,
+				B4D667D09316850A7D9F304A /* LocalStack.swift in Sources */,
 				8AE465B7477E318615ED8760 /* MainMenu.swift in Sources */,
 				1EC773B08223BA5BCD4E535A /* NativeBridge.swift in Sources */,
 				45152FF0AEC4727424B429CB /* RuntimeConfig.swift in Sources */,
+				B7F8DB212CD9198E29C4082A /* StartupWindowController.swift in Sources */,
 				3064F3B3284EFEBF7CE8312C /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

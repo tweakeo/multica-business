@@ -20,7 +20,8 @@ import { AGENTS } from "./demo/agents.mjs";
 const API = process.env.TLS_API ?? "http://localhost:8080";
 const EMAIL = process.env.TLS_EMAIL ?? "demo@tls.local";
 const CODE = process.env.TLS_CODE ?? "888888";
-const FOLDER = process.env.TLS_DEMO_FOLDER ?? join(homedir(), "TLS Empresas", "DEMO - Asesoría Ribera");
+// Dev folder; the installable app restores its own copy as "DEMO - Asesoría Ribera".
+const FOLDER = process.env.TLS_DEMO_FOLDER ?? join(homedir(), "TLS Empresas", "DEV - Asesoría Ribera");
 const DB = process.env.DATABASE_URL ?? "postgres://multica:multica@localhost:5432/multica?sslmode=disable";
 const PSQL = ["/opt/homebrew/opt/postgresql@17/bin/psql", "/opt/homebrew/bin/psql", "/usr/local/bin/psql"].find(existsSync) ?? "psql";
 const SLUG = "asesoria-ribera-demo";
