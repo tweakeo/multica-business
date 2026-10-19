@@ -115,6 +115,8 @@ async function main() {
     await http("POST", "/auth/send-code", { email: EMAIL });
     token = (await http("POST", "/auth/verify-code", { email: EMAIL, code: CODE })).token;
   }
+  // The demo owner is a fictitious person; the login account plays her.
+  await http("PATCH", "/api/me", { name: "Elena Ribera" }).catch(() => {});
   const me = await http("GET", "/api/me");
   log("sesión", me.email ?? EMAIL);
 

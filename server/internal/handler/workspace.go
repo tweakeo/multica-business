@@ -1072,6 +1072,14 @@ func lockWorkspaceTaskOwners(ctx context.Context, qtx *db.Queries, workspaceID p
 	return nil
 }
 
+// tlsBusinessTables lists the TLS "Empresa" tables removed with a workspace.
+var tlsBusinessTables = []string{
+	"biz_project_link", "biz_journal", "biz_document", "biz_audit", "biz_event", "biz_approval", "biz_policy", "biz_routine",
+	"biz_conversation", "biz_content", "biz_decision", "biz_objective", "biz_kpi", "biz_period", "biz_bank_movement",
+	"biz_bank_account", "biz_payment", "biz_invoice", "biz_opportunity", "biz_contact", "biz_organization", "biz_offer_version",
+	"biz_service", "biz_agent", "biz_role", "biz_area", "biz_setting",
+}
+
 func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	workspaceID := workspaceIDFromURL(r, "id")
 
@@ -1299,6 +1307,20 @@ func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 			name: "delete issue workflows",
 			run: func() error {
 				return qtx.DeleteIssueWorkflowsForWorkspace(ctx, requester.WorkspaceID)
+			},
+		},
+		{
+			// TLS business layer (internal/biz): every biz_ table is
+			// workspace-scoped with no foreign keys, so the company's records,
+			// outbox, audit and journal go with the workspace.
+			name: "delete business layer",
+			run: func() error {
+				for _, table := range tlsBusinessTables {
+					if _, err := tx.Exec(ctx, "DELETE FROM "+table+" WHERE workspace_id = $1", requester.WorkspaceID); err != nil {
+						return err
+					}
+				}
+				return nil
 			},
 		},
 		{
