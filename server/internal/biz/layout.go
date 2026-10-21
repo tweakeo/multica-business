@@ -26,6 +26,7 @@ type Layout struct {
 	Package    string            `json:"package,omitempty"`
 	Registros  string            `json:"registros,omitempty"`  // "" = no shared registers
 	Decisiones string            `json:"decisiones,omitempty"` // "" = one file per decision; else one append-only file
+	Metas      string            `json:"metas,omitempty"`      // "" = one file per KPI; else one table with every target
 	Archivo    string            `json:"archivo,omitempty"`
 	Buzon      string            `json:"buzon,omitempty"`
 	Skeleton   []string          `json:"skeleton,omitempty"` // folders created on export
@@ -67,6 +68,8 @@ func humanLayout() Layout {
 	l.Package = "{quarter}/Modelos/Paquete gestoría"
 	l.Registros = "{finanzas}/Registros"
 	l.Decisiones = "{direccion}/Decisiones.md"
+	l.Metas = "{direccion}/Metas.md"
+	l.Dirs["kpi"] = "" // the targets live in Metas.md
 	l.Buzon = "Buzón"
 	l.Skeleton = []string{"Buzón", "Archivo", "{direccion}/Contratos", "{finanzas}/Gestoría", "{finanzas}/Trámites"}
 	for _, a := range []string{"direccion", "ventas", "entrega", "finanzas", "marca", "equipo"} {
@@ -110,6 +113,7 @@ func LoadLayout(root string) (Layout, error) {
 	set(&l.Package, in.Package)
 	set(&l.Registros, in.Registros)
 	set(&l.Decisiones, in.Decisiones)
+	set(&l.Metas, in.Metas)
 	set(&l.Archivo, in.Archivo)
 	set(&l.Buzon, in.Buzon)
 	if in.Skeleton != nil {
@@ -145,6 +149,8 @@ func (l Layout) packageDir(year, quarter int) string {
 func (l Layout) registersDir() string { return l.expand(l.Registros) }
 
 func (l Layout) decisionsFile() string { return l.expand(l.Decisiones) }
+
+func (l Layout) metasFile() string { return l.expand(l.Metas) }
 
 // skipDir reports folders that never hold records: systems, resources, the
 // inbox, gestoría packages and hidden folders (.obsidian, .tls…). Archivo is

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -57,7 +59,9 @@ func (s *Service) ComputeKPIs(ctx context.Context, ws, area string) ([]KPIValue,
 		defs = append(defs, k)
 	}
 	rows.Close()
+	metas, fromFolder := s.kpiTargets(ctx, ws)
 	for i := range defs {
+		applyTargets(&defs[i], metas, fromFolder)
 		s.evalKPI(ctx, ws, &defs[i])
 	}
 	return defs, nil
@@ -91,6 +95,9 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 	case "DIR-DEC":
 		k.Value = s.scalar(ctx, `SELECT count(*)::float8 FROM biz_decision WHERE workspace_id=$1 AND status='open'`, ws)
 		k.Source = "/empresa/direccion?tab=decisiones"
+	case "DIR-DEC14":
+		k.Value = s.scalar(ctx, `SELECT count(*)::float8 FROM biz_decision WHERE workspace_id=$1 AND status='open' AND created_at < now()-interval '14 days'`, ws)
+		k.Source = "/empresa/direccion?tab=decisiones"
 	case "DIR-APR":
 		k.Value = s.scalar(ctx, `SELECT count(*)::float8 FROM biz_approval WHERE workspace_id=$1 AND status='pending'`, ws)
 		k.Source = "/empresa?tab=aprobaciones"
@@ -118,6 +125,28 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 		k.Value = s.scalar(ctx, `SELECT count(*)::float8 FROM biz_opportunity WHERE workspace_id=$1 AND archived_at IS NULL AND stage IN ('entrada','cualificacion','diagnostico','propuesta','negociacion')
 			AND coalesce(last_contact_at, created_at) < now()-interval '14 days'`, ws)
 		k.Source = "/empresa/ventas?tab=gestion&filter=stale"
+	case "VEN-STALE7":
+		var open, stale float64
+		_ = s.Pool.QueryRow(ctx, `SELECT count(*), count(*) FILTER (WHERE coalesce(greatest(last_contact_at, updated_at), created_at) < now()-interval '7 days')
+			FROM biz_opportunity WHERE workspace_id=$1 AND archived_at IS NULL AND stage IN ('entrada','cualificacion','diagnostico','propuesta','negociacion')`, ws).Scan(&open, &stale)
+		if open == 0 {
+			k.Explanation = "Sin oportunidades abiertas: no hay nada que mover."
+			break
+		}
+		k.Value = pf(stale)
+		k.Coverage = fmt.Sprintf("%.0f oportunidades abiertas", open)
+		k.Source = "/empresa/ventas?tab=gestion&filter=stale"
+	case "ENT-INC":
+		var projects float64
+		_ = s.Pool.QueryRow(ctx, `SELECT count(*) FROM biz_project_link l JOIN project p ON p.id=l.project_id WHERE p.workspace_id=$1`, ws).Scan(&projects)
+		if projects == 0 {
+			k.Explanation = "Sin proyectos de entrega: no hay incidencias que medir."
+			break
+		}
+		k.Value = s.scalar(ctx, `SELECT count(DISTINCT i.id)::float8 FROM issue i JOIN biz_project_link l ON l.project_id=i.project_id
+			JOIN issue_status st ON st.workspace_id=i.workspace_id AND st.key=i.status JOIN issue_to_label il ON il.issue_id=i.id JOIN issue_label lb ON lb.id=il.label_id
+			WHERE i.workspace_id=$1 AND st.category NOT IN ('done','closed') AND lower(lb.name) LIKE 'incidencia%' AND i.created_at < now()-interval '3 days'`, ws)
+		k.Source = "/empresa/entrega?tab=gestion"
 	case "ENT-ONTIME":
 		var done, ontime float64
 		_ = s.Pool.QueryRow(ctx, `SELECT count(*), count(*) FILTER (WHERE i.updated_at::date <= i.due_date) FROM issue i JOIN biz_project_link l ON l.project_id=i.project_id
@@ -142,11 +171,22 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 		k.Value, k.Explanation = s.runway(ctx, ws)
 		k.Source = "/empresa/finanzas?tab=analisis"
 	case "FIN-AR":
+		if n := s.scalar(ctx, `SELECT count(*)::float8 FROM biz_invoice WHERE workspace_id=$1 AND direction='issued' AND status NOT IN ('draft','void')`, ws); n == nil || *n == 0 {
+			k.Explanation = "Sin facturas emitidas registradas: no se da por cobrado."
+			break
+		}
 		k.Value = s.scalar(ctx, `SELECT coalesce(sum(total_minor-paid_minor),0)/100.0 FROM biz_invoice WHERE workspace_id=$1 AND direction='issued' AND status IN ('issued','partially_paid') AND due_date < $2`, ws, today())
 		k.Source = "/empresa/finanzas?tab=gestion&view=cobros"
 	case "FIN-UNREC":
+		if n := s.scalar(ctx, `SELECT count(*)::float8 FROM biz_bank_movement WHERE workspace_id=$1`, ws); n == nil || *n == 0 {
+			k.Explanation = "Sin movimientos bancarios importados: no se da por conciliado."
+			break
+		}
 		k.Value = s.scalar(ctx, `SELECT count(*)::float8 FROM biz_bank_movement WHERE workspace_id=$1 AND status IN ('unreconciled','proposed')`, ws)
 		k.Source = "/empresa/finanzas?tab=gestion&view=bancos"
+	case "FIN-FISCAL":
+		k.Value, k.Explanation = s.fiscalOnTime(ctx, ws, madridNow())
+		k.Source = "/empresa/finanzas?tab=gestion"
 	case "FIN-MARGIN":
 		var inc, exp float64
 		_ = s.Pool.QueryRow(ctx, `SELECT coalesce(sum(base_minor) FILTER (WHERE direction='issued'),0), coalesce(sum(base_minor) FILTER (WHERE direction='received' AND nature='operating'),0)
@@ -250,6 +290,17 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 			k.Status = "warning"
 		}
 	}
+	if k.Explanation == "" {
+		cmp := map[string]string{"down": "≤", "up": "≥"}[k.Direction]
+		verdict := map[string]string{"ok": "en meta", "warning": "por debajo de la meta", "alert": "en alerta"}[k.Status]
+		if cmp != "" && verdict != "" {
+			k.Explanation = fmt.Sprintf("%s frente a la meta %s %s: %s.", num1(v), cmp, num1(*k.Target), verdict)
+		}
+	}
+}
+
+func num1(v float64) string {
+	return strings.ReplaceAll(strconv.FormatFloat(math.Round(v*10)/10, 'f', -1, 64), ".", ",")
 }
 
 // cash uses the bank-reported running balance when available, otherwise the
@@ -337,9 +388,11 @@ func (s *Service) objectivesOnTrack(ctx context.Context, ws string) (*float64, s
 		return nil, "Sin objetivos activos con KPI en " + period
 	}
 	onTrack, measured := 0, 0
+	metas, fromFolder := s.kpiTargets(ctx, ws)
 	for _, x := range objs {
 		k := KPIValue{Code: x.code, Enabled: true}
 		_ = s.Pool.QueryRow(ctx, `SELECT area, direction, target::float8, alert::float8 FROM biz_kpi WHERE workspace_id=$1 AND code=$2`, ws, x.code).Scan(&k.Area, &k.Direction, &k.Target, &k.Alert)
+		applyTargets(&k, metas, fromFolder)
 		if x.target != nil {
 			k.Target = x.target
 		}
@@ -615,7 +668,7 @@ func (s *Service) Overview(ctx context.Context, ws string) (map[string]any, erro
 		measured := alerts + warns + oks
 		if measured > 0 {
 			score := float64(alerts*2+warns)/float64(measured) + float64(h.Exceptions)*0.05
-			if score > worstScore {
+			if score > 0 && score > worstScore {
 				worst, worstScore = a.Code, score
 			}
 		}

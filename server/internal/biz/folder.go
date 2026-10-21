@@ -371,6 +371,9 @@ func (f *Folder) writeEntity(ctx context.Context, ws, root, typ, id string) (str
 	if typ == "decision" && l.Decisiones != "" {
 		return writeDecisionLine(root, l, m)
 	}
+	if typ == "kpi" && l.Metas != "" {
+		return writeMetaRow(root, l, m)
+	}
 	rel := relPath(l, typ, m, f.lookupName(ctx))
 	if rel == "" {
 		return regRel, regHash, nil
