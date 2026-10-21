@@ -20,6 +20,7 @@ import { areaOf, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section,
 import { AskAgentDialog, BizTable } from "./widgets";
 import { AutonomoDocuments, FolderSystems } from "./library";
 import { ClientPortal } from "./portal";
+import { CargaView, PipelineView, PlanificacionView, RitmoView, SituacionView } from "./direccion";
 
 export function EmpresaAreaPage({ area }: { area: string }) {
   const nav = useNavigation();
@@ -33,7 +34,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
     const sp = new URLSearchParams(nav.searchParams);
     if (v === "resumen") sp.delete("tab");
     else sp.set("tab", v);
-    for (const k of ["view", "stage", "filter", "proyecto", "vista"]) if (v !== tab) sp.delete(k);
+    for (const k of ["view", "stage", "filter", "proyecto", "vista", "periodo"]) if (v !== tab) sp.delete(k);
     const q = sp.toString();
     nav.replace(`${nav.pathname}${q ? `?${q}` : ""}`);
   };
@@ -65,6 +66,11 @@ export function EmpresaAreaPage({ area }: { area: string }) {
         <div className={cn(PAGE_GUTTER, "border-b py-1.5")}>
           <TabsList variant="line">
             <TabsTrigger value="resumen">Resumen</TabsTrigger>
+            {area === "direccion" ? <TabsTrigger value="situacion">Situación</TabsTrigger> : null}
+            {area === "direccion" ? <TabsTrigger value="ritmo">Ritmo</TabsTrigger> : null}
+            {area === "direccion" ? <TabsTrigger value="planificacion">Planificación interna</TabsTrigger> : null}
+            {area === "ventas" ? <TabsTrigger value="pipeline">Pipeline</TabsTrigger> : null}
+            {area === "entrega" ? <TabsTrigger value="carga">Carga de trabajo</TabsTrigger> : null}
             <TabsTrigger value="gestion">Gestión</TabsTrigger>
             <TabsTrigger value="analisis">Análisis</TabsTrigger>
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
@@ -101,6 +107,11 @@ export function EmpresaAreaPage({ area }: { area: string }) {
               {tab === "sistemas" ? <AreaSystems area={area} /> : null}
               {tab === "autonomo" && area === "finanzas" ? <AutonomoDocuments /> : null}
               {tab === "portal" && area === "entrega" ? <ClientPortal /> : null}
+              {tab === "situacion" && area === "direccion" ? <SituacionView /> : null}
+              {tab === "ritmo" && area === "direccion" ? <RitmoView /> : null}
+              {tab === "planificacion" && area === "direccion" ? <PlanificacionView /> : null}
+              {tab === "pipeline" && area === "ventas" ? <PipelineView /> : null}
+              {tab === "carga" && area === "entrega" ? <CargaView /> : null}
             </>
           )}
         </div>

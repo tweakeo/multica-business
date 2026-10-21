@@ -46,6 +46,7 @@ func (s *Service) Routes(r chi.Router) {
 	s.databaseRoutes(r)
 	s.libraryRoutes(r)
 	s.portalRoutes(r)
+	s.vistasRoutes(r)
 	r.Post("/events/process", s.handle(func(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) {
 		s.ProcessEvents(ctx)
 		return map[string]any{"ok": true}, nil

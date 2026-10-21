@@ -340,6 +340,120 @@ export type BizDatabase = z.infer<typeof DatabaseSchema>;
 const DbDetailSchema = z.object({ row: DbRowSchema, inbound: z.array(DbLinkSchema).default([]), body: z.string().default("") });
 export type BizDbDetail = z.infer<typeof DbDetailSchema>;
 
+// Vistas de Dirección (MANU-60): ritmo de facturación, pipeline, carga y planificación interna.
+const nullNum = z.number().nullable().default(null);
+const InvoiceItemSchema = z.object({ date: z.string().default(""), number: z.string().default(""), party: z.string().default(""), amount: nullNum, path: z.string().default(""), id: z.string().default("") });
+const RitmoBucketSchema = z.object({
+  key: z.string(),
+  label: z.string().default(""),
+  start: z.string().default(""),
+  end: z.string().default(""),
+  current: z.boolean().default(false),
+  invoiced: nullNum,
+  invoices: z.number().default(0),
+  no_amount: z.number().default(0),
+  partial: z.boolean().default(false),
+  reason: z.string().default(""),
+  items: z.array(InvoiceItemSchema).nullable().default([]),
+});
+export type BizRitmoBucket = z.infer<typeof RitmoBucketSchema>;
+const RitmoSchema = z.object({
+  period: z.string().default("mes"),
+  buckets: z.array(RitmoBucketSchema).default([]),
+  first_record: z.string().default(""),
+  undated: z.number().default(0),
+  target: nullNum,
+  target_code: z.string().default(""),
+  target_note: z.string().default(""),
+  objectives: RowsSchema.nullable().default([]),
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizRitmo = z.infer<typeof RitmoSchema>;
+const PipelineCardSchema = z.object({
+  id: z.string(),
+  title: z.string().default(""),
+  client: z.string().default(""),
+  stage: z.string().default("entrada"),
+  outcome: z.string().default(""),
+  status: z.string().default(""),
+  amount: nullNum,
+  owner: z.string().default(""),
+  date: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity: z.string().default(""),
+  entity_id: z.string().default(""),
+});
+export type BizPipelineCard = z.infer<typeof PipelineCardSchema>;
+const PipelineStageSchema = z.object({ key: z.string(), count: z.number().default(0), amount: nullNum, no_amount: z.number().default(0), reached: z.number().default(0), conversion: nullNum });
+export type BizPipelineStage = z.infer<typeof PipelineStageSchema>;
+const PipelineSchema = z.object({
+  stages: z.array(PipelineStageSchema).default([]),
+  cards: z.array(PipelineCardSchema).default([]),
+  open: z.number().default(0),
+  open_amount: nullNum,
+  open_no_amount: z.number().default(0),
+  won: z.number().default(0),
+  lost: z.number().default(0),
+  archived: z.number().default(0),
+  win_rate: nullNum,
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizPipeline = z.infer<typeof PipelineSchema>;
+const WorkItemSchema = z.object({ kind: z.string(), title: z.string().default(""), project: z.string().default(""), date: z.string().default(""), overdue: z.boolean().default(false), db: z.string().default(""), id: z.string().default("") });
+const WorkloadSchema = z.object({
+  name: z.string(),
+  kind: z.string().default("persona"),
+  detail: z.string().default(""),
+  capacity: nullNum,
+  unit: z.string().default(""),
+  capacity_note: z.string().default(""),
+  assigned: nullNum,
+  visible: z.boolean().default(true),
+  note: z.string().default(""),
+  counts: z.array(z.object({ key: z.string(), label: z.string(), value: z.number() })).nullable().default([]),
+  items: z.array(WorkItemSchema).nullable().default([]),
+  load: nullNum,
+});
+export type BizWorkload = z.infer<typeof WorkloadSchema>;
+const CargaSchema = z.object({
+  people: z.array(WorkloadSchema).default([]),
+  capacity_note: z.string().default(""),
+  capacity_file: z.string().default(""),
+  has_capacity: z.boolean().default(false),
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizCarga = z.infer<typeof CargaSchema>;
+const InternalProjectSchema = z.object({
+  id: z.string(),
+  db: z.string().default(""),
+  title: z.string().default(""),
+  status: z.string().default(""),
+  closed: z.boolean().default(false),
+  area: z.string().default("direccion"),
+  owner: z.string().default(""),
+  start: z.string().default(""),
+  end: z.string().default(""),
+  steps: z.number().default(0),
+  done: z.number().default(0),
+  next: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity_id: z.string().default(""),
+});
+export type BizInternalProject = z.infer<typeof InternalProjectSchema>;
+const PlanificacionSchema = z.object({
+  projects: z.array(InternalProjectSchema).default([]),
+  folder: z.string().default(""),
+  fill: z.string().default(""),
+  configured: z.boolean().default(false),
+  folder_exists: z.boolean().default(false),
+});
+export type BizPlanificacion = z.infer<typeof PlanificacionSchema>;
+
 const opts = (endpoint: string) => ({ endpoint });
 
 export const bizApi = {
@@ -400,5 +514,10 @@ export const bizApi = {
   /** Opens the original in Obsidian when the folder is in a vault; otherwise with the default app. */
   openInObsidian: async (path: string) =>
     parseWithFallback(await api.bizPost("/folder/obsidian", { path }), RowSchema, {}, opts("POST /api/biz/folder/obsidian")),
+  ritmo: async (period: string) =>
+    parseWithFallback(await api.bizGet(`/ritmo?periodo=${encodeURIComponent(period)}`), RitmoSchema, RitmoSchema.parse({}), opts("GET /api/biz/ritmo")),
+  pipeline: async () => parseWithFallback(await api.bizGet("/pipeline"), PipelineSchema, PipelineSchema.parse({}), opts("GET /api/biz/pipeline")),
+  carga: async () => parseWithFallback(await api.bizGet("/carga"), CargaSchema, CargaSchema.parse({}), opts("GET /api/biz/carga")),
+  planificacion: async () => parseWithFallback(await api.bizGet("/planificacion"), PlanificacionSchema, PlanificacionSchema.parse({}), opts("GET /api/biz/planificacion")),
   folderRebuild: async (apply: boolean) => parseWithFallback(await api.bizPost("/folder/rebuild", { apply }), RowSchema, {}, opts("POST /api/biz/folder/rebuild")),
 };

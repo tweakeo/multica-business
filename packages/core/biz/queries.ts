@@ -25,6 +25,10 @@ export const bizKeys = {
   databases: (wsId: string) => [...bizKeys.all(wsId), "databases"] as const,
   database: (wsId: string, key: string) => [...bizKeys.all(wsId), "databases", key] as const,
   databaseRow: (wsId: string, key: string, id: string) => [...bizKeys.all(wsId), "databases", key, "row", id] as const,
+  ritmo: (wsId: string, period: string) => [...bizKeys.all(wsId), "ritmo", period] as const,
+  pipeline: (wsId: string) => [...bizKeys.all(wsId), "pipeline"] as const,
+  carga: (wsId: string) => [...bizKeys.all(wsId), "carga"] as const,
+  planificacion: (wsId: string) => [...bizKeys.all(wsId), "planificacion"] as const,
 };
 
 export const bizMetaOptions = (wsId: string) =>
@@ -86,3 +90,13 @@ export const bizDatabaseOptions = (wsId: string, key: string) =>
 
 export const bizDatabaseRowOptions = (wsId: string, key: string, id: string) =>
   queryOptions({ queryKey: bizKeys.databaseRow(wsId, key, id), queryFn: () => bizApi.databaseRow(key, id), enabled: Boolean(key && id), staleTime: 15_000 });
+
+export const bizRitmoOptions = (wsId: string, period: string) =>
+  queryOptions({ queryKey: bizKeys.ritmo(wsId, period), queryFn: () => bizApi.ritmo(period), staleTime: 15_000 });
+
+export const bizPipelineOptions = (wsId: string) => queryOptions({ queryKey: bizKeys.pipeline(wsId), queryFn: bizApi.pipeline, staleTime: 15_000 });
+
+export const bizCargaOptions = (wsId: string) => queryOptions({ queryKey: bizKeys.carga(wsId), queryFn: bizApi.carga, staleTime: 15_000 });
+
+export const bizPlanificacionOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.planificacion(wsId), queryFn: bizApi.planificacion, staleTime: 15_000 });

@@ -81,6 +81,8 @@ const WORKSPACE_ROUTES: readonly RoutePattern[] = [
   ["settings"],
   ["empresa"],
   ["empresa", ":area"],
+  ["bases"],
+  ["bases", ":db"],
   ["attachments", ":id", "preview"],
 ];
 
