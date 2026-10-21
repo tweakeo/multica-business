@@ -60,6 +60,27 @@ Notas en texto libre (cuerpo).
 - Campos desconocidos se conservan (`attrs`) al reconstruir.
 - Índices, cachés, sockets y servicios viven en `~/Library/Application Support/TLS` y en PostgreSQL, nunca en la carpeta.
 
+### Estructura humana (`.tls/layout.json`)
+
+Sin `.tls/layout.json` la carpeta usa la estructura de arriba (la de la demo). Con `{"preset": "humana"}` usa la estructura de The Last:
+
+```
+Empresa.md
+1 · Dirección/   Decisiones.md · Sistemas/ · Recursos/ · Contratos/
+2 · Ventas/      Empresas/ · Contactos/ · Oportunidades/ · Productos/
+3 · Entrega/ … 6 · Equipo/   Sistemas/ · Recursos/
+4 · Finanzas/    Fiscal/<año>/T<n>/{Ingresos,Gastos,Modelos} · Registros/{emitidas,recibidas,pagos}.csv
+Buzón/ · Archivo/
+```
+
+Cualquier clave del preset se puede cambiar en el mismo archivo (`areas`, `dirs`, `quarter`, `package`, `registros`, `decisiones`, `archivo`, `skeleton`, `skip`).
+
+- **Texto humano**: si una nota la escribió o editó una persona, la app solo actualiza su frontmatter (sin añadir campos vacíos y respetando `nombre`/`titulo`). El cuerpo no se toca; `Empresa.md` igual.
+- **No se borra nada**: dentro de su carpeta una nota conserva su nombre; si cambia de carpeta se mueve, y lo que se retira (o estorba) va a `Archivo/<misma ruta>`.
+- **Decisiones**: una línea por decisión en `Decisiones.md`, con el registro completo en un comentario `<!-- tls:decision … -->`. Las demás líneas no se tocan.
+- **Registros únicos**: las facturas emitidas o recibidas (no los borradores) y los pagos confirmados se escriben como fila en `Registros/*.csv`, por `id` (o `registro_id` de la factura). Los pagos no tienen nota propia. Al reconstruir, el CSV manda en fecha, número, moneda y total; las filas añadidas a mano se listan como `sin_vincular` y no se importan solas.
+- **Notas sin `tls_type`**: el tipo se deduce por la carpeta o por `tipo:` (empresa, persona, oportunidad) si tienen `id`. Las que no se pueden leer salen como propuestas; `POST /folder/adopt` con `apply` añade solo `tls_type`, `tls_schema` e `id`.
+
 ## Paquete trimestral para la gestoría
 
 `Finanzas/<año>/T<n>/Paquete gestoría/`:
