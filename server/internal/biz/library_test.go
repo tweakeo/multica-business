@@ -189,6 +189,31 @@ func TestSystemsAndDocumentsReadTheFolder(t *testing.T) {
 		t.Fatalf("gestoría: %+v", g)
 	}
 
+	// The dates index gives the real date of a document whose name has none;
+	// one in "Sin trimestre" shows the quarter of that date, without moving it.
+	writeFile(t, dir, "4 · Finanzas/Fiscal/2025/Sin trimestre/Gastos/Combustible/Campsa.pdf", "%PDF")
+	writeFile(t, dir, "4 · Finanzas/Fiscal/2025/Sin trimestre/Ingresos/F-41.pdf", "%PDF")
+	writeFile(t, dir, "4 · Finanzas/Fechas de documentos.csv", "ruta,fecha,fuente,nota\n"+
+		"4 · Finanzas/Fiscal/2025/Sin trimestre/Gastos/Combustible/Campsa.pdf,2025-11-03,documento,leída del escaneo (OCR)\n"+
+		"4 · Finanzas/Gestoría/2025 Urba gestores/acta.pdf,2025-07-31,manual,\n"+
+		"4 · Finanzas/Fiscal/2026/T3/Gastos/Apple/2026-07-14 factura.pdf,2020-01-01,documento,\n")
+	m = list(owner)
+	if c := m["Campsa.pdf"]; c.Date != "2025-11-03" || c.DateSource != "documento" || c.DateNote != "leída del escaneo (OCR)" || c.Year != 2025 || c.Quarter != "T4" || !c.QuarterFromDate || c.Kind != "Gastos" {
+		t.Fatalf("indexed date: %+v", c)
+	}
+	if c := m["F-41.pdf"]; c.DateSource != "archivo" || c.Quarter != "Sin trimestre" || c.QuarterFromDate {
+		t.Fatalf("without a readable date it stays in Sin trimestre: %+v", c)
+	}
+	if g := m["acta.pdf"]; g.Date != "2025-07-31" || g.DateSource != "manual" {
+		t.Fatalf("manual date: %+v", g)
+	}
+	if inv := m["2026-07-14 factura.pdf"]; inv.Date != "2026-07-14" || inv.DateSource != "nombre" {
+		t.Fatalf("the name wins over the index: %+v", inv)
+	}
+	if _, ok := m["Fechas de documentos.csv"]; ok {
+		t.Fatal("the index is not a document")
+	}
+
 	agent := f.agent("finanzas")
 	if _, ok := list(agent)["parte.pdf"]; ok {
 		t.Fatal("agents must never get private documents")
@@ -229,5 +254,52 @@ func TestKPIsWithoutFactoryTargets(t *testing.T) {
 	_ = f.s.Pool.QueryRow(ctx, `SELECT target::float8 FROM biz_kpi WHERE workspace_id=$1 AND code='DIR-DEC'`, f.ws).Scan(&target)
 	if target != nil {
 		t.Fatalf("clear left target %v", *target)
+	}
+}
+
+// A note a person wrote in Productos/ is adopted with only tls_type,
+// tls_schema and id; the rebuild names the service by its H1 and takes the
+// code from the file name, so the row satisfies the table without rewriting
+// the note.
+func TestAdoptedServiceNoteRebuilds(t *testing.T) {
+	f := newFixture(t)
+	dir := targetCopy(t)
+	rel := "2 · Ventas/Productos/Oferta.md"
+	body := "# Oferta\n\nEncargos puntuales que se acuerdan uno a uno.\n"
+	writeFile(t, dir, rel, body)
+	f.must(owner, "settings.set", map[string]any{"key": "company_folder", "value": dir})
+	ctx := context.Background()
+
+	if _, err := f.s.Folder.Adopt(ctx, f.ws, true, "service"); err != nil {
+		t.Fatal(err)
+	}
+	after := readFile(t, dir, rel)
+	if !strings.HasSuffix(after, "---\n\n"+body) || !strings.Contains(after, "tls_type: service") {
+		t.Fatalf("adopted note:\n%s", after)
+	}
+	res, err := f.s.Folder.Rebuild(ctx, f.ws, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if errs := res["parse_errors"].([]map[string]string); len(errs) != 0 {
+		t.Fatalf("rebuild errors: %v", errs)
+	}
+	var code, name string
+	if err := f.s.Pool.QueryRow(ctx, `SELECT code, name FROM biz_service WHERE workspace_id=$1 AND name='Oferta'`, f.ws).Scan(&code, &name); err != nil {
+		t.Fatal(err)
+	}
+	if code != "oferta" {
+		t.Fatalf("code %q", code)
+	}
+	cmp, _ := f.s.Folder.Rebuild(ctx, f.ws, false)
+	for _, k := range []string{"different", "missing_in_db"} {
+		for _, d := range cmp[k].([]map[string]any) {
+			if d["path"] == rel {
+				t.Fatalf("not stable (%s): %v", k, d)
+			}
+		}
+	}
+	if readFile(t, dir, rel) != after {
+		t.Fatal("rebuild wrote to the note")
 	}
 }

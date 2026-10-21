@@ -206,12 +206,64 @@ type libraryDoc struct {
 	Year       int       `json:"year,omitempty"`
 	Quarter    string    `json:"quarter,omitempty"`
 	Date       string    `json:"date"`
-	DateSource string    `json:"date_source"` // nombre | archivo
+	DateSource string    `json:"date_source"` // nombre | documento | metadatos | manual | archivo
+	DateNote   string    `json:"date_note,omitempty"`
 	Ext        string    `json:"ext"`
 	Size       int64     `json:"size"`
 	ModifiedAt time.Time `json:"modified_at"`
 	Private    bool      `json:"private"`
 	InCloud    bool      `json:"in_cloud"` // iCloud placeholder, not downloaded
+	// The file sits in "Sin trimestre" and the quarter comes from the
+	// document's date; the file is not moved.
+	QuarterFromDate bool `json:"quarter_from_date,omitempty"`
+}
+
+// datesIndexFile, in Finanzas, holds the real date of the documents whose
+// name has none (ruta,fecha,fuente,nota), read from the PDF text or metadata
+// by scripts/tls/the-last-fechas.mjs or written by a person (fuente manual).
+// The originals are never renamed.
+const datesIndexFile = "Fechas de documentos.csv"
+
+type indexedDate struct{ date, source, note string }
+
+var reISODay = regexp.MustCompile(`^(20\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$`)
+var reISOMonth = regexp.MustCompile(`^(20\d\d)-(0[1-9]|1[0-2])$`)
+
+// readDatesIndex maps a folder-relative path to its date. A missing or
+// unreadable index only means the file dates are used.
+func readDatesIndex(root, fin string) map[string]indexedDate {
+	out := map[string]indexedDate{}
+	reg, err := readRegister(filepath.Join(root, filepath.FromSlash(path.Join(fin, datesIndexFile))))
+	if err != nil {
+		return out
+	}
+	col := map[string]int{}
+	for i, h := range reg.header {
+		col[strings.TrimSpace(h)] = i
+	}
+	ri, ok1 := col["ruta"]
+	fi, ok2 := col["fecha"]
+	if !ok1 || !ok2 {
+		return out
+	}
+	get := func(row []string, k string) string {
+		if i, ok := col[k]; ok && i < len(row) {
+			return strings.TrimSpace(row[i])
+		}
+		return ""
+	}
+	for _, row := range reg.rows {
+		rel, date := strings.TrimSpace(row[ri]), strings.TrimSpace(row[fi])
+		if rel == "" || !(reISODay.MatchString(date) || reISOMonth.MatchString(date)) {
+			continue
+		}
+		src := get(row, "fuente")
+		if src == "" || src == "archivo" {
+			src = "manual"
+		}
+		out[rel] = indexedDate{date: date, source: src, note: get(row, "nota")}
+	}
+	return out
 }
 
 // documentGroups are the folders of Finanzas shown as documents.
@@ -239,7 +291,7 @@ func (l Layout) Private(rel string) bool {
 	return false
 }
 
-func classify(l Layout, rel string, size int64, mod time.Time) libraryDoc {
+func classify(l Layout, rel string, size int64, mod time.Time, index map[string]indexedDate) libraryDoc {
 	fin := l.Areas["finanzas"]
 	parts := strings.Split(strings.TrimPrefix(rel, fin+"/"), "/")
 	name := parts[len(parts)-1]
@@ -271,8 +323,17 @@ func classify(l Layout, rel string, size int64, mod time.Time) libraryDoc {
 		d.Date, d.DateSource = m[1]+"-"+m[2]+"-"+m[3], "nombre"
 	} else if m := reMonth.FindStringSubmatch(name); m != nil {
 		d.Date, d.DateSource = m[1]+"-"+m[2], "nombre"
+	} else if ix, ok := index[rel]; ok {
+		d.Date, d.DateSource, d.DateNote = ix.date, ix.source, ix.note
 	} else {
 		d.Date, d.DateSource = mod.Format("2006-01-02"), "archivo"
+	}
+	// A Fiscal document in "Sin trimestre" whose real date is known shows the
+	// quarter of that date, when it is the year of its folder.
+	if d.Quarter == "Sin trimestre" && d.DateSource != "archivo" {
+		if m := reISODay.FindStringSubmatch(d.Date); m != nil && (d.Year == 0 || d.Year == atoiSafe(m[1])) {
+			d.Year, d.Quarter, d.QuarterFromDate = atoiSafe(m[1]), "T"+string(rune('1'+(atoiSafe(m[2])-1)/3)), true
+		}
 	}
 	return d
 }
@@ -300,6 +361,8 @@ func (f *Folder) Documents(ctx context.Context, ws string, a Actor) (map[string]
 	}
 	fin := l.Areas["finanzas"]
 	out["folder"] = fin
+	out["dates_index"] = path.Join(fin, datesIndexFile)
+	index := readDatesIndex(root, fin)
 	docs := []libraryDoc{}
 	for _, g := range documentGroups {
 		base := filepath.Join(root, filepath.FromSlash(path.Join(fin, g)))
@@ -328,7 +391,7 @@ func (f *Folder) Documents(ctx context.Context, ws string, a Actor) (map[string]
 			if isPkg {
 				size = dirSize(p)
 			}
-			doc := classify(l, rel, size, mod)
+			doc := classify(l, rel, size, mod, index)
 			if !(doc.Private && a.Type == "agent") {
 				docs = append(docs, doc)
 			}

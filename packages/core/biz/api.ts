@@ -200,6 +200,8 @@ const LibraryDocSchema = z.object({
   quarter: z.string().optional(),
   date: z.string().default(""),
   date_source: z.string().default(""),
+  date_note: z.string().default(""),
+  quarter_from_date: z.boolean().default(false),
   ext: z.string().default(""),
   size: z.number().default(0),
   modified_at: z.string().default(""),
@@ -210,6 +212,7 @@ export type BizLibraryDoc = z.infer<typeof LibraryDocSchema>;
 const DocumentsSchema = z.object({
   configured: z.boolean().default(false),
   folder: z.string().default(""),
+  dates_index: z.string().default(""),
   groups: z.array(z.string()).default([]),
   documents: z.array(LibraryDocSchema).default([]),
 });

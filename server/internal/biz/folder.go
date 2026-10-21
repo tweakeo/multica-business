@@ -590,11 +590,17 @@ func (f *Folder) scan(root string) ([]*folderRecord, []map[string]string, []map[
 				delete(rec.Front, alias)
 			}
 		}
-		if rec.Inferred {
-			field := map[string]string{"organization": "name", "contact": "name", "opportunity": "title"}[rec.Type]
-			if field != "" && str(rec.Front[field]) == "" {
-				rec.Front[field] = firstHeading(rec.Body)
+		// A note a person wrote (inferred, or adopted with only tls_type,
+		// tls_schema and id) names itself by its H1; a service also needs a
+		// code, taken from the file name. Nothing is written back.
+		if field := map[string]string{"organization": "name", "contact": "name", "opportunity": "title", "service": "name"}[rec.Type]; field != "" && str(rec.Front[field]) == "" {
+			rec.Front[field] = firstHeading(rec.Body)
+			if str(rec.Front[field]) == "" {
+				rec.Front[field] = strings.TrimSuffix(path.Base(rel), ".md")
 			}
+		}
+		if rec.Type == "service" && str(rec.Front["code"]) == "" {
+			rec.Front["code"] = slugify(strings.TrimSuffix(path.Base(rel), ".md"))
 		}
 		if _, ok := entityTables[rec.Type]; ok && rec.ID != "" {
 			recs = append(recs, rec)

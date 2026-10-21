@@ -10,6 +10,7 @@
 #   scripts/tls/the-last.sh start    # cluster + migrations + API + web (builds on first run)
 #   scripts/tls/the-last.sh setup    # first time: user, workspace, folder, rebuild (the-last-setup.mjs)
 #   scripts/tls/the-last.sh decisiones  # import the lines of Decisiones.md (adds only the id mark)
+#   scripts/tls/the-last.sh fechas [--apply]  # real dates of the documents into "4 · Finanzas/Fechas de documentos.csv"
 #   scripts/tls/the-last.sh stop
 #   scripts/tls/the-last.sh status
 #   scripts/tls/the-last.sh build    # rebuild API and web after pulling changes
@@ -108,6 +109,9 @@ case "${1:-start}" in
     set -a; . "$(secrets)"; set +a
     TLS_API="http://127.0.0.1:$API_PORT" TLS_CODE="$MULTICA_DEV_VERIFICATION_CODE" node "$ROOT/scripts/tls/the-last-decisiones.mjs"
     ;;
+  fechas)
+    COMPANY_FOLDER="$COMPANY_FOLDER" node "$ROOT/scripts/tls/the-last-fechas.mjs" "${@:2}"
+    ;;
   stop)
     for p in web api; do alive "$p" && killtree "$(cat "$RUN/$p.pid")" && echo "$p detenido"; rm -f "$RUN/$p.pid"; done
     "$BREW/pg_ctl" -D "$PGDATA" stop -m fast >/dev/null 2>&1 && echo "PostgreSQL de The Last detenido" || true
@@ -117,5 +121,5 @@ case "${1:-start}" in
     curl -s -o /dev/null -w "web %{http_code}\n" "http://localhost:$WEB_PORT" || echo "web parada"
     "$BREW/pg_ctl" -D "$PGDATA" status 2>&1 | head -1
     ;;
-  *) echo "uso: $0 {start|setup|decisiones|stop|status|build}"; exit 1 ;;
+  *) echo "uso: $0 {start|setup|decisiones|fechas|stop|status|build}"; exit 1 ;;
 esac

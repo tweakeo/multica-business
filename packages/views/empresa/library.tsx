@@ -160,8 +160,18 @@ function docDate(d: BizLibraryDoc): string {
 
 const PACKAGES = new Set(["numbers", "pages", "key", "rtfd", "bundle", "app"]);
 
+const DATE_SOURCE: Record<string, string> = {
+  nombre: "Fecha del nombre",
+  documento: "Fecha leída del documento",
+  metadatos: "Fecha de creación del PDF o documento (el texto no la trae)",
+  manual: "Fecha anotada a mano en el índice de fechas",
+  archivo: "Fecha del archivo: ni el nombre ni el documento la indican",
+};
+
 function DocRow({ d }: { d: BizLibraryDoc }) {
-  const where = [d.year ? String(d.year) : "", d.quarter ?? "", d.detail].filter(Boolean).join(" · ");
+  const quarter = d.quarter_from_date ? `${d.quarter} (por fecha; está en Sin trimestre)` : (d.quarter ?? "");
+  const where = [d.year ? String(d.year) : "", quarter, d.detail].filter(Boolean).join(" · ");
+  const dateTitle = [DATE_SOURCE[d.date_source] ?? "", d.date_note].filter(Boolean).join(" · ");
   return (
     <div className="flex items-center gap-3 px-3 py-2 text-caption hover:bg-muted/40">
       <div className="min-w-0 flex-1">
@@ -177,7 +187,7 @@ function DocRow({ d }: { d: BizLibraryDoc }) {
         {where ? <div className="truncate text-micro text-muted-foreground">{where}</div> : null}
       </div>
       <span className="w-12 shrink-0 text-micro uppercase text-muted-foreground">{d.ext || "—"}</span>
-      <span className="w-24 shrink-0 text-right tabular-nums" title={d.date_source === "archivo" ? "Fecha del archivo (el nombre no la indica)" : "Fecha del nombre"}>
+      <span className="w-24 shrink-0 text-right tabular-nums" title={dateTitle}>
         {docDate(d)}
         {d.date_source === "archivo" ? <span className="text-muted-foreground">*</span> : null}
       </span>
@@ -245,7 +255,7 @@ export function AutonomoDocuments() {
       ))}
       {shown.length === 0 ? <EmptyHint title="Ningún documento con estos filtros" /> : null}
       <p className="text-micro text-muted-foreground">
-        Se leen tal cual de <code>{q.data.folder}</code>: nada se copia ni se convierte en ficha. «Abrir» muestra el original; el icono de carpeta lo enseña en Finder. * fecha del archivo, cuando el nombre no la indica. Los documentos privados no se ofrecen a los agentes.
+        Se leen tal cual de <code>{q.data.folder}</code>: nada se copia ni se convierte en ficha. «Abrir» muestra el original; el icono de carpeta lo enseña en Finder. Si el nombre no trae fecha, se usa la leída del documento (índice <code>{q.data.dates_index}</code>, editable a mano); * fecha del archivo, cuando tampoco el documento la indica. Los documentos privados no se ofrecen a los agentes.
       </p>
     </div>
   );
