@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, FolderOpen, OctagonPause, Plus, ShieldAlert } from "lucide-react";
+import { FolderOpen, OctagonPause, ShieldAlert, type LucideIcon } from "lucide-react";
 import { api } from "@multica/core/api";
 import {
   bizAuditOptions,
@@ -31,7 +31,8 @@ import { toast } from "sonner";
 import { CollectionPageHeader } from "../layout/collection-page";
 import { PAGE_GUTTER } from "../layout/page-header";
 import { useNavigation } from "../navigation";
-import { AreaPaceCard, AreaPaceChart, PaceLegend } from "./area-pace";
+import { AreaPaceRow } from "./area-pace";
+import { CashHero } from "./cash-chart";
 import { ApprovalCard, ExceptionList } from "./blocks";
 import { RecordSheet } from "./record-sheet";
 import {
@@ -41,6 +42,7 @@ import {
   EmptyHint,
   ErrorBlock,
   InspectorProvider,
+  ListRow,
   LoadingBlock,
   Pill,
   RecordLink,
@@ -50,12 +52,12 @@ import {
 } from "./shared";
 import { BizSearch, NewLeadDialog } from "./widgets";
 
-export function EmpresaShell({ children, title, icon, actions }: { children: React.ReactNode; title: React.ReactNode; icon?: typeof Building2; actions?: React.ReactNode }) {
+export function EmpresaShell({ children, title, icon, actions }: { children: React.ReactNode; title: React.ReactNode; icon?: LucideIcon; actions?: React.ReactNode }) {
   const [target, setTarget] = useState<{ entity: string; id: string } | null>(null);
   return (
     <InspectorProvider value={setTarget}>
       <div className="flex h-full min-h-0 flex-col">
-        <CollectionPageHeader icon={icon ?? Building2} title={title} actions={actions} />
+        <CollectionPageHeader icon={icon} title={title} actions={actions} />
         <ModeBanner />
         <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
       </div>
@@ -74,27 +76,10 @@ function ModeBanner() {
   const ro = settings.read_only === true;
   if (!demo && !kill && !ro) return null;
   return (
-    <div className={cn(PAGE_GUTTER, "flex flex-wrap items-center gap-x-4 gap-y-1 border-b py-1.5 text-caption", kill || ro ? "bg-destructive/10" : "bg-muted/50")}>
-      {demo ? (
-        <span className="font-medium">
-          DEMO · datos ficticios
-        </span>
-      ) : null}
-      {settings.company_folder ? (
-        <span className="inline-flex items-center gap-1 text-muted-foreground">
-          <FolderOpen className="size-3.5" /> <span className="font-mono text-micro">{str(settings.company_folder)}</span>
-        </span>
-      ) : null}
-      {kill ? (
-        <span className="inline-flex items-center gap-1 font-medium text-destructive">
-          <OctagonPause className="size-3.5" /> Interruptor global activado: agentes y automatismos detenidos
-        </span>
-      ) : null}
-      {ro ? (
-        <span className="inline-flex items-center gap-1 font-medium text-destructive">
-          <ShieldAlert className="size-3.5" /> Modo lectura: no se admiten cambios
-        </span>
-      ) : null}
+    <div className={cn(PAGE_GUTTER, "flex flex-wrap items-center gap-x-4 gap-y-1 py-1.5 text-caption", kill || ro ? "text-destructive" : "text-muted-foreground")}>
+      {demo ? <span>Demo · datos ficticios</span> : null}
+      {kill ? <span className="font-medium">Interruptor global activado: agentes y automatismos detenidos</span> : null}
+      {ro ? <span className="font-medium">Modo lectura: no se admiten cambios</span> : null}
     </div>
   );
 }
@@ -120,26 +105,26 @@ export function EmpresaPage() {
       actions={
         <div className="flex items-center gap-2">
           <BizSearch />
-          <Button size="sm" onClick={() => setLeadOpen(true)}>
-            <Plus /> Nuevo interesado
+          <Button size="sm" variant="ghost" onClick={() => setLeadOpen(true)}>
+            Nuevo interesado
           </Button>
         </div>
       }
     >
       <Tabs value={tab} onValueChange={setTab} className="gap-0">
-        <div className={cn(PAGE_GUTTER, "border-b py-1.5")}>
+        <div className={cn(PAGE_GUTTER, "py-1.5")}>
           <TabsList variant="line">
             <TabsTrigger value="empresa">Empresa</TabsTrigger>
             <TabsTrigger value="foco">Mi foco</TabsTrigger>
             <TabsTrigger value="aprobaciones">
-              Aprobaciones{pending > 0 ? <span className="ml-1 rounded-full bg-destructive px-1.5 text-micro text-white">{pending}</span> : null}
+              Aprobaciones{pending > 0 ? <span className="ml-1 tabular-nums text-muted-foreground">{pending}</span> : null}
             </TabsTrigger>
             <TabsTrigger value="excepciones">Excepciones</TabsTrigger>
             <TabsTrigger value="bitacora">Bitácora</TabsTrigger>
             <TabsTrigger value="controles">Controles y carpeta</TabsTrigger>
           </TabsList>
         </div>
-        <div className={cn(PAGE_GUTTER, "py-4")}>
+        <div className={cn(PAGE_GUTTER, "py-6")}>
           {tab === "empresa" ? <CompanyView /> : null}
           {tab === "foco" ? <FocusView /> : null}
           {tab === "aprobaciones" ? <ApprovalsView /> : null}
@@ -162,82 +147,66 @@ function CompanyView() {
   if (q.error || !q.data) return <ErrorBlock error={q.error} retry={() => q.refetch()} />;
   const o = q.data;
   const objectives = (o.objectives ?? []) as BizRow[];
+  const decisions = o.open_decisions ?? [];
+  const openTab = (tab: string) => nav.replace(`${nav.pathname}?tab=${tab}`);
+  const bottleneck = AREAS.find((a) => a.code === o.bottleneck)?.name;
   return (
-    <div className="space-y-6">
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-lg border bg-card p-3">
-          <div className="text-caption text-muted-foreground">Caja disponible</div>
-          <div className="text-title font-semibold tabular-nums">{formatKpiValue(o.cash, "EUR")}</div>
-          <p className="text-micro text-muted-foreground">{o.cash_coverage}</p>
-        </div>
-        <div className="rounded-lg border bg-card p-3">
-          <div className="text-caption text-muted-foreground">Meses de caja (runway)</div>
-          <div className="text-title font-semibold tabular-nums">{formatKpiValue(o.runway, "meses")}</div>
-          <p className="text-micro text-muted-foreground">{o.runway_explanation}</p>
-        </div>
-        <div className="rounded-lg border bg-card p-3">
-          <div className="text-caption text-muted-foreground">Dependencia del dueño</div>
-          <div className="text-title font-semibold tabular-nums">{o.owner_dependency.pending_approvals} aprobaciones</div>
-          <p className="text-micro text-muted-foreground">{o.owner_dependency.open_tasks_on_people} tareas abiertas en personas</p>
-        </div>
-        <div className="rounded-lg border bg-card p-3">
-          <div className="text-caption text-muted-foreground">Cuello de botella</div>
-          <div className="flex items-center gap-2 text-title font-semibold">
-            {o.bottleneck ? <><AreaDot area={o.bottleneck} className="size-2.5" /> {AREAS.find((a) => a.code === o.bottleneck)?.name}</> : "Sin datos"}
-          </div>
-          <p className="text-micro text-muted-foreground">Área con más indicadores en alerta y excepciones.</p>
-        </div>
-      </div>
+    <div className="mx-auto max-w-3xl space-y-14 pb-16">
+      <CashHero cash={o.cash} coverage={o.cash_coverage} />
 
-      <Section title="Seis áreas · ritmo">
-        <div className="space-y-3">
-          <div className="rounded-lg border bg-card p-4">
-            <AreaPaceChart areas={o.areas} onSelect={(code) => nav.push(p.empresaArea(code))} />
-            <PaceLegend className="mt-2 border-t pt-3" />
-            <p className="mt-1.5 text-micro text-muted-foreground">
-              Ritmo = valor real frente a lo esperado a fecha de hoy. Cada área muestra su indicador más atrasado, que es el que manda.
-            </p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {o.areas.map((a) => (
-              <AreaPaceCard key={a.code} area={a} onOpen={() => nav.push(p.empresaArea(a.code))} />
-            ))}
-          </div>
+      <section className="divide-y divide-border">
+        <ListRow primary="Meses de caja" secondary="Caja frente a la salida mensual normalizada" value={formatKpiValue(o.runway, "meses")} />
+        <ListRow primary="Cuello de botella" secondary="Área con más indicadores en alerta" value={bottleneck ?? "—"} onClick={o.bottleneck ? () => nav.push(p.empresaArea(o.bottleneck)) : undefined} />
+        <ListRow primary="Esperan tu decisión" secondary={`${o.owner_dependency.open_tasks_on_people} tareas abiertas en personas`} value={o.owner_dependency.pending_approvals} onClick={() => openTab("aprobaciones")} />
+      </section>
+
+      <Section title="Áreas">
+        <div className="divide-y divide-border">
+          {o.areas.map((a) => (
+            <AreaPaceRow key={a.code} area={a} onOpen={() => nav.push(p.empresaArea(a.code))} />
+          ))}
         </div>
       </Section>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <Section title="Objetivos del trimestre">
-          {objectives.length === 0 ? <EmptyHint title="Sin objetivos este trimestre" next="Créalos en Dirección → Gestión." /> : (
-            <ul className="divide-y rounded-lg border">
-              {objectives.map((ob) => (
-                <li key={str(ob.id)} className="flex items-center gap-2 px-3 py-2 text-caption">
-                  <AreaDot area={str(ob.area)} />
-                  <RecordLink entity="objective" id={ob.id} className="min-w-0 flex-1 truncate">{str(ob.title)}</RecordLink>
-                  <Pill>{str(ob.kind) === "compliance" ? "cumplimiento" : str(ob.kpi_code) || str(ob.kind)}</Pill>
-                  <Pill>{str(ob.status) === "active" ? "activo" : str(ob.status)}</Pill>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-        <Section title="Decisiones abiertas">
-          {(o.open_decisions ?? []).length === 0 ? <EmptyHint title="Nada pendiente de decidir" /> : (
-            <ul className="divide-y rounded-lg border">
-              {(o.open_decisions ?? []).map((d) => (
-                <li key={str(d.id)} className="flex items-center gap-2 px-3 py-2 text-caption">
-                  <AreaDot area={str(d.area)} />
-                  <RecordLink entity="decision" id={d.id} className="min-w-0 flex-1 truncate">{str(d.title)}</RecordLink>
-                  <span className="text-micro text-muted-foreground">{formatDate(d.created_at)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-      </div>
+      <Section
+        title="Requiere atención"
+        actions={o.exceptions_total > 0 ? <button type="button" className="text-label text-muted-foreground hover:text-foreground" onClick={() => openTab("excepciones")}>Ver todas · {o.exceptions_total}</button> : null}
+      >
+        {o.exceptions.length === 0 ? <EmptyHint title="Nada requiere tu atención" /> : (
+          <div className="divide-y divide-border">
+            {o.exceptions.slice(0, 5).map((e, i) => (
+              <ListRow key={`${e.kind}-${e.entity_id}-${i}`} primary={e.title} secondary={e.what} value={<AreaTag area={e.area} />} onClick={() => openTab("excepciones")} />
+            ))}
+          </div>
+        )}
+      </Section>
 
-      <Section title={`Excepciones prioritarias (${o.exceptions_total})`}>
-        <ExceptionList items={o.exceptions} showArea limit={8} />
+      <Section title="Decisiones abiertas">
+        {decisions.length === 0 ? <EmptyHint title="Nada pendiente de decidir" /> : (
+          <div className="divide-y divide-border">
+            {decisions.map((d) => (
+              <RecordLink key={str(d.id)} entity="decision" id={d.id} className="block w-full hover:no-underline">
+                <ListRow primary={str(d.title)} secondary={AREAS.find((a) => a.code === str(d.area))?.name} value={<span className="text-caption text-muted-foreground">{formatDate(d.created_at)}</span>} />
+              </RecordLink>
+            ))}
+          </div>
+        )}
+      </Section>
+
+      <Section title="Objetivos del trimestre">
+        {objectives.length === 0 ? <EmptyHint title="Sin objetivos este trimestre" next="Créalos en Dirección → Gestión." /> : (
+          <div className="divide-y divide-border">
+            {objectives.map((ob) => (
+              <RecordLink key={str(ob.id)} entity="objective" id={ob.id} className="block w-full hover:no-underline">
+                <ListRow
+                  primary={str(ob.title)}
+                  secondary={AREAS.find((a) => a.code === str(ob.area))?.name}
+                  value={<span className="text-caption text-muted-foreground">{str(ob.status) === "active" ? "Activo" : str(ob.status)}</span>}
+                />
+              </RecordLink>
+            ))}
+          </div>
+        )}
       </Section>
     </div>
   );

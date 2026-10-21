@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Bot, Check, ExternalLink, X } from "lucide-react";
+import { ArrowRight, Bot, ExternalLink } from "lucide-react";
 import type { BizException, BizKpi, BizRow } from "@multica/core/biz";
 import { formatDateTime, formatKpiValue, useBizDecide } from "@multica/core/biz";
 import { useWorkspacePaths } from "@multica/core/paths";
@@ -72,7 +72,7 @@ export function ExceptionList({ items, showArea, limit, onAskAgent }: { items: B
   const shown = limit ? items.slice(0, limit) : items;
   if (items.length === 0) return <EmptyHint title="Nada requiere tu atención" next="Las excepciones aparecen aquí con qué pasa, por qué importa y qué hacer." />;
   return (
-    <ul className="divide-y rounded-lg border">
+    <ul className="divide-y divide-border">
       {shown.map((e, i) => {
         const key = `${e.kind}-${e.entity_id}-${i}`;
         const isOpen = expanded === key;
@@ -84,11 +84,10 @@ export function ExceptionList({ items, showArea, limit, onAskAgent }: { items: B
           else open({ entity: e.entity_type, id: e.entity_id });
         };
         return (
-          <li key={key} className="px-3 py-2.5">
-            <div className="flex items-start gap-2">
-              <SeverityBadge severity={e.severity} />
+          <li key={key} className="group py-3.5">
+            <div className="flex items-start gap-4">
               <div className="min-w-0 flex-1">
-                <button type="button" className="text-left text-body font-medium hover:underline" onClick={() => setExpanded(isOpen ? null : key)} aria-expanded={isOpen}>
+                <button type="button" className="text-left text-body-lg hover:underline" onClick={() => setExpanded(isOpen ? null : key)} aria-expanded={isOpen}>
                   {e.title}
                 </button>
                 <p className="text-caption text-muted-foreground">{e.what}</p>
@@ -115,8 +114,8 @@ export function ExceptionList({ items, showArea, limit, onAskAgent }: { items: B
                   </dl>
                 ) : null}
               </div>
-              <div className="flex shrink-0 items-center gap-1">
-                {showArea ? <AreaTag area={e.area} /> : null}
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                 {onAskAgent ? (
                   <Button variant="ghost" size="icon-sm" aria-label="Pedir al agente del área" title="Pedir al agente del área" onClick={() => onAskAgent(e)}>
                     <Bot />
@@ -127,12 +126,17 @@ export function ExceptionList({ items, showArea, limit, onAskAgent }: { items: B
                     <ExternalLink />
                   </Button>
                 ) : null}
+                </span>
+                <span className="flex flex-col items-end">
+                  <SeverityBadge severity={e.severity} />
+                  {showArea ? <AreaTag area={e.area} /> : null}
+                </span>
               </div>
             </div>
           </li>
         );
       })}
-      {limit && items.length > limit ? <li className="px-3 py-2 text-caption text-muted-foreground">Y {items.length - limit} más…</li> : null}
+      {limit && items.length > limit ? <li className="py-3 text-caption text-muted-foreground">Y {items.length - limit} más…</li> : null}
     </ul>
   );
 }
@@ -157,7 +161,7 @@ export function ApprovalCard({ approval, canDecide }: { approval: BizRow; canDec
     }
   };
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <div className="border-b border-border py-4 last:border-b-0">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-body font-medium">{str(approval.title)}</span>
         <AreaTag area={str(approval.area)} />
@@ -195,7 +199,7 @@ export function ApprovalCard({ approval, canDecide }: { approval: BizRow; canDec
             ) : null}
             <div className="flex gap-2">
               <Button size="sm" onClick={() => act(true)} disabled={decide.isPending}>
-                <Check /> Aprobar y ejecutar
+                Aprobar y ejecutar
               </Button>
               {rejecting ? (
                 <Button size="sm" variant="destructive" disabled={!reason.trim() || decide.isPending} onClick={() => act(false)}>
@@ -203,7 +207,7 @@ export function ApprovalCard({ approval, canDecide }: { approval: BizRow; canDec
                 </Button>
               ) : (
                 <Button size="sm" variant="outline" onClick={() => setRejecting(true)}>
-                  <X /> Rechazar
+                  Rechazar
                 </Button>
               )}
             </div>

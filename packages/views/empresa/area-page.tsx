@@ -16,7 +16,7 @@ import { useNavigation } from "../navigation";
 import { ExceptionList, KpiGrid } from "./blocks";
 import { EmpresaShell } from "./overview-page";
 import { AreaAnalysis, AreaManagement } from "./area-views";
-import { areaOf, AreaDot, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
+import { areaOf, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
 import { AskAgentDialog, BizTable } from "./widgets";
 
 export function EmpresaAreaPage({ area }: { area: string }) {
@@ -41,7 +41,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
     <EmpresaShell
       title={
         <span className="inline-flex items-center gap-2">
-          <AreaDot area={area} className="size-2.5" /> {info.name}
+          {info.name}
           <span className="hidden text-caption font-normal text-muted-foreground md:inline">· {info.transforms}</span>
           {paused ? <StatusBadge status="paused" /> : null}
         </span>
@@ -50,7 +50,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
         <div className="flex items-center gap-2">
           {agent ? (
             <Button size="sm" variant="ghost" onClick={() => nav.push(p.agentDetail(str(agent.agent_id)))}>
-              <Bot className={info.text} /> {str(agent.name)}
+              {str(agent.name)}
             </Button>
           ) : null}
           <Button size="sm" variant="outline" onClick={() => setAsk({ open: true })} disabled={!agent}>

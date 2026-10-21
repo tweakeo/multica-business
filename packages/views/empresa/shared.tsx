@@ -2,16 +2,6 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  CircleDashed,
-  CircleHelp,
-  CircleSlash,
-  Clock,
-  OctagonAlert,
-  PauseCircle,
-} from "lucide-react";
 import { toast } from "sonner";
 import type { BizKpi } from "@multica/core/biz";
 import { formatKpiValue, useBizRun } from "@multica/core/biz";
@@ -38,62 +28,48 @@ export function AreaDot({ area, className }: { area: string; className?: string 
 }
 
 export function AreaTag({ area }: { area: string }) {
-  const a = areaOf(area);
-  return (
-    <span className="inline-flex items-center gap-1.5 text-caption text-muted-foreground">
-      <AreaDot area={area} />
-      {a.name}
-    </span>
-  );
+  return <span className="text-caption text-muted-foreground">{areaOf(area).name}</span>;
 }
 
-// Every status pairs an icon and a word: colour is never the only signal.
-const STATUS: Record<string, { label: string; icon: typeof CheckCircle2; className: string }> = {
-  ok: { label: "En meta", icon: CheckCircle2, className: "text-success" },
-  warning: { label: "Por debajo", icon: AlertTriangle, className: "text-warning" },
-  alert: { label: "Alerta", icon: OctagonAlert, className: "text-destructive" },
-  no_data: { label: "Sin datos", icon: CircleDashed, className: "text-muted-foreground" },
-  not_configured: { label: "Sin meta", icon: CircleHelp, className: "text-muted-foreground" },
-  disabled: { label: "Desactivado", icon: CircleSlash, className: "text-muted-foreground" },
-  stale: { label: "Desactualizado", icon: Clock, className: "text-warning" },
-  paused: { label: "En pausa", icon: PauseCircle, className: "text-warning" },
-  partial: { label: "Datos parciales", icon: CircleDashed, className: "text-warning" },
+// A status is a word; colour only reinforces meaning (green good, red bad)
+// and never carries it alone, so no icon is needed next to it.
+const STATUS: Record<string, { label: string; className: string }> = {
+  ok: { label: "En meta", className: "text-success" },
+  warning: { label: "Por debajo", className: "text-warning" },
+  alert: { label: "Alerta", className: "text-destructive" },
+  no_data: { label: "Sin datos", className: "text-muted-foreground" },
+  not_configured: { label: "Sin meta", className: "text-muted-foreground" },
+  disabled: { label: "Desactivado", className: "text-muted-foreground" },
+  stale: { label: "Desactualizado", className: "text-warning" },
+  paused: { label: "En pausa", className: "text-warning" },
+  partial: { label: "Datos parciales", className: "text-warning" },
 };
 
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
   const s = STATUS[status] ?? STATUS.no_data!;
-  const Icon = s.icon;
-  return (
-    <span className={cn("inline-flex items-center gap-1 text-caption font-medium", s.className)}>
-      <Icon aria-hidden="true" className="size-3.5" />
-      {label ?? s.label}
-    </span>
-  );
+  return <span className={cn("text-caption font-medium", s.className)}>{label ?? s.label}</span>;
 }
 
 const SEVERITY: Record<string, string> = {
-  alta: "bg-destructive/10 text-destructive",
-  media: "bg-warning/10 text-warning",
-  baja: "bg-muted text-muted-foreground",
+  alta: "text-destructive",
+  media: "text-warning",
+  baja: "text-muted-foreground",
 };
 
 export function SeverityBadge({ severity }: { severity: string }) {
-  return (
-    <span className={cn("rounded px-1.5 py-0.5 text-micro font-medium uppercase tracking-wide", SEVERITY[severity] ?? SEVERITY.baja)}>
-      {severity}
-    </span>
-  );
+  return <span className={cn("text-caption font-medium capitalize", SEVERITY[severity] ?? SEVERITY.baja)}>{severity}</span>;
 }
 
+/** Secondary metadata: plain grey text, no frame. */
 export function Pill({ children, className }: { children: ReactNode; className?: string }) {
-  return <span className={cn("inline-flex items-center rounded-md border px-1.5 py-0.5 text-caption text-muted-foreground", className)}>{children}</span>;
+  return <span className={cn("inline-flex items-center text-caption text-muted-foreground", className)}>{children}</span>;
 }
 
 export function Section({ title, actions, children, className }: { title: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-label font-medium text-muted-foreground">{title}</h2>
+    <section className={cn("space-y-3", className)}>
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="text-title font-semibold tracking-tight">{title}</h2>
         {actions}
       </div>
       {children}
@@ -101,10 +77,40 @@ export function Section({ title, actions, children, className }: { title: ReactN
   );
 }
 
+/**
+ * The list row of the minimal system: what it is on the left (with an
+ * optional grey line under it), the figure and its context on the right. No
+ * frame, no icon; rows separate by space and a hairline.
+ */
+export function ListRow({ primary, secondary, value, detail, onClick, className }: { primary: ReactNode; secondary?: ReactNode; value?: ReactNode; detail?: ReactNode; onClick?: () => void; className?: string }) {
+  const body = (
+    <>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-body-lg">{primary}</span>
+        {secondary ? <span className="block truncate text-caption text-muted-foreground">{secondary}</span> : null}
+      </span>
+      {value !== undefined || detail ? (
+        <span className="shrink-0 text-right">
+          {value !== undefined ? <span className="block text-body-lg tabular-nums">{value}</span> : null}
+          {detail ? <span className="block text-caption tabular-nums">{detail}</span> : null}
+        </span>
+      ) : null}
+    </>
+  );
+  const cls = cn("flex w-full items-center gap-4 py-3.5 text-left", className);
+  return onClick ? (
+    <button type="button" onClick={onClick} className={cn(cls, "transition-opacity hover:opacity-60 focus-visible:opacity-60 focus-visible:outline-none")}>
+      {body}
+    </button>
+  ) : (
+    <div className={cls}>{body}</div>
+  );
+}
+
 export function EmptyHint({ title, next }: { title: string; next?: ReactNode }) {
   return (
-    <div className="rounded-lg border border-dashed px-4 py-6 text-center">
-      <p className="text-body font-medium">{title}</p>
+    <div className="py-6">
+      <p className="text-body text-muted-foreground">{title}</p>
       {next ? <p className="mt-1 text-caption text-muted-foreground">{next}</p> : null}
     </div>
   );
@@ -122,7 +128,7 @@ export function LoadingBlock({ rows = 3 }: { rows?: number }) {
 
 export function ErrorBlock({ error, retry }: { error: unknown; retry?: () => void }) {
   return (
-    <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-caption">
+    <div role="alert" className="py-3 text-caption">
       <p className="font-medium text-destructive">No se pudo cargar</p>
       <p className="mt-0.5 text-muted-foreground">{error instanceof Error ? error.message : String(error)}</p>
       {retry ? (
