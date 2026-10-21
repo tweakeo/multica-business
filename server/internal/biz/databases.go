@@ -665,6 +665,7 @@ func (r *dbReader) facturas() []dbRow {
 	}
 	reg := r.l.registersDir()
 	numbers := map[string]bool{}
+	docs := map[string]bool{} // originals a register row points to
 	for _, f := range []struct{ file, kind, status string }{{"emitidas.csv", "Emitida", "estado_emision"}, {"recibidas.csv", "Recibida", "estado_revision"}} {
 		rel := path.Join(reg, f.file)
 		rg, err := readRegister(r.full(rel))
@@ -685,6 +686,7 @@ func (r *dbReader) facturas() []dbRow {
 			add(&row, "Fuente", rg.get(x, "fuente"))
 			if doc := rg.get(x, "documento"); doc != "" && !filepath.IsAbs(doc) {
 				row.refs = append(row.refs, path.Clean(path.Join(reg, doc)))
+				docs[path.Clean(path.Join(reg, doc))] = true
 			}
 			if n := rg.get(x, "numero_documento"); n != "" {
 				numbers[n] = true
@@ -736,7 +738,7 @@ func (r *dbReader) facturas() []dbRow {
 			row.Date = r.modDate(rel)
 		}
 		row.Status = "Sin registrar"
-		if numbers[number] {
+		if numbers[number] || docs[rel] {
 			row.Status = "Registrada"
 		}
 		low := strings.ToLower(name)
@@ -801,6 +803,28 @@ func (r *dbReader) pagos() []dbRow {
 			out = append(out, row)
 		}
 	}
+	// What the app already holds of each statement line, by import hash.
+	type held struct{ status, invoice string }
+	imported := map[string]held{}
+	var accounts []string
+	if r.s != nil && r.s.Pool != nil {
+		if rows, err := r.s.Pool.Query(r.ctx, `SELECT m.import_hash, m.account_id::text, m.status, coalesce(i.number,'')
+			FROM biz_bank_movement m LEFT JOIN biz_invoice i ON i.id=m.invoice_id WHERE m.workspace_id=$1`, r.ws); err == nil {
+			seen := map[string]bool{}
+			for rows.Next() {
+				var h, acc, st, num string
+				if rows.Scan(&h, &acc, &st, &num) == nil {
+					imported[h] = held{st, num}
+					if !seen[acc] {
+						seen[acc] = true
+						accounts = append(accounts, acc)
+					}
+				}
+			}
+			rows.Close()
+		}
+	}
+	movementLabel := map[string]string{"unreconciled": "Sin conciliar", "proposed": "Conciliación propuesta", "reconciled": "Conciliado", "ignored": "Ignorado"}
 	dir := path.Join(reg, "importar")
 	entries, _ := os.ReadDir(r.full(dir))
 	for _, e := range entries {
@@ -811,6 +835,13 @@ func (r *dbReader) pagos() []dbRow {
 		rg, err := readRegister(r.full(rel))
 		if err != nil {
 			continue
+		}
+		byLine := map[int]statementRow{}
+		if data, err := r.read(rel); err == nil {
+			stmt, _ := parseStatement(string(data))
+			for _, m := range stmt {
+				byLine[m.Line] = m
+			}
 		}
 		for i, x := range rg.rows {
 			id := rg.get(x, "id")
@@ -829,6 +860,27 @@ func (r *dbReader) pagos() []dbRow {
 			add(&row, "Proyecto", rg.get(x, "proyecto_nombre"))
 			if n := row.get("Factura"); n != "" {
 				row.match = append(row.match, "→"+n)
+			}
+			if m, ok := byLine[i+2]; ok {
+				if m.Skip != "" {
+					row.Status = "No importable"
+					add(&row, "Motivo", m.Skip)
+				} else {
+					hashes := []string{m.Hash("")}
+					if m.ExtID == "" {
+						hashes = hashes[:0]
+						for _, acc := range accounts {
+							hashes = append(hashes, m.Hash(acc))
+						}
+					}
+					for _, h := range hashes {
+						if got, ok := imported[h]; ok {
+							row.Status = "Importado"
+							add(&row, "Conciliación", strings.TrimSpace(movementLabel[got.status]+" "+got.invoice))
+							break
+						}
+					}
+				}
 			}
 			out = append(out, row)
 		}

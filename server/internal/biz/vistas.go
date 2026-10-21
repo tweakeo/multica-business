@@ -133,6 +133,10 @@ func (r *dbReader) issuedInvoices() (out []issuedInvoice, undated int) {
 			continue // registered: its row in emitidas.csv counts instead
 		}
 		inv := issuedInvoice{Number: firstNonEmpty(row.get("Número"), row.Title), Party: row.get("Tercero"), Amount: parseEuros(row.get("Importe")), Path: row.Path, ID: row.ID}
+		if strings.HasPrefix(st, "rectificativ") && inv.Amount != nil && *inv.Amount > 0 {
+			v := -*inv.Amount // the register keeps amounts positive; a credit note subtracts
+			inv.Amount = &v
+		}
 		if strings.HasPrefix(row.Origin, "PDF") {
 			date, _, _, _ := invoiceFromName(path.Base(row.Path))
 			if date == "" {

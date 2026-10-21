@@ -229,7 +229,7 @@ var listQueries = map[string]string{
 	"account": `SELECT a.*, (SELECT count(*) FROM biz_bank_movement m WHERE m.account_id=a.id) AS movements,
 		(SELECT balance_after_minor FROM biz_bank_movement m WHERE m.account_id=a.id AND balance_after_minor IS NOT NULL ORDER BY booked_on DESC, created_at DESC LIMIT 1) AS last_balance_minor
 		FROM biz_bank_account a WHERE a.workspace_id=$1`,
-	"movement": `SELECT m.*, a.name AS account_name, i.number AS invoice_number, org.name AS invoice_organization FROM biz_bank_movement m JOIN biz_bank_account a ON a.id=m.account_id
+	"movement": `SELECT m.*, a.name AS account_name, i.number AS invoice_number, coalesce(org.name, i.attrs->>'tercero') AS invoice_organization FROM biz_bank_movement m JOIN biz_bank_account a ON a.id=m.account_id
 		LEFT JOIN biz_invoice i ON i.id=m.invoice_id LEFT JOIN biz_organization org ON org.id=i.organization_id WHERE m.workspace_id=$1`,
 	"period":       `SELECT * FROM biz_period p WHERE p.workspace_id=$1`,
 	"kpi":          `SELECT * FROM biz_kpi k WHERE k.workspace_id=$1`,

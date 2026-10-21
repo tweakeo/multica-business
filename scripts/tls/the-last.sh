@@ -11,6 +11,8 @@
 #   scripts/tls/the-last.sh setup    # first time: user, workspace, folder, rebuild (the-last-setup.mjs)
 #   scripts/tls/the-last.sh decisiones  # import the lines of Decisiones.md (adds only the id mark)
 #   scripts/tls/the-last.sh fechas [--apply]  # real dates of the documents into "4 · Finanzas/Fechas de documentos.csv"
+#   scripts/tls/the-last.sh registros <datos.json> [--apply]  # invoices of Fiscal/ and Registros/importar into the app (the-last-registros.mjs)
+#   scripts/tls/the-last.sh abrir    # start if stopped and open Chrome already signed in (one-time local link)
 #   scripts/tls/the-last.sh stop
 #   scripts/tls/the-last.sh status
 #   scripts/tls/the-last.sh build    # rebuild API and web after pulling changes
@@ -52,6 +54,7 @@ server_env() {
     MULTICA_PUBLIC_URL="http://127.0.0.1:$API_PORT" MULTICA_APP_URL="http://localhost:$WEB_PORT" \
     LOCAL_UPLOAD_DIR="$STATE/uploads" LOCAL_UPLOAD_BASE_URL="http://localhost:$WEB_PORT" \
     TLS_STATE_DIR="$HOME/Library/Application Support/TLS" \
+    TLS_LOCAL_LOGIN_FILE="$RUN/enlace" AUTH_TOKEN_TTL=2160h \
     FF_PROJECT_WORKFLOWS_V1=true DO_NOT_TRACK=1 ANALYTICS_DISABLED=true "$@"
 }
 
@@ -112,6 +115,22 @@ case "${1:-start}" in
   fechas)
     COMPANY_FOLDER="$COMPANY_FOLDER" node "$ROOT/scripts/tls/the-last-fechas.mjs" "${@:2}"
     ;;
+  registros)
+    start
+    set -a; . "$(secrets)"; set +a
+    TLS_API="http://127.0.0.1:$API_PORT" TLS_CODE="$MULTICA_DEV_VERIFICATION_CODE" node "$ROOT/scripts/tls/the-last-registros.mjs" "${@:2}"
+    ;;
+  abrir)
+    # One-time link: its hash, a 60 s expiry and the user go to a 0600 file
+    # the API reads and deletes (TLS_LOCAL_LOGIN_FILE); only 127.0.0.1 can
+    # use it. The session then lasts 90 days and renews itself with use.
+    start >/dev/null
+    token="$(openssl rand -hex 32)"
+    (umask 077; printf '%s %s %s\n' "$(printf %s "$token" | shasum -a 256 | cut -d' ' -f1)" "$(($(date +%s) + 60))" "${TLS_EMAIL:-direccion@tls.local}" >"$RUN/enlace")
+    url="http://localhost:$WEB_PORT/auth/local-link?t=$token&next=/the-last/empresa"
+    if [ -d "/Applications/Google Chrome.app" ]; then open -a "Google Chrome" "$url"; else open "$url"; fi
+    echo "The Last abierto en http://localhost:$WEB_PORT/the-last/empresa"
+    ;;
   stop)
     for p in web api; do alive "$p" && killtree "$(cat "$RUN/$p.pid")" && echo "$p detenido"; rm -f "$RUN/$p.pid"; done
     "$BREW/pg_ctl" -D "$PGDATA" stop -m fast >/dev/null 2>&1 && echo "PostgreSQL de The Last detenido" || true
@@ -121,5 +140,5 @@ case "${1:-start}" in
     curl -s -o /dev/null -w "web %{http_code}\n" "http://localhost:$WEB_PORT" || echo "web parada"
     "$BREW/pg_ctl" -D "$PGDATA" status 2>&1 | head -1
     ;;
-  *) echo "uso: $0 {start|setup|decisiones|fechas|stop|status|build}"; exit 1 ;;
+  *) echo "uso: $0 {start|abrir|setup|decisiones|fechas|registros|stop|status|build}"; exit 1 ;;
 esac

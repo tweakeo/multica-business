@@ -225,7 +225,11 @@ func relPath(l Layout, typ string, m map[string]any, lookup func(string, string)
 		case str(m["direction"]) == "issued":
 			rel = qd + "/Ingresos/" + slugify(str(m["number"])) + ".md"
 		default:
-			rel = qd + "/Gastos/" + slugify(lookup("organization", str(m["organization_id"]))) + "/" + slugify(str(m["number"])) + "--" + short(id) + ".md"
+			party := lookup("organization", str(m["organization_id"]))
+			if attrs, _ := m["attrs"].(map[string]any); m["organization_id"] == nil && str(attrs["tercero"]) != "" {
+				party = str(attrs["tercero"]) // registered from its document, without an organization
+			}
+			rel = qd + "/Gastos/" + slugify(party) + "/" + slugify(str(m["number"])) + "--" + short(id) + ".md"
 		}
 	case "payment":
 		if d := l.Dirs["payment"]; d != "" {

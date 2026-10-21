@@ -573,6 +573,8 @@ func (f *Folder) writeRegisterRow(ctx context.Context, root string, l Layout, ty
 		}
 		if org := str(m["organization_id"]); org != "" {
 			own["tercero"] = f.lookupName(ctx)("organization", org)
+		} else {
+			own["tercero"] = str(attrs["tercero"])
 		}
 		if doc := str(m["document_id"]); doc != "" {
 			var docRel string
@@ -590,8 +592,12 @@ func (f *Folder) writeRegisterRow(ctx context.Context, root string, l Layout, ty
 		if ambito == "" {
 			ambito = "The Last"
 		}
+		fuente := str(attrs["fuente"])
+		if fuente == "" {
+			fuente = "TLS"
+		}
 		_, err := upsertRow(filepath.Join(root, filepath.FromSlash(regs), file), registerHeaders[file], id, own,
-			map[string]string{"ambito": ambito, "fuente": "TLS", "estado_revision": "pendiente"})
+			map[string]string{"ambito": ambito, "fuente": fuente, "estado_revision": "pendiente"})
 		return "", "", err
 	case "payment":
 		if str(m["status"]) != "confirmed" {

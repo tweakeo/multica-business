@@ -17,6 +17,8 @@ fecha;fecha_valor;concepto;importe;saldo
 | importe | sí | negativo = salida. `1.234,56` o `1234.56` |
 | saldo | no | saldo tras el movimiento según el banco |
 
+- Con cabecera, las columnas se leen por nombre y el separador puede ser `,` (como `Registros/importar/*.csv`). Si hay columna `id`, la huella es ese id.
+- Si además hay `iva` (y `retencion_irpf`), `importe` es la base, como en el libro antiguo: lo que se movió es importe + IVA − retención. Una fila con IVA o retención negativos (devoluciones, rectificativas) o un borrador no dice qué se movió: no se importa y se informa con su motivo.
 - Reimportar no duplica: cada movimiento lleva una huella de cuenta, fecha, importe, concepto y saldo.
 - Clasificación automática: traspasos, impuestos (AEAT, TGSS, modelo NNN), nóminas, retiradas del titular y préstamos. El resto es ingreso o gasto operativo.
 - Conciliación propuesta: importe exacto + número de factura en el concepto o contraparte coincidente, una factura por movimiento y fecha más próxima. **Propuesta no es confirmación.**
