@@ -5,7 +5,7 @@ import type { BizAreaHealth, BizKpi } from "./api";
 // target otherwise). The area shows its most delayed KPI, because that is
 // the one that rules. Bands keep the old program's cut-offs.
 
-export type PaceBand = "ahead" | "on_track" | "attention" | "at_risk" | "critical" | "no_data";
+export type PaceBand = "ahead" | "on_track" | "attention" | "at_risk" | "critical" | "no_target" | "no_data";
 
 export const PACE_BANDS: { band: Exclude<PaceBand, "no_data">; min: number; label: string; tone: PaceTone }[] = [
   { band: "ahead", min: 105, label: "Por delante", tone: "good" },
@@ -18,6 +18,8 @@ export const PACE_BANDS: { band: Exclude<PaceBand, "no_data">; min: number; labe
 export type PaceTone = "good" | "attention" | "risk" | "critical" | "none";
 
 export const PACE_NO_DATA = { label: "Sin dato", tone: "none" as PaceTone };
+/** A KPI with a value but no target configured: no verdict, ever. */
+export const PACE_NO_TARGET = { label: "Sin meta", tone: "none" as PaceTone };
 
 export function paceBand(pct: number | null): PaceBand {
   if (pct === null || !Number.isFinite(pct)) return "no_data";
@@ -25,6 +27,7 @@ export function paceBand(pct: number | null): PaceBand {
 }
 
 export function paceInfo(band: PaceBand) {
+  if (band === "no_target") return PACE_NO_TARGET;
   return PACE_BANDS.find((b) => b.band === band) ?? PACE_NO_DATA;
 }
 
@@ -39,10 +42,12 @@ export interface KpiPace {
 }
 
 const NONE: KpiPace = { pace: null, progress: null, expected: null, band: "no_data" };
+const NO_TARGET: KpiPace = { ...NONE, band: "no_target" };
 const MEASURED = new Set(["ok", "warning", "alert"]);
 const clamp = (n: number) => Math.max(0, Math.min(100, n));
 
 export function kpiPace(k: BizKpi): KpiPace {
+  if (k.enabled && k.target === null && (k.status === "not_configured" || MEASURED.has(k.status))) return NO_TARGET;
   if (!k.enabled || !MEASURED.has(k.status) || k.value === null || k.target === null || k.direction === "range") return NONE;
   const v = k.value;
   const target = k.target;
@@ -76,7 +81,7 @@ function downPace(v: number, target: number, alert: number | null): number | nul
 }
 
 function rank(b: PaceBand): number {
-  return ["ahead", "on_track", "attention", "at_risk", "critical", "no_data"].indexOf(b);
+  return ["ahead", "on_track", "attention", "at_risk", "critical", "no_target", "no_data"].indexOf(b);
 }
 
 export interface AreaPace extends KpiPace {
@@ -91,15 +96,18 @@ export function areaPace(area: Pick<BizAreaHealth, "kpis">): AreaPace {
   let ruling: BizKpi | null = null;
   let best: KpiPace = NONE;
   let measured = 0;
+  let noTarget = false;
   for (const k of kpis) {
     const p = kpiPace(k);
-    if (p.band === "no_data") continue;
+    if (p.band === "no_target") noTarget = true;
+    if (p.band === "no_data" || p.band === "no_target") continue;
     measured++;
     if (!ruling || worse(p, best)) {
       ruling = k;
       best = p;
     }
   }
+  if (!ruling && noTarget) best = NO_TARGET;
   return { ...best, ruling, measured, total: kpis.length };
 }
 

@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { BizKpi } from "./api";
-import { areaPace, kpiPace, paceBand } from "./pace";
+import { areaPace, kpiPace, paceBand, paceInfo } from "./pace";
 
 const kpi = (over: Partial<BizKpi>): BizKpi => ({
   code: "K",
@@ -62,8 +62,14 @@ describe("kpiPace", () => {
     expect(kpiPace(kpi({ value: 90, target: 100, alert: 92, status: "alert" })).band).toBe("at_risk");
   });
 
-  it("skips KPIs without data, target or verdict", () => {
-    expect(kpiPace(kpi({ value: 3, status: "not_configured" })).band).toBe("no_data");
+  it("says «sin meta», never a verdict, when no target is configured", () => {
+    const p = kpiPace(kpi({ value: 0, status: "not_configured" }));
+    expect(p.band).toBe("no_target");
+    expect(p.pace).toBeNull();
+    expect(paceInfo(p.band).label).toBe("Sin meta");
+  });
+
+  it("skips KPIs without data or disabled", () => {
     expect(kpiPace(kpi({ value: 3, target: 5, status: "ok", enabled: false })).band).toBe("no_data");
   });
 });
@@ -82,5 +88,11 @@ describe("areaPace", () => {
 
   it("reports no data when nothing is measurable", () => {
     expect(areaPace({ kpis: [kpi({})] }).band).toBe("no_data");
+  });
+
+  it("is «sin meta» when its KPIs have values but no target", () => {
+    const p = areaPace({ kpis: [kpi({ value: 0, status: "not_configured" }), kpi({})] });
+    expect(p.band).toBe("no_target");
+    expect(p.ruling).toBeNull();
   });
 });

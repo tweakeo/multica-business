@@ -10,7 +10,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"gopkg.in/yaml.v3"
@@ -231,6 +233,10 @@ func writeDecisionLine(root string, l Layout, m map[string]any) (string, string,
 	found := false
 	for i, ln := range lines {
 		if rec := parseDecisionLine(ln); rec != nil && str(rec["id"]) == id {
+			if str(rec["origen"]) == "texto" {
+				// A person's line keeps its words; only the state is added.
+				line = humanDecisionLine(ln, rec, m)
+			}
 			lines[i], found = line, true
 		}
 	}
@@ -244,6 +250,29 @@ func writeDecisionLine(root string, l Layout, m map[string]any) (string, string,
 	return rel + "#" + id, hashBytes([]byte(line)), nil
 }
 
+// humanDecisionLine rewrites a person's line after a change made in the app
+// (a decision is only ever superseded): the text stays, "(sustituida)" is
+// appended once, and the mark records what the text cannot say.
+func humanDecisionLine(ln string, mark, m map[string]any) string {
+	visible := visiblePart(ln)
+	rec := map[string]any{"id": str(m["id"]), "origen": "texto"}
+	if str(m["status"]) == "superseded" {
+		rec["status"] = "superseded"
+		if !strings.HasSuffix(visible, "(sustituida)") {
+			visible += " (sustituida)"
+		}
+	}
+	for _, k := range []string{"supersedes_id"} {
+		if v := str(m[k]); v != "" {
+			rec[k] = v
+		} else if v := str(mark[k]); v != "" {
+			rec[k] = v
+		}
+	}
+	raw, _ := json.Marshal(rec)
+	return visible + " " + decisionMark + string(raw) + " -->"
+}
+
 func scanDecisions(rel string, data []byte) []*folderRecord {
 	var out []*folderRecord
 	for _, ln := range strings.Split(string(data), "\n") {
@@ -251,9 +280,145 @@ func scanDecisions(rel string, data []byte) []*folderRecord {
 		if m == nil || str(m["id"]) == "" {
 			continue
 		}
+		if str(m["origen"]) == "texto" {
+			// A person's line: the text is the record, the mark only adds the id.
+			h := humanDecision(visiblePart(ln))
+			if h == nil {
+				continue
+			}
+			for k, v := range m {
+				if k != "origen" {
+					h[k] = v
+				}
+			}
+			m = h
+		}
 		out = append(out, &folderRecord{Path: rel + "#" + str(m["id"]), Type: "decision", ID: str(m["id"]), Front: m, Body: str(m["context"]), Hash: hashBytes([]byte(ln))})
 	}
 	return out
+}
+
+// --- Decisions a person wrote -----------------------------------------------
+
+// A person's line in Decisiones.md: "- AAAA-MM-DD · decisión · motivo ·
+// alcance [· fuente]". It is imported as it is: TLS only appends
+// <!-- tls:decision {"id":…,"origen":"texto"} --> at the end of the line, and
+// rebuilds the fields from the visible text every time.
+var reHumanDecision = regexp.MustCompile(`^- (\d{4}-\d{2}-\d{2}) · (.+)$`)
+
+func visiblePart(line string) string {
+	if i := strings.Index(line, decisionMark); i >= 0 {
+		line = line[:i]
+	}
+	return strings.TrimRight(line, " \t")
+}
+
+// humanDecision maps the visible text to biz_decision columns (nil when the
+// line is not a decision).
+func humanDecision(visible string) map[string]any {
+	m := reHumanDecision.FindStringSubmatch(strings.TrimSpace(visible))
+	if m == nil {
+		return nil
+	}
+	day, err := time.Parse("2006-01-02", m[1])
+	if err != nil {
+		return nil
+	}
+	parts := splitDots(m[2])
+	status := "decided"
+	if n := len(parts); n > 0 && strings.HasSuffix(parts[n-1], "(sustituida)") {
+		status = "superseded"
+		parts[n-1] = strings.TrimSpace(strings.TrimSuffix(parts[n-1], "(sustituida)"))
+	}
+	get := func(i int) string {
+		if i < len(parts) {
+			return parts[i]
+		}
+		return ""
+	}
+	purpose := strings.Join(nonEmpty(parts[min(3, len(parts)):]), " · ")
+	// Noon UTC keeps the day in Europe/Madrid whatever the summer time.
+	at := day.Add(12 * time.Hour).UTC().Format(time.RFC3339)
+	return map[string]any{
+		"area": "direccion", "status": status, "title": decisionTitle(get(0)), "decision": get(0), "why": get(1),
+		"purpose": strings.TrimSpace(strings.Join(nonEmpty([]string{get(2), purpose}), " · ")), "context": "",
+		"decided_at": at, "created_at": at, "author_type": "member",
+	}
+}
+
+func nonEmpty(xs []string) []string {
+	out := []string{}
+	for _, x := range xs {
+		if strings.TrimSpace(x) != "" {
+			out = append(out, x)
+		}
+	}
+	return out
+}
+
+// decisionTitle is the first sentence of the decision, at most ~100 runes.
+func decisionTitle(s string) string {
+	if i := strings.Index(s, ". "); i > 0 {
+		s = s[:i]
+	}
+	s = strings.TrimSuffix(strings.TrimSpace(s), ".")
+	r := []rune(s)
+	if len(r) <= 100 {
+		return s
+	}
+	cut := string(r[:100])
+	if j := strings.LastIndex(cut, " "); j > 60 {
+		cut = cut[:j]
+	}
+	return cut + "…"
+}
+
+// humanDecisionProposals lists the lines of the decisions file a person wrote
+// and TLS cannot read yet (no id mark).
+func humanDecisionProposals(rel string, data []byte) []map[string]any {
+	var out []map[string]any
+	for i, ln := range strings.Split(string(data), "\n") {
+		if strings.Contains(ln, decisionMark) || humanDecision(ln) == nil {
+			continue
+		}
+		out = append(out, map[string]any{"path": rel, "type": "decision", "line": i + 1, "texto": strings.TrimSpace(ln), "add": map[string]any{"id": nil}})
+	}
+	return out
+}
+
+// adoptDecisions appends the id mark to every unmarked decision line of a
+// person. The visible text of each line, and every other line, is kept byte
+// for byte.
+func adoptDecisions(root string, l Layout) (int, error) {
+	rel := l.decisionsFile()
+	if rel == "" {
+		return 0, nil
+	}
+	full := filepath.Join(root, filepath.FromSlash(rel))
+	old, err := os.ReadFile(full)
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	lines := strings.Split(string(old), "\n")
+	n := 0
+	for i, ln := range lines {
+		if strings.Contains(ln, decisionMark) || humanDecision(ln) == nil {
+			continue
+		}
+		raw, _ := json.Marshal(map[string]any{"id": uuid.NewString(), "origen": "texto"})
+		lines[i] = strings.TrimRight(ln, " \t\r") + " " + decisionMark + string(raw) + " -->"
+		if strings.HasSuffix(ln, "\r") {
+			lines[i] += "\r"
+		}
+		n++
+	}
+	if n == 0 {
+		return 0, nil
+	}
+	return n, atomicWrite(full, []byte(strings.Join(lines, "\n")))
 }
 
 // --- Shared registers (Registros/*.csv) --------------------------------------
@@ -613,8 +778,20 @@ func (f *Folder) update(ctx context.Context, table, ws, id string, fields map[st
 
 // Adopt lists the notes in record folders that lack tls_type or id and, with
 // apply, adds the minimal frontmatter (tls_type, tls_schema, id). The body and
-// any other key are kept exactly as they are.
-func (f *Folder) Adopt(ctx context.Context, ws string, apply bool) (map[string]any, error) {
+// any other key are kept exactly as they are. With types, only proposals of
+// those types are applied ("decision" marks the lines of Decisiones.md).
+func (f *Folder) Adopt(ctx context.Context, ws string, apply bool, types ...string) (map[string]any, error) {
+	want := func(typ string) bool {
+		if len(types) == 0 {
+			return true
+		}
+		for _, t := range types {
+			if t == typ {
+				return true
+			}
+		}
+		return false
+	}
 	root := f.Root(ctx, f.svc.Pool, ws)
 	if root == "" {
 		return nil, invalid("La empresa no tiene carpeta configurada")
@@ -625,7 +802,17 @@ func (f *Folder) Adopt(ctx context.Context, ws string, apply bool) (map[string]a
 		if err := f.claim(ctx, ws, root); err != nil {
 			return nil, invalid("%v", err)
 		}
+		if want("decision") {
+			n, err := adoptDecisions(root, mustLayout(root))
+			if err != nil {
+				errs = append(errs, map[string]string{"path": mustLayout(root).decisionsFile(), "error": err.Error()})
+			}
+			adopted += n
+		}
 		for _, p := range proposals {
+			if str(p["type"]) == "decision" || !want(str(p["type"])) {
+				continue // decisions: done above, all lines of the file at once
+			}
 			rel := str(p["path"])
 			full := filepath.Join(root, filepath.FromSlash(rel))
 			old, err := os.ReadFile(full)
@@ -655,6 +842,11 @@ func (f *Folder) Adopt(ctx context.Context, ws string, apply bool) (map[string]a
 		errs = []map[string]string{}
 	}
 	return map[string]any{"proposals": proposals, "adopted": adopted, "parse_errors": errs, "mode": map[bool]string{true: "apply", false: "preview"}[apply]}, nil
+}
+
+func mustLayout(root string) Layout {
+	l, _ := LoadLayout(root)
+	return l
 }
 
 // minimalFront proposes what a note needs to be read as a record.

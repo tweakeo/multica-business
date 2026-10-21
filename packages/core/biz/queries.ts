@@ -18,6 +18,8 @@ export const bizKeys = {
   audit: (wsId: string, actorType: string) => [...bizKeys.all(wsId), "audit", actorType] as const,
   events: (wsId: string, status: string) => [...bizKeys.all(wsId), "events", status] as const,
   folder: (wsId: string) => [...bizKeys.all(wsId), "folder"] as const,
+  systems: (wsId: string, area: string) => [...bizKeys.all(wsId), "systems", area] as const,
+  documents: (wsId: string) => [...bizKeys.all(wsId), "documents"] as const,
 };
 
 export const bizMetaOptions = (wsId: string) =>
@@ -58,3 +60,9 @@ export const bizEventsOptions = (wsId: string, status = "") =>
 
 export const bizFolderOptions = (wsId: string) =>
   queryOptions({ queryKey: bizKeys.folder(wsId), queryFn: bizApi.folderStatus });
+
+export const bizSystemsOptions = (wsId: string, area: string) =>
+  queryOptions({ queryKey: bizKeys.systems(wsId, area), queryFn: () => bizApi.systems(area), staleTime: 30_000 });
+
+export const bizDocumentsOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.documents(wsId), queryFn: bizApi.documents, staleTime: 30_000 });

@@ -43,6 +43,7 @@ func (s *Service) Routes(r chi.Router) {
 	r.Post("/folder/export", s.handle(s.postFolderExport))
 	r.Post("/folder/rebuild", s.handle(s.postFolderRebuild))
 	r.Post("/folder/adopt", s.handle(s.postFolderAdopt))
+	s.libraryRoutes(r)
 	r.Post("/events/process", s.handle(func(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) {
 		s.ProcessEvents(ctx)
 		return map[string]any{"ok": true}, nil
@@ -448,8 +449,9 @@ func (s *Service) postFolderAdopt(ctx context.Context, ws string, a Actor, r *ht
 		return nil, errf(403, "forbidden", "Solo propietarios y administradores adoptan notas de la carpeta")
 	}
 	var in struct {
-		Apply bool `json:"apply"`
+		Apply bool     `json:"apply"`
+		Types []string `json:"types"`
 	}
 	_ = json.NewDecoder(r.Body).Decode(&in)
-	return s.Folder.Adopt(ctx, ws, in.Apply)
+	return s.Folder.Adopt(ctx, ws, in.Apply, in.Types...)
 }

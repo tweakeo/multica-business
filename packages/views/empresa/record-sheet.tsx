@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, FolderOpen } from "lucide-react";
 import {
+  bizListOptions,
   bizRecordOptions,
   ENTITY_LABELS,
   formatDate,
@@ -299,6 +300,21 @@ function PeriodSummary({ row }: { row: BizRow }) {
 
 // --- Entity actions -----------------------------------------------------------
 
+/** One button per service of the company, or a plain one when it has none. */
+function QualifyButtons({ disabled, onQualify }: { disabled: boolean; onQualify: (serviceCode: string) => void }) {
+  const wsId = useWorkspaceId();
+  const services = useQuery(bizListOptions(wsId, "service", {}));
+  const list = (services.data ?? []).filter((s) => str(s.code));
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {list.length === 0 ? <Button size="xs" disabled={disabled} onClick={() => onQualify("")}>Cualificar → Ventas</Button> : null}
+      {list.map((s, i) => (
+        <Button key={str(s.id)} size="xs" variant={i === 0 ? "default" : "outline"} disabled={disabled} onClick={() => onQualify(str(s.code))}>Cualificar → {str(s.name)}</Button>
+      ))}
+    </div>
+  );
+}
+
 function EntityActions({ entity, row }: { entity: string; row: BizRow }) {
   const { exec, pending } = useAction();
   const [text, setText] = useState("");
@@ -416,10 +432,7 @@ function EntityActions({ entity, row }: { entity: string; row: BizRow }) {
         <div className="space-y-2 rounded-md border p-3">
           {field("Nombre del interesado", text, setText)}
           {field("Email (opcional)", text2, setText2)}
-          <div className="flex gap-1.5">
-            <Button size="xs" disabled={!text.trim() || pending} onClick={() => exec("conversation.qualify", { id, name: text, email: text2, service_code: "RENTA" }, "Pasa a Ventas como interesado")}>Cualificar → Renta</Button>
-            <Button size="xs" variant="outline" disabled={!text.trim() || pending} onClick={() => exec("conversation.qualify", { id, name: text, email: text2, service_code: "TRIM" }, "Pasa a Ventas como interesado")}>Cualificar → Trimestrales</Button>
-          </div>
+          <QualifyButtons disabled={!text.trim() || pending} onQualify={(code) => exec("conversation.qualify", { id, name: text, email: text2, service_code: code }, "Pasa a Ventas como interesado")} />
         </div>
       );
     }

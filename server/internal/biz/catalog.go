@@ -167,33 +167,34 @@ func CapabilityByCode(code string) (Capability, bool) {
 }
 
 // KPIDefault seeds biz_kpi. Values are computed in kpi.go, never stored.
+// There is no factory target: a KPI without a target configured by the
+// company shows its value with "sin meta", never a verdict. The demo sets its
+// own targets in scripts/tls/seed-demo.mjs.
 type KPIDefault struct {
 	Code, Area, Name, Unit, Formula, Direction, Period string
 	Target, Alert                                    *float64
 }
 
-func f(v float64) *float64 { return &v }
-
 var DefaultKPIs = []KPIDefault{
-	{Code: "DIR-OBJ", Area: "direccion", Name: "Objetivos del trimestre en trayectoria", Unit: "%", Formula: "objetivos en trayectoria / objetivos activos", Direction: "up", Period: "quarter", Target: f(80), Alert: f(50)},
-	{Code: "DIR-DEC", Area: "direccion", Name: "Decisiones abiertas", Unit: "n", Formula: "decisiones con estado abierta", Direction: "down", Period: "now", Target: f(3), Alert: f(8)},
-	{Code: "DIR-APR", Area: "direccion", Name: "Aprobaciones pendientes", Unit: "n", Formula: "aprobaciones pendientes", Direction: "down", Period: "now", Target: f(3), Alert: f(10)},
+	{Code: "DIR-OBJ", Area: "direccion", Name: "Objetivos del trimestre en trayectoria", Unit: "%", Formula: "objetivos en trayectoria / objetivos activos", Direction: "up", Period: "quarter"},
+	{Code: "DIR-DEC", Area: "direccion", Name: "Decisiones abiertas", Unit: "n", Formula: "decisiones con estado abierta", Direction: "down", Period: "now"},
+	{Code: "DIR-APR", Area: "direccion", Name: "Aprobaciones pendientes", Unit: "n", Formula: "aprobaciones pendientes", Direction: "down", Period: "now"},
 	{Code: "VEN-PIPE", Area: "ventas", Name: "Cartera abierta", Unit: "EUR", Formula: "suma del valor de oportunidades abiertas", Direction: "up", Period: "now"},
 	{Code: "VEN-FCST", Area: "ventas", Name: "Previsión ponderada", Unit: "EUR", Formula: "Σ valor × probabilidad de la etapa (previsión)", Direction: "up", Period: "now"},
-	{Code: "VEN-WON", Area: "ventas", Name: "Ventas cobradas del mes", Unit: "EUR", Formula: "Σ valor de oportunidades ganadas (cobro confirmado) en el mes", Direction: "up", Period: "month", Target: f(6000), Alert: f(3000)},
-	{Code: "VEN-CONV", Area: "ventas", Name: "Conversión propuesta → aceptada", Unit: "%", Formula: "aceptadas+ganadas / con propuesta (90 días)", Direction: "up", Period: "90d", Target: f(40), Alert: f(20)},
-	{Code: "VEN-STALE", Area: "ventas", Name: "Oportunidades quietas (>14 días)", Unit: "n", Formula: "abiertas sin contacto en 14 días", Direction: "down", Period: "now", Target: f(0), Alert: f(3)},
-	{Code: "ENT-ONTIME", Area: "entrega", Name: "Tareas de entrega a tiempo", Unit: "%", Formula: "tareas hechas antes del vencimiento / hechas con vencimiento (30 días)", Direction: "up", Period: "30d", Target: f(90), Alert: f(75)},
-	{Code: "ENT-OVERDUE", Area: "entrega", Name: "Tareas vencidas", Unit: "n", Formula: "tareas abiertas con vencimiento pasado", Direction: "down", Period: "now", Target: f(0), Alert: f(5)},
+	{Code: "VEN-WON", Area: "ventas", Name: "Ventas cobradas del mes", Unit: "EUR", Formula: "Σ valor de oportunidades ganadas (cobro confirmado) en el mes", Direction: "up", Period: "month"},
+	{Code: "VEN-CONV", Area: "ventas", Name: "Conversión propuesta → aceptada", Unit: "%", Formula: "aceptadas+ganadas / con propuesta (90 días)", Direction: "up", Period: "90d"},
+	{Code: "VEN-STALE", Area: "ventas", Name: "Oportunidades quietas (>14 días)", Unit: "n", Formula: "abiertas sin contacto en 14 días", Direction: "down", Period: "now"},
+	{Code: "ENT-ONTIME", Area: "entrega", Name: "Tareas de entrega a tiempo", Unit: "%", Formula: "tareas hechas antes del vencimiento / hechas con vencimiento (30 días)", Direction: "up", Period: "30d"},
+	{Code: "ENT-OVERDUE", Area: "entrega", Name: "Tareas vencidas", Unit: "n", Formula: "tareas abiertas con vencimiento pasado", Direction: "down", Period: "now"},
 	{Code: "ENT-ACTIVE", Area: "entrega", Name: "Proyectos activos", Unit: "n", Formula: "proyectos en curso ligados a un servicio", Direction: "range", Period: "now"},
 	{Code: "FIN-CASH", Area: "finanzas", Name: "Caja disponible", Unit: "EUR", Formula: "saldo inicial + movimientos importados (desconocido sin saldo inicial)", Direction: "up", Period: "now"},
-	{Code: "FIN-RUNWAY", Area: "finanzas", Name: "Meses de caja (runway)", Unit: "meses", Formula: "caja disponible / salida fija mensual normalizada (media 3 meses)", Direction: "up", Period: "now", Target: f(3), Alert: f(2)},
-	{Code: "FIN-AR", Area: "finanzas", Name: "Cobros vencidos", Unit: "EUR", Formula: "Σ pendiente de facturas emitidas vencidas", Direction: "down", Period: "now", Target: f(0), Alert: f(1000)},
-	{Code: "FIN-UNREC", Area: "finanzas", Name: "Movimientos sin conciliar", Unit: "n", Formula: "movimientos sin conciliar ni ignorar", Direction: "down", Period: "now", Target: f(0), Alert: f(10)},
-	{Code: "FIN-MARGIN", Area: "finanzas", Name: "Margen de gestión del mes", Unit: "%", Formula: "(ingresos facturados − gastos recibidos) / ingresos (devengo)", Direction: "up", Period: "month", Target: f(30), Alert: f(15)},
-	{Code: "MAR-QCONV", Area: "marca", Name: "Conversaciones cualificadas del mes", Unit: "n", Formula: "conversaciones cualificadas en el mes", Direction: "up", Period: "month", Target: f(8), Alert: f(3)},
-	{Code: "MAR-PUB", Area: "marca", Name: "Piezas publicadas del mes", Unit: "n", Formula: "contenidos publicados con evidencia en el mes", Direction: "up", Period: "month", Target: f(6), Alert: f(2)},
-	{Code: "EQU-HEALTH", Area: "equipo", Name: "Agentes sanos", Unit: "%", Formula: "agentes sin fallo en su última ejecución / agentes de área", Direction: "up", Period: "now", Target: f(100), Alert: f(80)},
+	{Code: "FIN-RUNWAY", Area: "finanzas", Name: "Meses de caja (runway)", Unit: "meses", Formula: "caja disponible / salida fija mensual normalizada (media 3 meses)", Direction: "up", Period: "now"},
+	{Code: "FIN-AR", Area: "finanzas", Name: "Cobros vencidos", Unit: "EUR", Formula: "Σ pendiente de facturas emitidas vencidas", Direction: "down", Period: "now"},
+	{Code: "FIN-UNREC", Area: "finanzas", Name: "Movimientos sin conciliar", Unit: "n", Formula: "movimientos sin conciliar ni ignorar", Direction: "down", Period: "now"},
+	{Code: "FIN-MARGIN", Area: "finanzas", Name: "Margen de gestión del mes", Unit: "%", Formula: "(ingresos facturados − gastos recibidos) / ingresos (devengo)", Direction: "up", Period: "month"},
+	{Code: "MAR-QCONV", Area: "marca", Name: "Conversaciones cualificadas del mes", Unit: "n", Formula: "conversaciones cualificadas en el mes", Direction: "up", Period: "month"},
+	{Code: "MAR-PUB", Area: "marca", Name: "Piezas publicadas del mes", Unit: "n", Formula: "contenidos publicados con evidencia en el mes", Direction: "up", Period: "month"},
+	{Code: "EQU-HEALTH", Area: "equipo", Name: "Agentes sanos", Unit: "%", Formula: "agentes sin fallo en su última ejecución / agentes de área", Direction: "up", Period: "now"},
 	{Code: "EQU-COST", Area: "equipo", Name: "Coste de agentes del mes", Unit: "USD", Formula: "Σ coste de ejecuciones registrado por el proveedor", Direction: "down", Period: "month"},
-	{Code: "EQU-ROLES", Area: "equipo", Name: "Roles con ocupante", Unit: "%", Formula: "roles con ocupante / roles", Direction: "up", Period: "now", Target: f(100), Alert: f(70)},
+	{Code: "EQU-ROLES", Area: "equipo", Name: "Roles con ocupante", Unit: "%", Formula: "roles con ocupante / roles", Direction: "up", Period: "now"},
 }

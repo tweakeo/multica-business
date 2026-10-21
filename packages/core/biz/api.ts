@@ -173,6 +173,48 @@ const FolderStatusSchema = z.object({
 });
 export type BizFolderStatus = z.infer<typeof FolderStatusSchema>;
 
+const SystemSectionSchema = z.object({ heading: z.string().default(""), body: z.string().default("") });
+const SystemDocBase = z.object({
+  path: z.string(),
+  title: z.string().default(""),
+  summary: z.string().default(""),
+  status: z.string().default(""),
+  owner: z.string().default(""),
+  intro: z.string().default(""),
+  sections: z.array(SystemSectionSchema).nullable().default([]),
+  modified_at: z.string().default(""),
+});
+export type BizSystemNote = z.infer<typeof SystemDocBase>;
+const SystemDocSchema = SystemDocBase.extend({ children: z.array(SystemDocBase).nullable().default([]) });
+export type BizSystemDoc = z.infer<typeof SystemDocSchema>;
+const SystemsSchema = z.object({ configured: z.boolean().default(false), folder: z.string().default(""), systems: z.array(SystemDocSchema).default([]) });
+export type BizSystems = z.infer<typeof SystemsSchema>;
+
+const LibraryDocSchema = z.object({
+  path: z.string(),
+  name: z.string(),
+  group: z.string().default(""),
+  kind: z.string().default(""),
+  detail: z.string().default(""),
+  year: z.number().optional(),
+  quarter: z.string().optional(),
+  date: z.string().default(""),
+  date_source: z.string().default(""),
+  ext: z.string().default(""),
+  size: z.number().default(0),
+  modified_at: z.string().default(""),
+  private: z.boolean().default(false),
+  in_cloud: z.boolean().default(false),
+});
+export type BizLibraryDoc = z.infer<typeof LibraryDocSchema>;
+const DocumentsSchema = z.object({
+  configured: z.boolean().default(false),
+  folder: z.string().default(""),
+  groups: z.array(z.string()).default([]),
+  documents: z.array(LibraryDocSchema).default([]),
+});
+export type BizDocuments = z.infer<typeof DocumentsSchema>;
+
 const opts = (endpoint: string) => ({ endpoint });
 
 export const bizApi = {
@@ -203,5 +245,12 @@ export const bizApi = {
   decide: async (id: string, approve: boolean, reason: string) =>
     parseWithFallback(await api.bizPost(`/approvals/${id}/decide`, { approve, reason }), RowSchema, {}, opts("POST /api/biz/approvals/:id/decide")),
   folderExport: async () => api.bizPost("/folder/export", {}),
+  systems: async (area: string) =>
+    parseWithFallback(await api.bizGet(`/systems?area=${encodeURIComponent(area)}`), SystemsSchema, SystemsSchema.parse({}), opts("GET /api/biz/systems")),
+  documents: async () => parseWithFallback(await api.bizGet("/documents"), DocumentsSchema, DocumentsSchema.parse({}), opts("GET /api/biz/documents")),
+  /** The original file, as it is in the company folder. */
+  file: (path: string) => api.bizBlob(`/folder/file?path=${encodeURIComponent(path)}`),
+  /** Shows the original in Finder (the server runs on the Mac that holds the folder). */
+  reveal: async (path: string) => api.bizPost("/folder/reveal", { path }),
   folderRebuild: async (apply: boolean) => parseWithFallback(await api.bizPost("/folder/rebuild", { apply }), RowSchema, {}, opts("POST /api/biz/folder/rebuild")),
 };

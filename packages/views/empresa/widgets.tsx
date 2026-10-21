@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, Search } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@multica/core/api";
-import { bizSearchOptions, ENTITY_LABELS, type BizRow } from "@multica/core/biz";
+import { bizListOptions, bizSearchOptions, ENTITY_LABELS, type BizRow } from "@multica/core/biz";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { issueKeys } from "@multica/core/issues/queries";
 import { useWorkspacePaths } from "@multica/core/paths";
@@ -133,7 +133,10 @@ export function AskAgentDialog({ area, open, onOpenChange, initial }: { area: st
 /** VEN-01/VEN-02: one form creates organization + contact + opportunity. */
 export function NewLeadDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { exec, pending } = useAction();
-  const [f, setF] = useState({ name: "", email: "", phone: "", company: "", service_code: "RENTA", channel: "web", notes: "" });
+  const wsId = useWorkspaceId();
+  const services = useQuery({ ...bizListOptions(wsId, "service", {}), enabled: open });
+  const serviceList = (services.data ?? []).filter((s) => str(s.code));
+  const [f, setF] = useState({ name: "", email: "", phone: "", company: "", service_code: "", channel: "web", notes: "" });
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((x) => ({ ...x, [k]: e.target.value }));
   const submit = async () => {
     await exec("lead.create", {
@@ -144,7 +147,7 @@ export function NewLeadDialog({ open, onOpenChange }: { open: boolean; onOpenCha
       notes: f.notes,
     }, "Alta comercial creada: contacto + oportunidad");
     onOpenChange(false);
-    setF({ name: "", email: "", phone: "", company: "", service_code: "RENTA", channel: "web", notes: "" });
+    setF({ name: "", email: "", phone: "", company: "", service_code: "", channel: "web", notes: "" });
   };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -161,8 +164,8 @@ export function NewLeadDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           <label className="text-caption text-muted-foreground">
             Servicio
             <select className="mt-1 h-8 w-full rounded-md border bg-transparent px-2 text-body" value={f.service_code} onChange={set("service_code")}>
-              <option value="RENTA">Renta</option>
-              <option value="TRIM">Trimestrales</option>
+              <option value="">Sin servicio</option>
+              {serviceList.map((s) => <option key={str(s.id)} value={str(s.code)}>{str(s.name)}</option>)}
             </select>
           </label>
           <label className="text-caption text-muted-foreground">

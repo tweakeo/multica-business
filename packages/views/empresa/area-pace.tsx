@@ -29,7 +29,9 @@ export function AreaPaceRow({ area, onOpen }: { area: BizAreaHealth; onOpen: () 
       secondary={
         p.ruling
           ? `${p.ruling.name} · ${formatKpiValue(p.ruling.value, p.ruling.unit)} de ${formatKpiValue(p.ruling.target, p.ruling.unit)}`
-          : "Ningún indicador con dato y meta"
+          : p.band === "no_target"
+            ? "Indicadores sin meta configurada"
+            : "Ningún indicador con dato y meta"
       }
       value={<span className={cn(p.pace === null && "text-muted-foreground")}>{p.pace === null ? "—" : `${p.pace} %`}</span>}
       detail={<PaceLabel band={p.band} />}

@@ -550,6 +550,7 @@ func (f *Folder) scan(root string) ([]*folderRecord, []map[string]string, []map[
 		}
 		if rel == decisions {
 			recs = append(recs, scanDecisions(rel, data)...)
+			proposals = append(proposals, humanDecisionProposals(rel, data)...)
 			return nil
 		}
 		rec, err := parseRecord(rel, data)

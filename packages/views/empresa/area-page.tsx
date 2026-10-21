@@ -18,6 +18,7 @@ import { EmpresaShell } from "./overview-page";
 import { AreaAnalysis, AreaManagement } from "./area-views";
 import { areaOf, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
 import { AskAgentDialog, BizTable } from "./widgets";
+import { AutonomoDocuments, FolderSystems } from "./library";
 
 export function EmpresaAreaPage({ area }: { area: string }) {
   const nav = useNavigation();
@@ -66,6 +67,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
             <TabsTrigger value="gestion">Gestión</TabsTrigger>
             <TabsTrigger value="analisis">Análisis</TabsTrigger>
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
+            {area === "finanzas" ? <TabsTrigger value="autonomo">Autónomo</TabsTrigger> : null}
           </TabsList>
         </div>
         <div className={cn(PAGE_GUTTER, "py-4")}>
@@ -95,6 +97,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
               {tab === "gestion" ? <AreaManagement area={area} /> : null}
               {tab === "analisis" ? <AreaAnalysis area={area} /> : null}
               {tab === "sistemas" ? <AreaSystems area={area} /> : null}
+              {tab === "autonomo" && area === "finanzas" ? <AutonomoDocuments /> : null}
             </>
           )}
         </div>
@@ -121,6 +124,13 @@ function AreaSystems({ area }: { area: string }) {
   const [edit, setEdit] = useState<Record<string, string>>({});
   return (
     <div className="space-y-6">
+      <FolderSystems area={area} />
+
+      <details className="group rounded-lg border">
+        <summary className="cursor-pointer select-none px-3 py-2 text-caption text-muted-foreground">
+          Configuración de la app: capacidades del código, roles, agente{area === "entrega" || area === "ventas" ? ", servicios" : ""} e indicadores
+        </summary>
+        <div className="space-y-6 border-t p-3">
       <Section title={`Capacidades (${caps.length}) · modo de ejecución`}>
         <BizTable
           rows={caps as unknown as BizRow[]}
@@ -235,13 +245,17 @@ function AreaSystems({ area }: { area: string }) {
               render: (k) => (
                 <Input
                   className="h-7 w-24 text-caption"
+                  placeholder="sin meta"
                   disabled={!admin}
                   defaultValue={k.target === null || k.target === undefined ? "" : str(k.target)}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => setEdit((x) => ({ ...x, [str(k.code)]: e.target.value }))}
                   onBlur={() => {
-                    const v = edit[str(k.code)];
-                    if (v !== undefined && v !== "" && !Number.isNaN(Number(v))) exec("kpi.update", { code: str(k.code), target: Number(v) }, "Meta actualizada");
+                    const v = edit[str(k.code)]?.trim();
+                    if (v === undefined) return;
+                    if (v === "") {
+                      if (k.target !== null && k.target !== undefined) exec("kpi.update", { code: str(k.code), clear: true }, "Meta quitada: sin meta");
+                    } else if (!Number.isNaN(Number(v))) exec("kpi.update", { code: str(k.code), target: Number(v) }, "Meta actualizada");
                   }}
                 />
               ),
@@ -249,7 +263,10 @@ function AreaSystems({ area }: { area: string }) {
             { key: "alert", label: "Alerta", className: "w-20", render: (k) => (k.alert === null || k.alert === undefined ? "—" : formatKpiValue(Number(k.alert), str(k.unit))) },
           ]}
         />
+        <p className="text-caption text-muted-foreground">Sin meta, el indicador muestra su valor sin veredicto. Deja la meta vacía para quitarla.</p>
       </Section>
+        </div>
+      </details>
     </div>
   );
 }

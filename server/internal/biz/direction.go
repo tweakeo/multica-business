@@ -310,13 +310,15 @@ func (s *Service) registerDirection() {
 				Target  *float64 `json:"target"`
 				Alert   *float64 `json:"alert"`
 				Enabled *bool    `json:"enabled"`
+				Clear   bool     `json:"clear"` // remove target and alert: "sin meta"
 			}](p)
 			if err != nil {
 				return nil, err
 			}
 			var row json.RawMessage
-			if err := tx.QueryRow(ctx, `UPDATE biz_kpi SET target=coalesce($3, target), alert=coalesce($4, alert), enabled=coalesce($5, enabled), version=version+1, updated_at=now()
-				WHERE workspace_id=$1 AND code=$2 RETURNING to_jsonb(biz_kpi.*)`, ws, in.Code, in.Target, in.Alert, in.Enabled).Scan(&row); err != nil {
+			if err := tx.QueryRow(ctx, `UPDATE biz_kpi SET target=CASE WHEN $6 THEN NULL ELSE coalesce($3, target) END, alert=CASE WHEN $6 THEN NULL ELSE coalesce($4, alert) END,
+				enabled=coalesce($5, enabled), version=version+1, updated_at=now()
+				WHERE workspace_id=$1 AND code=$2 RETURNING to_jsonb(biz_kpi.*)`, ws, in.Code, in.Target, in.Alert, in.Enabled, in.Clear).Scan(&row); err != nil {
 				return nil, errf(404, "not_found", "KPI no encontrado")
 			}
 			res := entityResult("kpi", row)

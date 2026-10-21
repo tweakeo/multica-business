@@ -162,6 +162,17 @@ async function main() {
   })) {
     await run("settings.set", { key, value });
   }
+  // KPI targets: the app has no factory targets; the demo company sets its own.
+  for (const [code, target, alert] of [
+    ["DIR-OBJ", 80, 50], ["DIR-DEC", 3, 8], ["DIR-APR", 3, 10],
+    ["VEN-WON", 6000, 3000], ["VEN-CONV", 40, 20], ["VEN-STALE", 0, 3],
+    ["ENT-ONTIME", 90, 75], ["ENT-OVERDUE", 0, 5],
+    ["FIN-RUNWAY", 3, 2], ["FIN-AR", 0, 1000], ["FIN-UNREC", 0, 10], ["FIN-MARGIN", 30, 15],
+    ["MAR-QCONV", 8, 3], ["MAR-PUB", 6, 2],
+    ["EQU-HEALTH", 100, 80], ["EQU-ROLES", 100, 70],
+  ]) {
+    await run("kpi.update", { code, target, alert });
+  }
 
   // --- Service canvases: custom statuses + one workflow per service -------
   const status = async (key, name, category, color, description) =>

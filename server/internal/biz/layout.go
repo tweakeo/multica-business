@@ -30,6 +30,7 @@ type Layout struct {
 	Buzon      string            `json:"buzon,omitempty"`
 	Skeleton   []string          `json:"skeleton,omitempty"` // folders created on export
 	Skip       []string          `json:"skip,omitempty"`     // folder names never read as records
+	Privado    []string          `json:"privado,omitempty"`  // paths people see and agents never get
 }
 
 const layoutFile = ".tls/layout.json"
@@ -72,6 +73,7 @@ func humanLayout() Layout {
 		l.Skeleton = append(l.Skeleton, "{"+a+"}/Sistemas", "{"+a+"}/Recursos")
 	}
 	l.Skip = append(l.Skip, "Buzón", "Sistemas", "Recursos", "Contratos", "Gestoría", "Trámites")
+	l.Privado = []string{"{finanzas}/Trámites/Baja IT 2026"}
 	return l
 }
 
@@ -114,6 +116,7 @@ func LoadLayout(root string) (Layout, error) {
 		l.Skeleton = in.Skeleton
 	}
 	l.Skip = append(l.Skip, in.Skip...)
+	l.Privado = append(l.Privado, in.Privado...)
 	return l, nil
 }
 
