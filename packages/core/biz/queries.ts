@@ -20,6 +20,8 @@ export const bizKeys = {
   folder: (wsId: string) => [...bizKeys.all(wsId), "folder"] as const,
   systems: (wsId: string, area: string) => [...bizKeys.all(wsId), "systems", area] as const,
   documents: (wsId: string) => [...bizKeys.all(wsId), "documents"] as const,
+  portals: (wsId: string) => [...bizKeys.all(wsId), "portal"] as const,
+  portal: (wsId: string, slug: string, client: boolean) => [...bizKeys.all(wsId), "portal", slug, client] as const,
 };
 
 export const bizMetaOptions = (wsId: string) =>
@@ -66,3 +68,9 @@ export const bizSystemsOptions = (wsId: string, area: string) =>
 
 export const bizDocumentsOptions = (wsId: string) =>
   queryOptions({ queryKey: bizKeys.documents(wsId), queryFn: bizApi.documents, staleTime: 30_000 });
+
+export const bizPortalsOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.portals(wsId), queryFn: bizApi.portals, staleTime: 15_000 });
+
+export const bizPortalOptions = (wsId: string, slug: string, client: boolean) =>
+  queryOptions({ queryKey: bizKeys.portal(wsId, slug, client), queryFn: () => bizApi.portal(slug, client), enabled: Boolean(slug), staleTime: 15_000 });

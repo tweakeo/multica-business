@@ -218,6 +218,87 @@ const DocumentsSchema = z.object({
 });
 export type BizDocuments = z.infer<typeof DocumentsSchema>;
 
+const PortalDocSchema = z.object({
+  path: z.string(),
+  name: z.string(),
+  ext: z.string().default(""),
+  size: z.number().default(0),
+  modified_at: z.string().default(""),
+  session: z.string().default(""),
+  client: z.boolean().default(false),
+  in_cloud: z.boolean().default(false),
+});
+export type BizPortalDoc = z.infer<typeof PortalDocSchema>;
+const PortalSessionSchema = z.object({
+  code: z.string(),
+  name: z.string().default(""),
+  status: z.string().default(""),
+  state: z.string().default("pendiente"),
+  date: z.string().default(""),
+  summary: z.string().default(""),
+  note: z.string().default(""),
+  cover: z.string().default(""),
+  kit: z.array(PortalDocSchema).nullable().default([]),
+  current: z.boolean().default(false),
+});
+export type BizPortalSession = z.infer<typeof PortalSessionSchema>;
+const PortalTaskSchema = z.object({ text: z.string().default(""), done: z.boolean().default(false), session: z.string().default(""), due: z.string().default(""), overdue: z.boolean().default(false) });
+export type BizPortalTask = z.infer<typeof PortalTaskSchema>;
+const PortalIncidentSchema = z.object({
+  id: z.string().default(""),
+  date: z.string().default(""),
+  reporter: z.string().default(""),
+  email: z.string().default(""),
+  type: z.string().default(""),
+  severity: z.string().default(""),
+  status: z.string().default(""),
+  description: z.string().default(""),
+  owner: z.string().default(""),
+  resolution: z.string().default(""),
+  open: z.boolean().default(false),
+  age_days: z.number().default(0),
+});
+export type BizPortalIncident = z.infer<typeof PortalIncidentSchema>;
+const PortalProgressSchema = z.object({
+  sessions_done: z.number().default(0),
+  sessions_total: z.number().default(0),
+  tasks_done: z.number().default(0),
+  tasks_total: z.number().default(0),
+  incidents_open: z.number().default(0),
+  percent: z.number().default(0),
+  current: z.string().default(""),
+});
+const PortalProjectSchema = z.object({
+  slug: z.string(),
+  path: z.string().default(""),
+  title: z.string().default(""),
+  client: z.string().default(""),
+  state: z.string().default(""),
+  demo: z.boolean().default(false),
+  closed: z.boolean().default(false),
+  has_portal: z.boolean().default(false),
+  portal_path: z.string().default(""),
+  incidents_path: z.string().default(""),
+  client_folder: z.string().default(""),
+  sessions: z.array(PortalSessionSchema).nullable().default([]),
+  tasks: z.array(PortalTaskSchema).nullable().default([]),
+  incidents: z.array(PortalIncidentSchema).nullable().default([]),
+  documents: z.array(PortalDocSchema).nullable().default([]),
+  progress: PortalProgressSchema.default(PortalProgressSchema.parse({})),
+  intro: z.string().default(""),
+});
+export type BizPortalProject = z.infer<typeof PortalProjectSchema>;
+const PortalListSchema = z.object({
+  configured: z.boolean().default(false),
+  folder: z.string().default(""),
+  client_folder: z.string().default(""),
+  projects: z.array(PortalProjectSchema).default([]),
+  types: z.array(z.string()).default([]),
+  severities: z.array(z.string()).default([]),
+});
+export type BizPortalList = z.infer<typeof PortalListSchema>;
+export type BizIncidentInput = { reporter: string; email: string; date: string; type: string; severity: string; description: string; steps: string };
+
 const opts = (endpoint: string) => ({ endpoint });
 
 export const bizApi = {
@@ -255,5 +336,15 @@ export const bizApi = {
   file: (path: string) => api.bizBlob(`/folder/file?path=${encodeURIComponent(path)}`),
   /** Shows the original in Finder (the server runs on the Mac that holds the folder). */
   reveal: async (path: string) => api.bizPost("/folder/reveal", { path }),
+  portals: async () => parseWithFallback(await api.bizGet("/portal"), PortalListSchema, PortalListSchema.parse({}), opts("GET /api/biz/portal")),
+  portal: async (slug: string, client: boolean) =>
+    parseWithFallback(
+      await api.bizGet(`/portal/${encodeURIComponent(slug)}${client ? "?vista=cliente" : ""}`),
+      PortalProjectSchema,
+      null as BizPortalProject | null,
+      opts("GET /api/biz/portal/:project"),
+    ),
+  addIncident: async (slug: string, input: BizIncidentInput) =>
+    parseWithFallback(await api.bizPost(`/portal/${encodeURIComponent(slug)}/incidents`, input), RowSchema, {}, opts("POST /api/biz/portal/:project/incidents")),
   folderRebuild: async (apply: boolean) => parseWithFallback(await api.bizPost("/folder/rebuild", { apply }), RowSchema, {}, opts("POST /api/biz/folder/rebuild")),
 };

@@ -139,13 +139,24 @@ func (s *Service) evalKPI(ctx context.Context, ws string, k *KPIValue) {
 	case "ENT-INC":
 		var projects float64
 		_ = s.Pool.QueryRow(ctx, `SELECT count(*) FROM biz_project_link l JOIN project p ON p.id=l.project_id WHERE p.workspace_id=$1`, ws).Scan(&projects)
-		if projects == 0 {
+		// The Portal Cliente keeps incidents in Proyectos/<proyecto>/Incidencias.md
+		// (demo expedientes excluded); they count with the tasks labelled Incidencia.
+		fileStale, fileFound := 0, false
+		if root, l, err := s.Folder.portalRoot(ctx, ws); err == nil && root != "" {
+			fileStale, fileFound = staleIncidents(root, l, 3, time.Now())
+		}
+		if projects == 0 && !fileFound {
 			k.Explanation = "Sin proyectos de entrega: no hay incidencias que medir."
 			break
 		}
 		k.Value = s.scalar(ctx, `SELECT count(DISTINCT i.id)::float8 FROM issue i JOIN biz_project_link l ON l.project_id=i.project_id
 			JOIN issue_status st ON st.workspace_id=i.workspace_id AND st.key=i.status JOIN issue_to_label il ON il.issue_id=i.id JOIN issue_label lb ON lb.id=il.label_id
 			WHERE i.workspace_id=$1 AND st.category NOT IN ('done','closed') AND lower(lb.name) LIKE 'incidencia%' AND i.created_at < now()-interval '3 days'`, ws)
+		if k.Value != nil {
+			*k.Value += float64(fileStale)
+		} else if fileFound {
+			k.Value = pf(float64(fileStale))
+		}
 		k.Source = "/empresa/entrega?tab=gestion"
 	case "ENT-ONTIME":
 		var done, ontime float64

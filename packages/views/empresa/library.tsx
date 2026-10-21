@@ -32,7 +32,7 @@ export async function openOriginal(path: string) {
   }
 }
 
-async function revealInFinder(path: string) {
+export async function revealInFinder(path: string) {
   try {
     await bizApi.reveal(path);
   } catch (e) {

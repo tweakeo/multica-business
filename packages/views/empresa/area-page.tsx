@@ -19,6 +19,7 @@ import { AreaAnalysis, AreaManagement } from "./area-views";
 import { areaOf, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
 import { AskAgentDialog, BizTable } from "./widgets";
 import { AutonomoDocuments, FolderSystems } from "./library";
+import { ClientPortal } from "./portal";
 
 export function EmpresaAreaPage({ area }: { area: string }) {
   const nav = useNavigation();
@@ -32,7 +33,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
     const sp = new URLSearchParams(nav.searchParams);
     if (v === "resumen") sp.delete("tab");
     else sp.set("tab", v);
-    for (const k of ["view", "stage", "filter"]) if (v !== tab) sp.delete(k);
+    for (const k of ["view", "stage", "filter", "proyecto", "vista"]) if (v !== tab) sp.delete(k);
     const q = sp.toString();
     nav.replace(`${nav.pathname}${q ? `?${q}` : ""}`);
   };
@@ -67,6 +68,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
             <TabsTrigger value="gestion">Gestión</TabsTrigger>
             <TabsTrigger value="analisis">Análisis</TabsTrigger>
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
+            {area === "entrega" ? <TabsTrigger value="portal">Portal Cliente</TabsTrigger> : null}
             {area === "finanzas" ? <TabsTrigger value="autonomo">Autónomo</TabsTrigger> : null}
           </TabsList>
         </div>
@@ -98,6 +100,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
               {tab === "analisis" ? <AreaAnalysis area={area} /> : null}
               {tab === "sistemas" ? <AreaSystems area={area} /> : null}
               {tab === "autonomo" && area === "finanzas" ? <AutonomoDocuments /> : null}
+              {tab === "portal" && area === "entrega" ? <ClientPortal /> : null}
             </>
           )}
         </div>
