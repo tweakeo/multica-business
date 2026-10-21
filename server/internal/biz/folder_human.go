@@ -622,6 +622,9 @@ func (f *Folder) Adopt(ctx context.Context, ws string, apply bool) (map[string]a
 	_, errs, proposals := f.scan(root)
 	adopted := 0
 	if apply {
+		if err := f.claim(ctx, ws, root); err != nil {
+			return nil, invalid("%v", err)
+		}
 		for _, p := range proposals {
 			rel := str(p["path"])
 			full := filepath.Join(root, filepath.FromSlash(rel))

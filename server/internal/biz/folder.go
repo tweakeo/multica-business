@@ -78,7 +78,12 @@ func (f *Folder) PendingCount(ctx context.Context, ws string) int {
 func (f *Folder) FlushPending(ctx context.Context, ws string) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	root := f.Root(ctx, f.svc.Pool, ws)
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil {
+		// Another TLS owns the folder: intents stay pending, nothing is written.
+		f.svc.Log.Warn("biz folder not written", "error", err)
+		return
+	}
 	if root == "" {
 		return
 	}
@@ -109,6 +114,9 @@ func (f *Folder) FlushPending(ctx context.Context, ws string) {
 
 // ExportAll journals every record so the next flush writes the full folder.
 func (f *Folder) ExportAll(ctx context.Context, ws string) (int, error) {
+	if _, err := f.writeRoot(ctx, ws); err != nil {
+		return 0, invalid("%v", err)
+	}
 	n := 0
 	err := f.svc.withTx(ctx, func(tx pgx.Tx) error {
 		for typ, table := range entityTables {
@@ -134,8 +142,8 @@ func (f *Folder) ExportAll(ctx context.Context, ws string) (int, error) {
 // ensureSkeleton creates the layout's empty folders (Sistemas/, Recursos/,
 // Buzón/, Archivo/…). Creating a folder never touches anything inside it.
 func (f *Folder) ensureSkeleton(ctx context.Context, ws string) {
-	root := f.Root(ctx, f.svc.Pool, ws)
-	if root == "" {
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
 		return
 	}
 	l, err := LoadLayout(root)
@@ -432,9 +440,9 @@ func (f *Folder) writeEntity(ctx context.Context, ws, root, typ, id string) (str
 // writeCompanyIndex keeps Empresa.md. When it exists, only its frontmatter is
 // updated: the text below is the company's own and is never rewritten.
 func (f *Folder) writeCompanyIndex(ctx context.Context, ws string) error {
-	root := f.Root(ctx, f.svc.Pool, ws)
-	if root == "" {
-		return nil
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
+		return err
 	}
 	var name string
 	_ = f.svc.Pool.QueryRow(ctx, `SELECT name FROM workspace WHERE id=$1`, ws).Scan(&name)
@@ -623,6 +631,7 @@ func (f *Folder) Status(ctx context.Context, ws string) (map[string]any, error) 
 		return nil, invalid("%v", err)
 	}
 	out["layout"] = l.Preset
+	out["escritor"] = f.writerStatus(ctx, ws, root)
 	recs, errs, proposals := f.scan(root)
 	known := map[string]string{}
 	rows, err := f.svc.Pool.Query(ctx, `SELECT DISTINCT ON (entity_id) entity_id::text, rel_path, content_hash FROM biz_journal
@@ -744,6 +753,11 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 	root := f.Root(ctx, f.svc.Pool, ws)
 	if root == "" {
 		return nil, invalid("La empresa no tiene carpeta configurada")
+	}
+	if apply {
+		if err := f.claim(ctx, ws, root); err != nil {
+			return nil, invalid("%v", err)
+		}
 	}
 	l, err := LoadLayout(root)
 	if err != nil {
@@ -900,9 +914,9 @@ func (s *Service) attachDocument(ctx context.Context, tx pgx.Tx, ws, entityType,
 }
 
 func (f *Folder) WritePeriodPackage(ctx context.Context, ws string, year, quarter int) error {
-	root := f.Root(ctx, f.svc.Pool, ws)
-	if root == "" {
-		return nil
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
+		return err
 	}
 	l, err := LoadLayout(root)
 	if err != nil {
