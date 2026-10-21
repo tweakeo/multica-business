@@ -70,6 +70,9 @@ function workspaceScoped(slug: string) {
     // TLS business layer ("Empresa"): overview and the six business areas.
     empresa: () => `${ws}/empresa`,
     empresaArea: (area: string) => `${ws}/empresa/${encode(area)}`,
+    // «Bases de datos»: every database of the company in one place.
+    bases: () => `${ws}/bases`,
+    basesDb: (db: string) => `${ws}/bases/${encode(db)}`,
     attachmentPreview: (id: string) => `${ws}/attachments/${encode(id)}/preview`,
   };
 }

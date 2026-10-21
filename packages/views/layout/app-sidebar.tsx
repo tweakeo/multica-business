@@ -860,10 +860,29 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
 
           <EmpresaNavGroup pathname={pathname} />
 
+          {/* TLS: the inherited "Work" group becomes "Bases de datos": every
+              database of the company first, then tasks, projects and
+              autopilots, which are databases of the app itself. */}
           <SidebarGroup>
-            <SidebarGroupLabel>{t(($) => $.sidebar.work_group)}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t(($) => $.sidebar.bases_group)}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
+                {(() => {
+                  const href = p.bases();
+                  const Icon = routeIconForPath(href);
+                  return (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        isActive={!isActivePinnedRoute && isNavActive(pathname, href)}
+                        render={<AppLink href={href} />}
+                        className={NAV_ITEM_CLASS_NAME}
+                      >
+                        <Icon />
+                        <span>{t(($) => $.sidebar.bases_all)}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })()}
                 {workNav.map((item) => {
                   const href = p[item.key]();
                   const Icon = routeIconForPath(href);

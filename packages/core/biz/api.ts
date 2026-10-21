@@ -299,6 +299,47 @@ const PortalListSchema = z.object({
 export type BizPortalList = z.infer<typeof PortalListSchema>;
 export type BizIncidentInput = { reporter: string; email: string; date: string; type: string; severity: string; description: string; steps: string };
 
+// «Bases de datos»: every database of the company, read from where it lives.
+const DbFieldSchema = z.object({ label: z.string(), value: z.string().default("") });
+const DbLinkSchema = z.object({ db: z.string(), id: z.string(), title: z.string().default("") });
+export type BizDbLink = z.infer<typeof DbLinkSchema>;
+const DbRowSchema = z.object({
+  id: z.string(),
+  title: z.string().default(""),
+  subtitle: z.string().default(""),
+  area: z.string().default(""),
+  status: z.string().default(""),
+  date: z.string().default(""),
+  owner: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity: z.string().default(""),
+  entity_id: z.string().default(""),
+  private: z.boolean().default(false),
+  fields: z.array(DbFieldSchema).nullable().default([]),
+  links: z.array(DbLinkSchema).nullable().default([]),
+});
+export type BizDbRow = z.infer<typeof DbRowSchema>;
+const DbInfoSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  area: z.string().default(""),
+  description: z.string().default(""),
+  source: z.string().default(""),
+  folder: z.string().default(""),
+  fill: z.string().default(""),
+  why: z.string().default(""),
+  columns: z.array(z.string()).nullable().default([]),
+  count: z.number().default(0),
+});
+export type BizDbInfo = z.infer<typeof DbInfoSchema>;
+const DatabasesSchema = z.object({ configured: z.boolean().default(false), databases: z.array(DbInfoSchema).default([]) });
+export type BizDatabases = z.infer<typeof DatabasesSchema>;
+const DatabaseSchema = z.object({ configured: z.boolean().default(false), database: DbInfoSchema.nullable().default(null), rows: z.array(DbRowSchema).default([]) });
+export type BizDatabase = z.infer<typeof DatabaseSchema>;
+const DbDetailSchema = z.object({ row: DbRowSchema, inbound: z.array(DbLinkSchema).default([]), body: z.string().default("") });
+export type BizDbDetail = z.infer<typeof DbDetailSchema>;
+
 const opts = (endpoint: string) => ({ endpoint });
 
 export const bizApi = {
@@ -346,5 +387,18 @@ export const bizApi = {
     ),
   addIncident: async (slug: string, input: BizIncidentInput) =>
     parseWithFallback(await api.bizPost(`/portal/${encodeURIComponent(slug)}/incidents`, input), RowSchema, {}, opts("POST /api/biz/portal/:project/incidents")),
+  databases: async () => parseWithFallback(await api.bizGet("/databases"), DatabasesSchema, DatabasesSchema.parse({}), opts("GET /api/biz/databases")),
+  database: async (key: string) =>
+    parseWithFallback(await api.bizGet(`/databases/${encodeURIComponent(key)}`), DatabaseSchema, DatabaseSchema.parse({}), opts("GET /api/biz/databases/:db")),
+  databaseRow: async (key: string, id: string) =>
+    parseWithFallback(
+      await api.bizGet(`/databases/${encodeURIComponent(key)}?id=${encodeURIComponent(id)}`),
+      DbDetailSchema,
+      null as BizDbDetail | null,
+      opts("GET /api/biz/databases/:db?id"),
+    ),
+  /** Opens the original in Obsidian when the folder is in a vault; otherwise with the default app. */
+  openInObsidian: async (path: string) =>
+    parseWithFallback(await api.bizPost("/folder/obsidian", { path }), RowSchema, {}, opts("POST /api/biz/folder/obsidian")),
   folderRebuild: async (apply: boolean) => parseWithFallback(await api.bizPost("/folder/rebuild", { apply }), RowSchema, {}, opts("POST /api/biz/folder/rebuild")),
 };

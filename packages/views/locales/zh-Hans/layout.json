@@ -12,7 +12,8 @@
     "runtimes": "运行时",
     "skills": "Skills",
     "settings": "设置",
-    "empresa": "公司"
+    "empresa": "公司",
+    "bases": "数据库"
   },
   "tab": {
     "issue": "任务",
@@ -62,6 +63,8 @@
       "title": "加入 Discord",
       "dismiss": "关闭"
     },
-    "empresa_group": "公司"
+    "empresa_group": "公司",
+    "bases_group": "数据库",
+    "bases_all": "全部数据库"
   }
 }

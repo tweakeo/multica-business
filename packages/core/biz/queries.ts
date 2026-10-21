@@ -22,6 +22,9 @@ export const bizKeys = {
   documents: (wsId: string) => [...bizKeys.all(wsId), "documents"] as const,
   portals: (wsId: string) => [...bizKeys.all(wsId), "portal"] as const,
   portal: (wsId: string, slug: string, client: boolean) => [...bizKeys.all(wsId), "portal", slug, client] as const,
+  databases: (wsId: string) => [...bizKeys.all(wsId), "databases"] as const,
+  database: (wsId: string, key: string) => [...bizKeys.all(wsId), "databases", key] as const,
+  databaseRow: (wsId: string, key: string, id: string) => [...bizKeys.all(wsId), "databases", key, "row", id] as const,
 };
 
 export const bizMetaOptions = (wsId: string) =>
@@ -74,3 +77,12 @@ export const bizPortalsOptions = (wsId: string) =>
 
 export const bizPortalOptions = (wsId: string, slug: string, client: boolean) =>
   queryOptions({ queryKey: bizKeys.portal(wsId, slug, client), queryFn: () => bizApi.portal(slug, client), enabled: Boolean(slug), staleTime: 15_000 });
+
+export const bizDatabasesOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.databases(wsId), queryFn: bizApi.databases, staleTime: 15_000 });
+
+export const bizDatabaseOptions = (wsId: string, key: string) =>
+  queryOptions({ queryKey: bizKeys.database(wsId, key), queryFn: () => bizApi.database(key), enabled: Boolean(key), staleTime: 15_000 });
+
+export const bizDatabaseRowOptions = (wsId: string, key: string, id: string) =>
+  queryOptions({ queryKey: bizKeys.databaseRow(wsId, key, id), queryFn: () => bizApi.databaseRow(key, id), enabled: Boolean(key && id), staleTime: 15_000 });

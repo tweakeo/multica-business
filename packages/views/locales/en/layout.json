@@ -12,7 +12,8 @@
     "runtimes": "Runtimes",
     "skills": "Skills",
     "settings": "Settings",
-    "empresa": "Company"
+    "empresa": "Company",
+    "bases": "Databases"
   },
   "tab": {
     "issue": "Issue",
@@ -62,6 +63,8 @@
       "title": "Join our Discord",
       "dismiss": "Dismiss"
     },
-    "empresa_group": "Company"
+    "empresa_group": "Company",
+    "bases_group": "Databases",
+    "bases_all": "All databases"
   }
 }

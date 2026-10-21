@@ -43,6 +43,7 @@ func (s *Service) Routes(r chi.Router) {
 	r.Post("/folder/export", s.handle(s.postFolderExport))
 	r.Post("/folder/rebuild", s.handle(s.postFolderRebuild))
 	r.Post("/folder/adopt", s.handle(s.postFolderAdopt))
+	s.databaseRoutes(r)
 	s.libraryRoutes(r)
 	s.portalRoutes(r)
 	r.Post("/events/process", s.handle(func(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) {

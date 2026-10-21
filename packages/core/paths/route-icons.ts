@@ -34,6 +34,7 @@ export type RouteIconName =
   | "BookOpenText"
   | "Settings"
   | "Building2"
+  | "Database"
   | "File"
   | "FileText"
   | "FileImage"
@@ -57,7 +58,8 @@ export type NavLabelKey =
   | "runtimes"
   | "skills"
   | "settings"
-  | "empresa";
+  | "empresa"
+  | "bases";
 
 /** Stable identifier for each workspace navigation page. */
 export type WorkspacePageKey =
@@ -73,7 +75,8 @@ export type WorkspacePageKey =
   | "runtimes"
   | "skills"
   | "settings"
-  | "empresa";
+  | "empresa"
+  | "bases";
 
 export interface WorkspacePage {
   /** Route segment at index 1 of `/{slug}/{segment}/...`. */
@@ -102,6 +105,7 @@ export const WORKSPACE_PAGES: Record<WorkspacePageKey, WorkspacePage> = {
   skills: { segment: "skills", icon: "BookOpenText", navKey: "skills" },
   settings: { segment: "settings", icon: "Settings", navKey: "settings" },
   empresa: { segment: "empresa", icon: "Building2", navKey: "empresa" },
+  bases: { segment: "bases", icon: "Database", navKey: "bases" },
 };
 
 /** Reverse lookup: route segment → page key. */
