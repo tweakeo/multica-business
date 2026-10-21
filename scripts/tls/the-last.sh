@@ -88,7 +88,7 @@ start() {
   if ! alive web; then
     echo "==> Web en :$WEB_PORT"
     (cd "$ROOT/apps/web" && NEXT_DIST_DIR=.next-the-last REMOTE_API_URL="http://127.0.0.1:$API_PORT" \
-      nohup pnpm exec next start --port "$WEB_PORT" </dev/null >"$LOGS/the-last-web.log" 2>&1 & echo $! >"$RUN/web.pid")
+      nohup pnpm exec next start --hostname 127.0.0.1 --port "$WEB_PORT" </dev/null >"$LOGS/the-last-web.log" 2>&1 & echo $! >"$RUN/web.pid")
     wait_http "http://localhost:$WEB_PORT" 120 || { echo "La web no arrancó; revisa $LOGS/the-last-web.log"; exit 1; }
   fi
   echo "The Last → http://localhost:$WEB_PORT (API :$API_PORT) · carpeta: $COMPANY_FOLDER"
