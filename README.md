@@ -2,7 +2,7 @@
 
 Sistema operativo de empresa para macOS: seis áreas de negocio, CRM, entrega por servicios, finanzas con conciliación y paquete trimestral, y agentes de IA que trabajan con aprobaciones, auditoría e interruptor global.
 
-Construido sobre [Multica](https://github.com/multica-ai/multica) (fork de `e752b971b`). La interfaz, las tareas, los proyectos, los agentes y su runtime son los de Multica; TLS añade la capa de empresa y una app nativa de macOS.
+Construido sobre [Multica](https://github.com/multica-ai/multica) (fork de `e752b971b`). La interfaz, las tareas, los proyectos, los agentes y su runtime son los de Multica; TLS añade la capa de empresa y una app nativa de macOS. En `apps/the-last-system/` está además **The Last System 1.0**, la versión nativa en Swift. Para entenderlo todo, empieza por [la arquitectura](docs/tls/ARQUITECTURA.md); para montarlo, por [el despliegue](docs/tls/DESPLIEGUE.md).
 
 > **Uso interno.** La versión 0.1 es una demostración funcional con una empresa ficticia: **Asesoría Ribera**, una gestoría con los servicios de Renta y Trimestrales. Ver [Licencia y atribución](#licencia-y-atribución).
 
@@ -106,6 +106,13 @@ scripts/tls/build-dmg.sh                      # TLS-<versión>.dmg y -debug.dmg
 
 | Documento | Contenido |
 |---|---|
+| [docs/tls/ARQUITECTURA.md](docs/tls/ARQUITECTURA.md) | Cómo encajan el fork y la app nativa, mapa del repositorio y la carpeta de la empresa |
+| [docs/tls/DESPLIEGUE.md](docs/tls/DESPLIEGUE.md) | Las cuatro formas de montarlo y desplegarlo, y la licencia |
+| [docs/tls/VARIABLES.md](docs/tls/VARIABLES.md) | Variables de entorno, sin valores |
+| [docs/diseno/](docs/diseno/README.md) | Sistema visual y marca |
+| [negocio/](negocio/README.md) | Teoría TLB, las 6 áreas con sus 24 sistemas y el método |
+| [examples/empresa-ejemplo/](examples/empresa-ejemplo/README.md) | Carpeta de empresa ficticia con la estructura «humana» |
+| [apps/the-last-system/](apps/the-last-system/README.md) | App nativa The Last System 1.0 (Swift, licencia propia) |
 | [docs/tls/GUIA-DEMO.md](docs/tls/GUIA-DEMO.md) | Cómo se trabaja con TLS: el viaje del cliente paso a paso, agentes y controles |
 | [docs/tls/ESTADO.md](docs/tls/ESTADO.md) | Estado por fases, criterios de aceptación con evidencia, pruebas y limitaciones |
 | [docs/tls/DECISIONES.md](docs/tls/DECISIONES.md) | Decisiones de diseño y su motivo |
