@@ -1,0 +1,71 @@
+/* ===================================================
+   THE LAST — Design Tokens
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+:root {
+  /* ---------- Brand Colors ---------- */
+  --dark-blue: #0a1628;        /* Fondo principal oscuro */
+  --intense-blue: #1a3a8a;     /* Azul de marca (inicio de gradiente) */
+  --magenta: #e6007e;          /* Magenta de marca (fin de gradiente) */
+  --gray-blue: #8490b0;        /* Texto secundario sobre oscuro */
+  --white: #ffffff;
+  --cream: #fdfbf7;            /* Fondo cálido alternativo */
+  --off-black: #050c18;
+
+  /* Acentos funcionales (no brand-core) */
+  --green: #00d4aa;
+  --yellow: #ffb800;
+  --red: #ff6b6b;
+  --purple: #9b59b6;
+
+  /* Áreas (sistema operativo) */
+  --area-direccion: #a855f7;
+  --area-ventas:    #22c55e;
+  --area-entrega:   #3b82f6;
+  --area-finanzas:  #f97316;
+  --area-marca:     #ec4899;
+  --area-equipo:    #ef4444;
+
+  /* ---------- Gradients ---------- */
+  --grad-brand: linear-gradient(135deg, var(--intense-blue) 0%, var(--magenta) 100%);
+  --grad-brand-h: linear-gradient(90deg, var(--intense-blue) 0%, var(--magenta) 100%);
+  --grad-brand-soft: linear-gradient(135deg, #6b8edb 0%, #ff3da0 100%);
+  --grad-white: linear-gradient(135deg, #ffffff 0%, #ffd6e8 100%);
+
+  /* ---------- Type ---------- */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* ---------- Radii ---------- */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-soft: 0 12px 40px rgba(14, 12, 68, 0.08);
+  --shadow-md: 0 20px 50px rgba(14, 12, 68, 0.12);
+  --shadow-glow-magenta: 0 18px 48px rgba(230, 0, 126, 0.28);
+  --shadow-glow-blue: 0 18px 48px rgba(26, 58, 138, 0.28);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--dark-blue);
+  color: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; display: block; }
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
