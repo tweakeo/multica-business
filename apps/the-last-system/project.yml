@@ -1,0 +1,90 @@
+# The Last System · proyecto Xcode (PLAN §3.1). Genera: make gen (el .xcodeproj va versionado).
+# Firma: Config/Base.xcconfig (ad hoc) + Config/Signing.local.xcconfig (tu equipo; make firma).
+name: TheLastSystem
+options:
+  bundleIdPrefix: es.thelast
+  deploymentTarget:
+    macOS: "15.0"
+  developmentLanguage: es
+  createIntermediateGroups: true
+configFiles:
+  Debug: Config/Base.xcconfig
+  Release: Config/Base.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    ARCHS: arm64
+    ENABLE_HARDENED_RUNTIME: YES
+    ENABLE_APP_SANDBOX: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEAD_CODE_STRIPPING: YES
+  configs:
+    # El DMG no debe permitir que otro proceso depure la app (get-task-allow).
+    Release:
+      CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+packages:
+  TLSKit:
+    path: Packages/TLSKit
+targets:
+  TheLastSystem:
+    type: application
+    platform: macOS
+    sources:
+      - path: App/Sources
+      # Color de acento = azul noche (Mosaico v2 §7.8): casillas, interruptores y selección del sistema.
+      - path: App/Assets.xcassets
+      - path: App/Recursos
+        type: folder
+        buildPhase: resources
+        optional: true
+    settings:
+      base:
+        PRODUCT_NAME: "The Last System"
+        PRODUCT_BUNDLE_IDENTIFIER: es.thelast.system
+        CODE_SIGN_ENTITLEMENTS: App/TheLastSystem.entitlements
+        INFOPLIST_FILE: App/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: TLSKit
+        product: TLSUI
+      - package: TLSKit
+        product: TLSCore
+      - package: TLSKit
+        product: TLSOnboarding
+      # F4 · los asistentes de cada empresa abierta: motor, servidor de herramientas (`tls-mcp`) y chat de Mika.
+      - package: TLSKit
+        product: TLSIntegracion
+      - package: TLSKit
+        product: TLSMCPHost
+      - target: tls-mcp
+        embed: true
+        codeSign: true
+        copy:
+          destination: wrapper
+          subpath: Contents/Helpers
+  tls-mcp:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Helpers/tls-mcp
+    settings:
+      base:
+        PRODUCT_NAME: tls-mcp
+        PRODUCT_BUNDLE_IDENTIFIER: es.thelast.system.tls-mcp
+        SKIP_INSTALL: YES
+        CREATE_INFOPLIST_SECTION_IN_BINARY: YES
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: TLSKit
+        product: TLSMCPShared
+schemes:
+  TheLastSystem:
+    build:
+      targets:
+        TheLastSystem: all
+    run:
+      config: Debug
+    archive:
+      config: Release

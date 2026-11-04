@@ -1,0 +1,10 @@
+{
+  "operacion": "escritor",
+  "descripcion": "retire mueve la nota a Archivo/ con la misma ruta, sin cambiar un byte.",
+  "plan": [
+    {
+      "op": "retire",
+      "ruta": "2 · Ventas/Oportunidades/lola-plaza-trimestrales.md"
+    }
+  ]
+}

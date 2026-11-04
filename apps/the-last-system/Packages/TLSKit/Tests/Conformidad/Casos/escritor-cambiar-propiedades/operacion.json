@@ -1,0 +1,16 @@
+{
+  "operacion": "escritor",
+  "descripcion": "mergeFrontmatter cambia la línea de «estado» y quita la de «origen»; el resto de la nota queda byte a byte (PLAN §4.8, criterio F1 2).",
+  "plan": [
+    {
+      "op": "mergeFrontmatter",
+      "ruta": "1 · Dirección/Tareas/t-0001-subir-trimestrales-a-165-desde-t1-2027.md",
+      "set": {
+        "estado": "Hecha"
+      },
+      "unset": [
+        "origen"
+      ]
+    }
+  ]
+}

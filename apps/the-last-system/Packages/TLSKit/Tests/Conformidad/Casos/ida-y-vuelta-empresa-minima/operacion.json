@@ -1,0 +1,5 @@
+{
+  "operacion": "ida-y-vuelta",
+  "descripcion": "Leer y reescribir sin cambios cada .md y .csv de la fixture EmpresaMinima (formato G3, con BOM, comillas y nombres en NFD) da los mismos bytes.",
+  "origen": "fixture:EmpresaMinima"
+}

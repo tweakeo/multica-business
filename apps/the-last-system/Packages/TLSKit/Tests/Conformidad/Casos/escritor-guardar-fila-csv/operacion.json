@@ -1,0 +1,27 @@
+{
+  "operacion": "escritor",
+  "descripcion": "upsertCSVRow actualiza en su sitio la fila F-2026-002 y añade F-2026-003 al final; se respetan el BOM, \\r\\n, las comillas y el salto de línea dentro de un campo (PLAN §4.6).",
+  "plan": [
+    {
+      "op": "upsertCSVRow",
+      "ruta": "4 · Finanzas/Registros/emitidas.csv",
+      "clave": "id",
+      "fila": {
+        "id": "F-2026-002",
+        "importe": "95.00"
+      }
+    },
+    {
+      "op": "upsertCSVRow",
+      "ruta": "4 · Finanzas/Registros/emitidas.csv",
+      "clave": "id",
+      "fila": {
+        "id": "F-2026-003",
+        "fecha": "2026-10-20",
+        "cliente": "Cliente Nuevo, S.L.",
+        "concepto": "Consulta",
+        "importe": "60.00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "operacion": "escritor",
+  "descripcion": "Renombrar talleres-martin-e-hijos.md a talleres-martin.md actualiza todos los enlaces (wikilinks en propiedades y en el cuerpo, con y sin texto, con sección e incrustados; Markdown relativos con %20, con #sección y entre <…>). Solo cambian los destinos: el texto visible y el resto de bytes no (SISTEMAS §5.2 y §5.11). El nombre que se ve (nombre) no cambia, así que no se añade a aliases.",
+  "plan": [
+    {
+      "op": "renombrar",
+      "ruta": "2 · Ventas/Empresas/talleres-martin-e-hijos.md",
+      "a": "2 · Ventas/Empresas/talleres-martin.md"
+    }
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "procedencia": "Programa v0.5 (Manu): core/sql/02-semillas.sql (áreas, roles, etapas, módulos, rutinas) y core/sql/10-tlb.sql (qué toca y señal de cada etapa). Los colores de área no se portan: manda Mosaico v2.",
+  "areas": [
+    {
+      "codigo": "DIR",
+      "nombre": "Dirección",
+      "convierte": "Ruido en decisiones",
+      "orden": 1
+    },
+    {
+      "codigo": "VEN",
+      "nombre": "Ventas",
+      "convierte": "Desconocidos en clientes",
+      "orden": 2
+    },
+    {
+      "codigo": "ENT",
+      "nombre": "Entrega",
+      "convierte": "Promesas en resultados",
+      "orden": 3
+    },
+    {
+      "codigo": "FIN",
+      "nombre": "Finanzas",
+      "convierte": "Actividad en caja y margen",
+      "orden": 4
+    },
+    {
+      "codigo": "MAR",
+      "nombre": "Marca",
+      "convierte": "Mercado en demanda",
+      "orden": 5
+    },
+    {
+      "codigo": "EQU",
+      "nombre": "Equipo",
+      "convierte": "Personas en capacidad",
+      "orden": 6
+    }
+  ],
+  "roles": [
+    {
+      "codigo": "director",
+      "area": "DIR",
+      "nombre": "Director",
+      "mision": "Que el negocio vaya donde dijiste que iba, y saber si va",
+      "pregunta": "¿Estamos yendo a donde dijimos?"
+    },
+    {
+      "codigo": "comercial",
+      "area": "VEN",
+      "nombre": "Comercial",
+      "mision": "Que entren clientes de forma previsible y que entren los que encajan",
+      "pregunta": "¿De dónde sale el próximo cliente?"
+    },
+    {
+      "codigo": "implementador",
+      "area": "ENT",
+      "nombre": "Implementador",
+      "mision": "Que lo prometido se cumpla, igual siempre, y que el cliente lo esté usando",
+      "pregunta": "¿Estamos cumpliendo lo prometido?"
+    },
+    {
+      "codigo": "financiero",
+      "area": "FIN",
+      "nombre": "Financiero",
+      "mision": "Que haya caja hoy y margen mañana",
+      "pregunta": "¿Hay caja y hay margen?"
+    },
+    {
+      "codigo": "marca",
+      "area": "MAR",
+      "nombre": "Responsable de Marca",
+      "mision": "Que te conozcan los que te tienen que conocer y lleguen convencidos",
+      "pregunta": "¿Nos conocen los que importan?"
+    },
+    {
+      "codigo": "equipo",
+      "area": "EQU",
+      "nombre": "Responsable de Equipo",
+      "mision": "Que otro pueda ejecutar sin ti y que el bueno se quede",
+      "pregunta": "¿Quién hace esto cuando yo no esté?"
+    }
+  ],
+  "etapas": [
+    {
+      "num": 1,
+      "nombre": "Validación",
+      "verbo": "Validar",
+      "que_toca": "Vender a salto de mata y apuntar lo que funciona. Aquí manda Ventas.",
+      "senal": "Cada venta es distinta y cada precio también"
+    },
+    {
+      "num": 2,
+      "nombre": "Estandarización",
+      "verbo": "Estandarizar",
+      "que_toca": "Escribir lo que ya haces: la oferta, el guion, el proceso de entrega.",
+      "senal": "Lo repites de memoria y sale distinto cada vez"
+    },
+    {
+      "num": 3,
+      "nombre": "Sistematización",
+      "verbo": "Sistematizar",
+      "que_toca": "Poner ejecutor y rutina a cada proceso escrito. Etapas y seguimiento.",
+      "senal": "Está escrito pero nadie lo abre"
+    },
+    {
+      "num": 4,
+      "nombre": "Automatización",
+      "verbo": "Automatizar",
+      "que_toca": "Bajar de escalón lo que se repite igual: reglas, disparadores, scripts.",
+      "senal": "Haces a mano cosas que decides siempre igual"
+    },
+    {
+      "num": 5,
+      "nombre": "Equipo y delegación",
+      "verbo": "Delegar",
+      "que_toca": "Ficha de rol, dueño distinto de ti y ceder Operaciones, Control y Estrategia.",
+      "senal": "Delegas tareas pero sigues decidiendo tú"
+    },
+    {
+      "num": 6,
+      "nombre": "Empresa",
+      "verbo": "Dirigir",
+      "que_toca": "Dirigir por número y criterio. El negocio entra clientes sin que hables con nadie.",
+      "senal": null
+    }
+  ],
+  "modulos": [
+    {
+      "codigo": "DIR-M1",
+      "area": "DIR",
+      "nombre": "Rumbo y decisiones",
+      "produce": "Criterio escrito y un sitio donde vive"
+    },
+    {
+      "codigo": "DIR-M2",
+      "area": "DIR",
+      "nombre": "Ritmos",
+      "produce": "Que el día y la semana se repartan solos y se cierren con veredicto"
+    },
+    {
+      "codigo": "DIR-M3",
+      "area": "DIR",
+      "nombre": "Control",
+      "produce": "Los números de las seis áreas, con meta y alerta"
+    },
+    {
+      "codigo": "DIR-M4",
+      "area": "DIR",
+      "nombre": "Salud del sistema",
+      "produce": "Que el sistema se mire a sí mismo y sepa pararse"
+    },
+    {
+      "codigo": "VEN-M1",
+      "area": "VEN",
+      "nombre": "Captación",
+      "produce": "Que entre gente y quede registrado de dónde vino"
+    },
+    {
+      "codigo": "VEN-M2",
+      "area": "VEN",
+      "nombre": "Embudo",
+      "produce": "Que una conversación acabe en sí o en no, nunca en silencio"
+    },
+    {
+      "codigo": "VEN-M3",
+      "area": "VEN",
+      "nombre": "Diagnóstico y propuesta",
+      "produce": "El mismo guion siempre y una propuesta que no se improvisa"
+    },
+    {
+      "codigo": "VEN-M4",
+      "area": "VEN",
+      "nombre": "Cierre y traspaso",
+      "produce": "Una oportunidad ganada y pagada, con todo colgando de ella"
+    },
+    {
+      "codigo": "VEN-M5",
+      "area": "VEN",
+      "nombre": "Referidos y recuperación",
+      "produce": "Que la recomendación deje de ser suerte"
+    },
+    {
+      "codigo": "ENT-M1",
+      "area": "ENT",
+      "nombre": "Arranque y onboarding",
+      "produce": "Que el proyecto empiece con todo lo que necesita"
+    },
+    {
+      "codigo": "ENT-M2",
+      "area": "ENT",
+      "nombre": "Ejecución",
+      "produce": "El mismo resultado, en el mismo orden, con el mismo material"
+    },
+    {
+      "codigo": "ENT-M3",
+      "area": "ENT",
+      "nombre": "Control de entrega",
+      "produce": "Que ningún proyecto llegue tarde en silencio"
+    },
+    {
+      "codigo": "ENT-M4",
+      "area": "ENT",
+      "nombre": "Calidad",
+      "produce": "Que el proceso mejore solo cuando algo falla"
+    },
+    {
+      "codigo": "ENT-M5",
+      "area": "ENT",
+      "nombre": "Cierre",
+      "produce": "Un cliente usándolo, y lo que las otras áreas necesitan"
+    },
+    {
+      "codigo": "FIN-M1",
+      "area": "FIN",
+      "nombre": "Facturación y contratos",
+      "produce": "Documentos generados, nunca improvisados"
+    },
+    {
+      "codigo": "FIN-M2",
+      "area": "FIN",
+      "nombre": "Cobro",
+      "produce": "Que lo vendido se cobre, y se cobre cuando toca"
+    },
+    {
+      "codigo": "FIN-M3",
+      "area": "FIN",
+      "nombre": "Registro y conciliación",
+      "produce": "Que el sistema y el banco digan lo mismo"
+    },
+    {
+      "codigo": "FIN-M4",
+      "area": "FIN",
+      "nombre": "Control",
+      "produce": "Los dos números que Dirección necesita"
+    },
+    {
+      "codigo": "FIN-M5",
+      "area": "FIN",
+      "nombre": "Cumplimiento",
+      "produce": "Que ninguna obligación llegue tarde"
+    },
+    {
+      "codigo": "MAR-M1",
+      "area": "MAR",
+      "nombre": "Identidad y mensaje",
+      "produce": "Que digas lo mismo en todas partes"
+    },
+    {
+      "codigo": "MAR-M2",
+      "area": "MAR",
+      "nombre": "Producción",
+      "produce": "Que publicar no dependa de la inspiración"
+    },
+    {
+      "codigo": "MAR-M3",
+      "area": "MAR",
+      "nombre": "Publicación",
+      "produce": "Que la pieza salga y quede registrado el resultado"
+    },
+    {
+      "codigo": "MAR-M4",
+      "area": "MAR",
+      "nombre": "Escucha y captación",
+      "produce": "Que lo que vuelve acabe en el embudo"
+    },
+    {
+      "codigo": "MAR-M5",
+      "area": "MAR",
+      "nombre": "Prueba y control",
+      "produce": "Casos con cifra y el número que sí importa"
+    },
+    {
+      "codigo": "EQU-M1",
+      "area": "EQU",
+      "nombre": "Roles",
+      "produce": "Que cada área tenga dueño, y que el dueño vea solo lo suyo"
+    },
+    {
+      "codigo": "EQU-M2",
+      "area": "EQU",
+      "nombre": "Equipo agéntico",
+      "produce": "Que los agentes sean miembros gobernados, no scripts sueltos"
+    },
+    {
+      "codigo": "EQU-M3",
+      "area": "EQU",
+      "nombre": "Salud",
+      "produce": "Que se sepa qué está vivo y qué se cayó"
+    },
+    {
+      "codigo": "EQU-M4",
+      "area": "EQU",
+      "nombre": "Ciclo de talento",
+      "produce": "Que entrar, rendir y salir tengan un cómo"
+    },
+    {
+      "codigo": "EQU-M5",
+      "area": "EQU",
+      "nombre": "Evolución",
+      "produce": "Que el sistema absorba complejidad en vez de repartirla"
+    }
+  ],
+  "rutinas": [
+    {
+      "codigo": "R-DIR-D",
+      "area": "DIR",
+      "nombre": "Ritmo del día",
+      "cadencia": "diaria",
+      "pregunta": "¿Cuál es el foco de hoy, y cómo ha ido?"
+    },
+    {
+      "codigo": "R-DIR-S",
+      "area": "DIR",
+      "nombre": "Ritmo de la semana",
+      "cadencia": "semanal",
+      "pregunta": "¿Qué decidí esta semana, y qué se quedó sin decidir?"
+    },
+    {
+      "codigo": "R-VEN-S",
+      "area": "VEN",
+      "nombre": "Rutina comercial",
+      "cadencia": "semanal",
+      "pregunta": "¿Qué oportunidad se ha movido, y cuál lleva demasiado quieta?"
+    },
+    {
+      "codigo": "R-ENT-S",
+      "area": "ENT",
+      "nombre": "Rutina de entrega",
+      "cadencia": "semanal",
+      "pregunta": "¿Qué proyecto está en riesgo, y qué le falta exactamente?"
+    },
+    {
+      "codigo": "R-FIN-M",
+      "area": "FIN",
+      "nombre": "Rutina financiera",
+      "cadencia": "mensual",
+      "pregunta": "¿Qué está sin cobrar, y qué margen dejó lo cobrado?"
+    },
+    {
+      "codigo": "R-MAR-S",
+      "area": "MAR",
+      "nombre": "Rutina de marca",
+      "cadencia": "semanal",
+      "pregunta": "¿Qué conversación empezó por algo que publiqué?"
+    },
+    {
+      "codigo": "R-EQU-M",
+      "area": "EQU",
+      "nombre": "Rutina de equipo",
+      "cadencia": "mensual",
+      "pregunta": "¿Qué rutina se ha caído, y a quién le falta una pieza?"
+    }
+  ]
+}

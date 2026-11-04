@@ -1,0 +1,716 @@
+# The Last System · matriz de capacidades
+#
+# Este fichero ES el estándar. La implementación es reemplazable; esto no.
+# Licencia: Apache-2.0 — impleméntelo quien quiera, incluso comercialmente.
+#
+# Niveles      · esencial | recomendable | opcional
+# Ejecutores   · humano → agente → automatizacion → script  (la escalera; se baja, no se sube)
+#
+# Regla que sostiene todo lo demás: el código es estable y no se reutiliza nunca.
+# Una capacidad retirada deja su código muerto; jamás se recicla para otra cosa.
+
+version: 0.1.0
+idioma_canonico: es
+
+capacidades:
+  - codigo: DIR-01
+    area: DIR            # Dirección
+    modulo: DIR-M1
+    nombre: "Registro de decisiones con su porqué y su para qué"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Una decisión tomada"
+    produce: "Decisión inmutable y enlazada"
+
+  - codigo: DIR-02
+    area: DIR            # Dirección
+    modulo: DIR-M1
+    nombre: "Objetivos del periodo, cada uno con un número comprobable"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Inicio de trimestre"
+    produce: "Objetivos con meta y fecha"
+
+  - codigo: DIR-03
+    area: DIR            # Dirección
+    modulo: DIR-M1
+    nombre: "Todo proyecto activo cuelga de un objetivo"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Un proyecto pasa a activo"
+    produce: "Rechazo si no hay objetivo"
+
+  - codigo: DIR-04
+    area: DIR            # Dirección
+    modulo: DIR-M3
+    nombre: "Panel de área: cada KPI con su meta y su alerta"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Cambio en el dato de origen"
+    produce: "Estado por área y alertas"
+
+  - codigo: DIR-05
+    area: DIR            # Dirección
+    modulo: DIR-M2
+    nombre: "Ritmo del día: un foco único al abrir, un veredicto al cerrar"
+    nivel: esencial
+    ejecutor_recomendado: automatizacion
+    disparador: "Hora fija, días laborables"
+    produce: "Panel del día y cierre registrado"
+
+  - codigo: DIR-06
+    area: DIR            # Dirección
+    modulo: DIR-M2
+    nombre: "Ritmo de la semana: reparto al empezar, balance al terminar"
+    nivel: esencial
+    ejecutor_recomendado: automatizacion
+    disparador: "Lunes y viernes"
+    produce: "Semana repartida y balance escrito"
+
+  - codigo: DIR-07
+    area: DIR            # Dirección
+    modulo: DIR-M2
+    nombre: "Capacidad declarada en horas y tope de carga diaria"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Al repartir el día"
+    produce: "Aviso si se supera el tope"
+
+  - codigo: DIR-08
+    area: DIR            # Dirección
+    modulo: DIR-M4
+    nombre: "Mapa de etapa por área y cuello de botella marcado"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "Revisión trimestral"
+    produce: "Etapa por área y el cuello señalado"
+
+  - codigo: DIR-09
+    area: DIR            # Dirección
+    modulo: DIR-M4
+    nombre: "Auditoría del sistema: campos sin usar, procesos duplicados, capacidades promovibles"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "Periódica"
+    produce: "Informe con propuestas accionables"
+
+  - codigo: DIR-10
+    area: DIR            # Dirección
+    modulo: DIR-M2
+    nombre: "Ritmo del trimestre: objetivos, aplazados con destino, capacidad"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Cierre de trimestre"
+    produce: "Plan del trimestre siguiente"
+
+  - codigo: DIR-11
+    area: DIR            # Dirección
+    modulo: DIR-M4
+    nombre: "Interruptor global y modo lectura"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Manual"
+    produce: "Toda pieza lo comprueba antes de escribir"
+
+  - codigo: DIR-12
+    area: DIR            # Dirección
+    modulo: DIR-M3
+    nombre: "Simulación: qué pasa con los números si cambia una variable"
+    nivel: opcional
+    ejecutor_recomendado: agente
+    disparador: "A petición"
+    produce: "Escenarios comparados"
+
+  - codigo: DIR-13
+    area: DIR            # Dirección
+    modulo: DIR-M4
+    nombre: "Debate entre agentes de área sobre una decisión abierta"
+    nivel: opcional
+    ejecutor_recomendado: agente
+    disparador: "A petición"
+    produce: "Posiciones enfrentadas con su dato"
+
+  - codigo: ENT-01
+    area: ENT            # Entrega
+    modulo: ENT-M1
+    nombre: "El proyecto nace del cobro, con empresa, producto y oportunidad ligados"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "cobro.confirmado"
+    produce: "Proyecto creado y relacionado"
+
+  - codigo: ENT-02
+    area: ENT            # Entrega
+    modulo: ENT-M1
+    nombre: "Plantilla de entrega por producto: fases, sesiones, criterio de terminado"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "proyecto.creado"
+    produce: "El plan del proyecto ya poblado"
+
+  - codigo: ENT-03
+    area: ENT            # Entrega
+    modulo: ENT-M1
+    nombre: "Onboarding del cliente y recogida del contexto profundo"
+    nivel: esencial
+    ejecutor_recomendado: automatizacion
+    disparador: "proyecto.creado"
+    produce: "Contexto como dato, no documento"
+
+  - codigo: ENT-04
+    area: ENT            # Entrega
+    modulo: ENT-M2
+    nombre: "Tareas con dos fechas: planificación se mueve, vencimiento no"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Plan del proyecto"
+    produce: "Tareas repartidas, sin fines de semana"
+
+  - codigo: ENT-05
+    area: ENT            # Entrega
+    modulo: ENT-M5
+    nombre: "Criterio de terminado explícito y cierre formal"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Fin de la última fase"
+    produce: "Proyecto cerrado con su balance"
+
+  - codigo: ENT-06
+    area: ENT            # Entrega
+    modulo: ENT-M4
+    nombre: "Registro de incidencias con investigación de causa a la segunda repetición"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "incidencia.registrada"
+    produce: "Causa apuntando al sistema"
+
+  - codigo: ENT-07
+    area: ENT            # Entrega
+    modulo: ENT-M3
+    nombre: "Alerta de proyecto en riesgo de fecha y sin movimiento"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Paso del tiempo"
+    produce: "Aviso con qué le falta"
+
+  - codigo: ENT-08
+    area: ENT            # Entrega
+    modulo: ENT-M5
+    nombre: "Portal del cliente: ve su proyecto y lo que le toca a él"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "onboarding.lanzado"
+    produce: "Vista acotada a su empresa"
+
+  - codigo: ENT-09
+    area: ENT            # Entrega
+    modulo: ENT-M2
+    nombre: "Actas y transcripciones convertidas en tareas y acuerdos"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "sesion.realizada"
+    produce: "Tareas propuestas y acta enlazada"
+
+  - codigo: ENT-10
+    area: ENT            # Entrega
+    modulo: ENT-M2
+    nombre: "Capacidad y ocupación por ejecutor, humano o agente"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Al planificar"
+    produce: "Holgura real disponible"
+
+  - codigo: ENT-11
+    area: ENT            # Entrega
+    modulo: ENT-M5
+    nombre: "Petición del testimonio en el cierre, no seis meses después"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "proyecto.cerrado"
+    produce: "Petición lanzada y material para Marca"
+
+  - codigo: ENT-12
+    area: ENT            # Entrega
+    modulo: ENT-M1
+    nombre: "Custodia de credenciales y accesos del cliente"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Onboarding"
+    produce: "Secreto guardado con acceso auditado"
+
+  - codigo: ENT-13
+    area: ENT            # Entrega
+    modulo: ENT-M3
+    nombre: "Reglas de servicio y escalado"
+    nivel: opcional
+    ejecutor_recomendado: script
+    disparador: "Incumplimiento"
+    produce: "Escalado disparado"
+
+  - codigo: EQU-01
+    area: EQU            # Equipo
+    modulo: EQU-M1
+    nombre: "Ficha de rol: misión, qué decide, su número, sus sistemas"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Al crear un rol"
+    produce: "El rol antes que su ocupante"
+
+  - codigo: EQU-02
+    area: EQU            # Equipo
+    modulo: EQU-M1
+    nombre: "Mapa de roles con dueño, humano o agéntico"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Asignación"
+    produce: "Quién responde de cada área"
+
+  - codigo: EQU-03
+    area: EQU            # Equipo
+    modulo: EQU-M1
+    nombre: "Vista por rol: solo lo suyo, con sus números"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Entrada al sistema"
+    produce: "Proyección filtrada"
+
+  - codigo: EQU-04
+    area: EQU            # Equipo
+    modulo: EQU-M2
+    nombre: "Registro de trabajadores agénticos con rol, permisos y coste"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Alta de un agente"
+    produce: "El agente como miembro"
+
+  - codigo: EQU-05
+    area: EQU            # Equipo
+    modulo: EQU-M2
+    nombre: "Bitácora de acciones de agentes, auditable y reversible"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Toda acción de un agente"
+    produce: "Registro de quién, qué y con qué"
+
+  - codigo: EQU-06
+    area: EQU            # Equipo
+    modulo: EQU-M2
+    nombre: "Permisos por agente: qué hace solo y qué necesita visto bueno"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Intento de acción"
+    produce: "Ejecución o petición de aprobación"
+
+  - codigo: EQU-07
+    area: EQU            # Equipo
+    modulo: EQU-M3
+    nombre: "Salud de cada pieza automática con su último funcionamiento"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Cada ejecución y su ausencia"
+    produce: "Estado por pieza y aviso"
+
+  - codigo: EQU-08
+    area: EQU            # Equipo
+    modulo: EQU-M4
+    nombre: "Plan de incorporación, de una persona o de un agente"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Alta de miembro"
+    produce: "Los pasos hasta que rinde solo"
+
+  - codigo: EQU-09
+    area: EQU            # Equipo
+    modulo: EQU-M4
+    nombre: "Rutina de equipo: qué rutina se cayó y a quién le falta una pieza"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Mensual"
+    produce: "La pregunta contestada por escrito"
+
+  - codigo: EQU-10
+    area: EQU            # Equipo
+    modulo: EQU-M3
+    nombre: "Ocupación por ejecutor, contando personas y agentes"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Al planificar"
+    produce: "Holgura real del equipo completo"
+
+  - codigo: EQU-11
+    area: EQU            # Equipo
+    modulo: EQU-M4
+    nombre: "Evaluación y salida, con retirada de accesos"
+    nivel: opcional
+    ejecutor_recomendado: humano
+    disparador: "Fin de la relación"
+    produce: "Accesos cerrados y rastro conservado"
+
+  - codigo: EQU-12
+    area: EQU            # Equipo
+    modulo: EQU-M5
+    nombre: "Promoción de capacidades: detectar criterio consolidado y bajarlo de ejecutor"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "Periódica, sobre la bitácora"
+    produce: "Propuesta concreta y su regla escrita"
+
+  - codigo: EQU-13
+    area: EQU            # Equipo
+    modulo: EQU-M2
+    nombre: "Coste por agente y presupuesto"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Cada ejecución"
+    produce: "Coste por agente, área y proceso"
+
+  - codigo: FIN-01
+    area: FIN            # Finanzas
+    modulo: FIN-M3
+    nombre: "Movimiento con banco obligatorio y proyecto cuando aplica"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Alta de movimiento"
+    produce: "Rechazo si falta el banco"
+
+  - codigo: FIN-02
+    area: FIN            # Finanzas
+    modulo: FIN-M1
+    nombre: "Factura emitida desde el proyecto, con el precio leído de la oferta"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "proyecto.creado o hito"
+    produce: "Factura numerada"
+
+  - codigo: FIN-03
+    area: FIN            # Finanzas
+    modulo: FIN-M1
+    nombre: "Condiciones de pago y vencimiento calculado"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "factura.emitida"
+    produce: "Fecha de vencimiento real"
+
+  - codigo: FIN-04
+    area: FIN            # Finanzas
+    modulo: FIN-M2
+    nombre: "Cobro pendiente y reclamación escalonada"
+    nivel: esencial
+    ejecutor_recomendado: automatizacion
+    disparador: "Vencimiento cumplido"
+    produce: "Aviso y mensaje redactado"
+
+  - codigo: FIN-05
+    area: FIN            # Finanzas
+    modulo: FIN-M4
+    nombre: "Meses de caja: cuánto se aguanta si mañana no entra nada"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Cambio de saldo o gasto"
+    produce: "El número, con alerta a 3 meses"
+
+  - codigo: FIN-06
+    area: FIN            # Finanzas
+    modulo: FIN-M4
+    nombre: "Margen por proyecto: qué deja realmente cada cosa"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "proyecto.cerrado o consulta"
+    produce: "Margen por proyecto y producto"
+
+  - codigo: FIN-07
+    area: FIN            # Finanzas
+    modulo: FIN-M3
+    nombre: "Conciliación bancaria: importar extractos o leer por API"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Periódica"
+    produce: "Movimientos casados y los que no"
+
+  - codigo: FIN-08
+    area: FIN            # Finanzas
+    modulo: FIN-M3
+    nombre: "Gasto separado de inversión, con sus amortizaciones"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Alta de movimiento"
+    produce: "Clasificación y plan"
+
+  - codigo: FIN-09
+    area: FIN            # Finanzas
+    modulo: FIN-M5
+    nombre: "Calendario de obligaciones y paquete para la gestoría"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Fecha del calendario"
+    produce: "Aviso y paquete montado"
+
+  - codigo: FIN-10
+    area: FIN            # Finanzas
+    modulo: FIN-M1
+    nombre: "Contrato generado desde plantilla, sin precios dentro"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "oportunidad.ganada"
+    produce: "Contrato listo para firma"
+
+  - codigo: FIN-11
+    area: FIN            # Finanzas
+    modulo: FIN-M5
+    nombre: "Multidivisa y regímenes de impuesto por país"
+    nivel: opcional
+    ejecutor_recomendado: script
+    disparador: "País del cliente"
+    produce: "Importes e impuestos correctos"
+
+  - codigo: FIN-12
+    area: FIN            # Finanzas
+    modulo: FIN-M4
+    nombre: "Previsión de tesorería con lo comprometido"
+    nivel: opcional
+    ejecutor_recomendado: script
+    disparador: "Consulta"
+    produce: "Caja proyectada por semanas"
+
+  - codigo: MAR-01
+    area: MAR            # Marca
+    modulo: MAR-M1
+    nombre: "Identidad y mensaje escritos en un solo sitio"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Una vez, y se revisa"
+    produce: "El activo de marca referenciado"
+
+  - codigo: MAR-02
+    area: MAR            # Marca
+    modulo: MAR-M2
+    nombre: "Calendario editorial con pilares de contenido"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Planificación del periodo"
+    produce: "Piezas planificadas por pilar"
+
+  - codigo: MAR-03
+    area: MAR            # Marca
+    modulo: MAR-M2
+    nombre: "Pieza de contenido con estado: idea a publicada"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Alta de idea"
+    produce: "La pieza y su recorrido trazable"
+
+  - codigo: MAR-04
+    area: MAR            # Marca
+    modulo: MAR-M3
+    nombre: "Publicación en Instagram por API y registro del resultado"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Fecha programada"
+    produce: "Publicación y sus métricas"
+
+  - codigo: MAR-05
+    area: MAR            # Marca
+    modulo: MAR-M5
+    nombre: "Caso de cliente con cifra, pedido en el cierre de la entrega"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "testimonio.solicitado"
+    produce: "Caso publicable con su número"
+
+  - codigo: MAR-06
+    area: MAR            # Marca
+    modulo: MAR-M4
+    nombre: "Escucha: comentarios y mensajes convertidos en conversaciones"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Actividad en el canal"
+    produce: "Conversación con su origen"
+
+  - codigo: MAR-07
+    area: MAR            # Marca
+    modulo: MAR-M4
+    nombre: "Un mensaje directo cualificado se convierte en contacto"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "conversacion.cualificada"
+    produce: "contacto.creado con su origen"
+
+  - codigo: MAR-08
+    area: MAR            # Marca
+    modulo: MAR-M5
+    nombre: "KPI de conversaciones cualificadas, nunca de seguidores"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Continuo"
+    produce: "El número que sí mide el área"
+
+  - codigo: MAR-09
+    area: MAR            # Marca
+    modulo: MAR-M2
+    nombre: "Banco de material: fotos, vídeos, plantillas"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Continuo"
+    produce: "Material localizable"
+
+  - codigo: MAR-10
+    area: MAR            # Marca
+    modulo: MAR-M2
+    nombre: "Guiones propuestos desde el conocimiento y lo escuchado"
+    nivel: opcional
+    ejecutor_recomendado: agente
+    disparador: "A petición"
+    produce: "Borradores con su pilar y ángulo"
+
+  - codigo: MAR-11
+    area: MAR            # Marca
+    modulo: MAR-M2
+    nombre: "Una pieza reutilizada en varios formatos"
+    nivel: opcional
+    ejecutor_recomendado: agente
+    disparador: "contenido.publicado"
+    produce: "Versiones derivadas"
+
+  - codigo: MAR-12
+    area: MAR            # Marca
+    modulo: MAR-M4
+    nombre: "Atribución: de qué pieza salió cada contacto"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "contacto.creado"
+    produce: "Origen ligado a la pieza"
+
+  - codigo: VEN-01
+    area: VEN            # Ventas
+    modulo: VEN-M1
+    nombre: "Alta en paquete: empresa + contacto + oportunidad, nunca sueltos"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Entrada de un desconocido"
+    produce: "Las tres entidades ligadas"
+
+  - codigo: VEN-02
+    area: VEN            # Ventas
+    modulo: VEN-M1
+    nombre: "Formulario de entrada mínimo, con origen y atribución automáticos"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "El interesado lo envía"
+    produce: "Contacto con su canal real"
+
+  - codigo: VEN-03
+    area: VEN            # Ventas
+    modulo: VEN-M2
+    nombre: "Oportunidad con valor, estado, producto y responsable obligatorios"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Alta de oportunidad"
+    produce: "Rechazo si falta alguno"
+
+  - codigo: VEN-04
+    area: VEN            # Ventas
+    modulo: VEN-M2
+    nombre: "Agendar la sesión de diagnóstico en el mismo acto de la captación"
+    nivel: esencial
+    ejecutor_recomendado: automatizacion
+    disparador: "contacto.creado"
+    produce: "Reunión creada con su enlace"
+
+  - codigo: VEN-05
+    area: VEN            # Ventas
+    modulo: VEN-M3
+    nombre: "Guion de diagnóstico versionado, enlazado y nunca copiado"
+    nivel: esencial
+    ejecutor_recomendado: humano
+    disparador: "Preparación de la sesión"
+    produce: "El guion vigente, uno solo"
+
+  - codigo: VEN-06
+    area: VEN            # Ventas
+    modulo: VEN-M3
+    nombre: "Propuesta generada desde la oferta única"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "Fin del diagnóstico"
+    produce: "Propuesta y condiciones"
+
+  - codigo: VEN-07
+    area: VEN            # Ventas
+    modulo: VEN-M4
+    nombre: "Paso a ganado solo con cobro confirmado, y creación del proyecto"
+    nivel: esencial
+    ejecutor_recomendado: script
+    disparador: "cobro.confirmado"
+    produce: "Proyecto con todo ligado"
+
+  - codigo: VEN-08
+    area: VEN            # Ventas
+    modulo: VEN-M2
+    nombre: "Secuencia de seguimiento por toques"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "Oportunidad sin movimiento"
+    produce: "El toque que corresponde, redactado"
+
+  - codigo: VEN-09
+    area: VEN            # Ventas
+    modulo: VEN-M2
+    nombre: "Alerta de oportunidad quieta y contacto sin respuesta"
+    nivel: recomendable
+    ejecutor_recomendado: script
+    disparador: "Paso del tiempo"
+    produce: "Aviso con la antigüedad"
+
+  - codigo: VEN-10
+    area: VEN            # Ventas
+    modulo: VEN-M1
+    nombre: "Criterio de cliente ideal aplicado como filtro de entrada"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "contacto.creado"
+    produce: "Encaje estimado y motivo"
+
+  - codigo: VEN-11
+    area: VEN            # Ventas
+    modulo: VEN-M1
+    nombre: "Investigación previa del interesado antes de la sesión"
+    nivel: recomendable
+    ejecutor_recomendado: agente
+    disparador: "Reunión agendada"
+    produce: "Ficha de contexto"
+
+  - codigo: VEN-12
+    area: VEN            # Ventas
+    modulo: VEN-M5
+    nombre: "Proceso de referidos: cuándo se pide y qué gana quien recomienda"
+    nivel: recomendable
+    ejecutor_recomendado: automatizacion
+    disparador: "proyecto.cerrado"
+    produce: "Petición lanzada y registrada"
+
+  - codigo: VEN-13
+    area: VEN            # Ventas
+    modulo: VEN-M5
+    nombre: "Recuperación de oportunidades perdidas por toques espaciados"
+    nivel: opcional
+    ejecutor_recomendado: automatizacion
+    disparador: "Tiempo desde la pérdida"
+    produce: "El toque que corresponde"
+
+  - codigo: VEN-14
+    area: VEN            # Ventas
+    modulo: VEN-M5
+    nombre: "Previsión de cierre ponderada por estado y antigüedad"
+    nivel: opcional
+    ejecutor_recomendado: script
+    disparador: "Consulta"
+    produce: "Importe esperado del periodo"
+
+  - codigo: VEN-15
+    area: VEN            # Ventas
+    modulo: VEN-M4
+    nombre: "Comisión al referidor, calculada sobre la oportunidad"
+    nivel: opcional
+    ejecutor_recomendado: script
+    disparador: "oportunidad.ganada"
+    produce: "Movimiento pendiente en Finanzas"

@@ -1,0 +1,18 @@
+id,fecha,direccion,importe,moneda,documento_id,proyecto_id,tercero,metodo,evidencia,verificacion
+PAG-20260506-001,2026-05-06,cobro,108.90,EUR,F-2026-0001,,Lucía Ferrer,tarjeta,Recibo TPV 2026-05-06,confirmado
+PAG-20260521-001,2026-05-21,cobro,108.90,EUR,F-2026-0002,,Marta Soler,tarjeta,Recibo TPV 2026-05-21,confirmado
+PAG-20260603-001,2026-06-03,cobro,108.90,EUR,F-2026-0003,,Pablo Ruiz,tarjeta,Recibo TPV 2026-06-03,confirmado
+PAG-20260701-001,2026-07-01,pago,663.00,EUR,REC-20260701-001,,Inmobiliaria Centro SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-08f0e849554b,confirmado
+PAG-20260705-001,2026-07-05,pago,145.20,EUR,REC-20260705-001,,Software Contable Nube SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-2f180ff895d2,confirmado
+PAG-20260710-001,2026-07-10,pago,78.65,EUR,REC-20260710-001,,Movil Levante SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-938048353e83,confirmado
+PAG-20260712-001,2026-07-12,cobro,181.50,EUR,F-2026-0004,,Panadería Horno Sol SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-80e6c895d220,confirmado
+PAG-20260720-001,2026-07-20,cobro,181.50,EUR,F-2026-0005,,Clínica Dental Sonrisa SLP,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-7a32057e1c39,confirmado
+PAG-20260801-001,2026-08-01,pago,663.00,EUR,REC-20260801-001,,Inmobiliaria Centro SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-0f4de2753844,confirmado
+PAG-20260805-001,2026-08-05,pago,145.20,EUR,REC-20260805-001,,Software Contable Nube SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-492a0f46ff4f,confirmado
+PAG-20260810-001,2026-08-10,pago,78.65,EUR,REC-20260810-001,,Movil Levante SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-adc14af0db18,confirmado
+PAG-20260901-001,2026-09-01,pago,663.00,EUR,REC-20260901-001,,Inmobiliaria Centro SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-03436cfadf6b,confirmado
+PAG-20260905-001,2026-09-05,pago,145.20,EUR,REC-20260905-001,,Software Contable Nube SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-a78a80bb9f53,confirmado
+PAG-20260910-001,2026-09-10,pago,78.65,EUR,REC-20260910-001,,Movil Levante SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-3f0a0d62bdef,confirmado
+PAG-20260918-001,2026-09-18,cobro,108.90,EUR,F-2026-0006,,Andrés Vidal,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-ce0532c91235,confirmado
+PAG-20261001-001,2026-10-01,pago,663.00,EUR,REC-20261001-001,,Inmobiliaria Centro SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-4d3d2b0659e3,confirmado
+PAG-20261005-001,2026-10-05,pago,145.20,EUR,REC-20261005-001,,Software Contable Nube SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-eacc4d885179,confirmado

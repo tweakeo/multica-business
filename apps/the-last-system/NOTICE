@@ -1,0 +1,12 @@
+The Last System
+Copyright (c) 2026 Manuel Trigo
+
+Autoría y procedencia: docs/PROCEDENCIA.md (regla de sala limpia).
+
+Dependencias de terceros (Swift Package Manager), cada una con su licencia:
+- GRDB.swift (MIT) — https://github.com/groue/GRDB.swift
+- Yams (MIT) — https://github.com/jpsim/Yams
+- swift-markdown (Apache 2.0) — https://github.com/swiftlang/swift-markdown
+- swift-collections (Apache 2.0) — https://github.com/apple/swift-collections
+- swift-argument-parser (Apache 2.0) — https://github.com/apple/swift-argument-parser
+- MCP Swift SDK (MIT) — https://github.com/modelcontextprotocol/swift-sdk

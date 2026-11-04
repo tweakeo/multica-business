@@ -1,0 +1,2 @@
+id,fecha_documento,tercero,numero_documento,moneda,total_documento,documento,ambito,proyecto_id,estado_revision,fuente,base,iva,retencion,categoria,naturaleza
+REC-20260701-001,2026-07-01,Inmobiliaria Centro SL,ALQ-2026-07,EUR,663.00,"Fiscal/2026/T3/Gastos/inmobiliaria-centro/2026-07-01 Inmobiliaria Centro ALQ-2026-07 663,00€.pdf",Asesoría Ribera (DEMO),,,importacion,650.00,136.50,123.50,Alquiler,

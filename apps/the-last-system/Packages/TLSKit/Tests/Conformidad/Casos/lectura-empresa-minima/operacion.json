@@ -1,0 +1,5 @@
+{
+  "operacion": "lectura",
+  "descripcion": "Lo que lee el núcleo de EmpresaMinima: tipo, propiedades, título, enlaces y a qué nota resuelve cada uno, y cabeceras de los CSV.",
+  "origen": "fixture:EmpresaMinima"
+}

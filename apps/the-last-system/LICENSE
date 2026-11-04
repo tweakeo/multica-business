@@ -1,0 +1,12 @@
+The Last System (apps/the-last-system)
+Copyright (c) 2026 Manuel Trigo. Todos los derechos reservados.
+
+Este directorio contiene código original de Manuel Trigo, escrito desde cero en
+Swift (ver docs/PROCEDENCIA.md). No deriva de Multica ni de ningún otro código
+de este repositorio, y la Multica License de la raíz NO se aplica a él.
+
+Se permite a las personas con acceso a este repositorio leer, compilar y
+ejecutar este código para evaluarlo y colaborar en él. Cualquier otro uso,
+redistribución, sublicencia o venta necesita el permiso escrito de su autor.
+
+EL SOFTWARE SE ENTREGA «TAL CUAL», SIN GARANTÍAS DE NINGÚN TIPO.

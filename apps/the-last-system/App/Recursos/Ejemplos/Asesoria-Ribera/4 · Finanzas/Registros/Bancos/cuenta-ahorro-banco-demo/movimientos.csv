@@ -1,0 +1,2 @@
+id,fecha,fecha_valor,concepto,importe,saldo,naturaleza,categoria,proyecto_id,documento_id,pago_id,estado_conciliacion,motivo,import_hash,lote,verificacion
+MOV-ac01229be87c,2026-08-14,2026-08-14,TRASPASO DESDE CUENTA CORRIENTE,2000.00,7000.00,traspaso,Traspaso entre cuentas,,,,ignorado,"Sin factura asociada por naturaleza (impuestos, nómina, traspaso o retirada).",ac01229be87c60ad2dadcc5e24dc9cfcd77d0221f83aa81ef9f870aec2ff6670,extracto-ahorro,
