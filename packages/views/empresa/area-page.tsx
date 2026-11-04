@@ -16,8 +16,11 @@ import { useNavigation } from "../navigation";
 import { ExceptionList, KpiGrid } from "./blocks";
 import { EmpresaShell } from "./overview-page";
 import { AreaAnalysis, AreaManagement } from "./area-views";
-import { areaOf, AreaDot, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
+import { areaOf, EmptyHint, ErrorBlock, LoadingBlock, Pill, RecordLink, Section, StatusBadge, str, num, useAction } from "./shared";
 import { AskAgentDialog, BizTable } from "./widgets";
+import { AutonomoDocuments, FolderSystems } from "./library";
+import { ClientPortal } from "./portal";
+import { CargaView, PipelineView, PlanificacionView, RitmoView, SituacionView } from "./direccion";
 
 export function EmpresaAreaPage({ area }: { area: string }) {
   const nav = useNavigation();
@@ -31,7 +34,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
     const sp = new URLSearchParams(nav.searchParams);
     if (v === "resumen") sp.delete("tab");
     else sp.set("tab", v);
-    for (const k of ["view", "stage", "filter"]) if (v !== tab) sp.delete(k);
+    for (const k of ["view", "stage", "filter", "proyecto", "vista", "periodo"]) if (v !== tab) sp.delete(k);
     const q = sp.toString();
     nav.replace(`${nav.pathname}${q ? `?${q}` : ""}`);
   };
@@ -41,7 +44,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
     <EmpresaShell
       title={
         <span className="inline-flex items-center gap-2">
-          <AreaDot area={area} className="size-2.5" /> {info.name}
+          {info.name}
           <span className="hidden text-caption font-normal text-muted-foreground md:inline">· {info.transforms}</span>
           {paused ? <StatusBadge status="paused" /> : null}
         </span>
@@ -50,7 +53,7 @@ export function EmpresaAreaPage({ area }: { area: string }) {
         <div className="flex items-center gap-2">
           {agent ? (
             <Button size="sm" variant="ghost" onClick={() => nav.push(p.agentDetail(str(agent.agent_id)))}>
-              <Bot className={info.text} /> {str(agent.name)}
+              {str(agent.name)}
             </Button>
           ) : null}
           <Button size="sm" variant="outline" onClick={() => setAsk({ open: true })} disabled={!agent}>
@@ -63,9 +66,16 @@ export function EmpresaAreaPage({ area }: { area: string }) {
         <div className={cn(PAGE_GUTTER, "border-b py-1.5")}>
           <TabsList variant="line">
             <TabsTrigger value="resumen">Resumen</TabsTrigger>
+            {area === "direccion" ? <TabsTrigger value="situacion">Situación</TabsTrigger> : null}
+            {area === "direccion" ? <TabsTrigger value="ritmo">Ritmo</TabsTrigger> : null}
+            {area === "direccion" ? <TabsTrigger value="planificacion">Planificación interna</TabsTrigger> : null}
+            {area === "ventas" ? <TabsTrigger value="pipeline">Pipeline</TabsTrigger> : null}
+            {area === "entrega" ? <TabsTrigger value="carga">Carga de trabajo</TabsTrigger> : null}
             <TabsTrigger value="gestion">Gestión</TabsTrigger>
             <TabsTrigger value="analisis">Análisis</TabsTrigger>
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
+            {area === "entrega" ? <TabsTrigger value="portal">Portal Cliente</TabsTrigger> : null}
+            {area === "finanzas" ? <TabsTrigger value="autonomo">Autónomo</TabsTrigger> : null}
           </TabsList>
         </div>
         <div className={cn(PAGE_GUTTER, "py-4")}>
@@ -95,6 +105,13 @@ export function EmpresaAreaPage({ area }: { area: string }) {
               {tab === "gestion" ? <AreaManagement area={area} /> : null}
               {tab === "analisis" ? <AreaAnalysis area={area} /> : null}
               {tab === "sistemas" ? <AreaSystems area={area} /> : null}
+              {tab === "autonomo" && area === "finanzas" ? <AutonomoDocuments /> : null}
+              {tab === "portal" && area === "entrega" ? <ClientPortal /> : null}
+              {tab === "situacion" && area === "direccion" ? <SituacionView /> : null}
+              {tab === "ritmo" && area === "direccion" ? <RitmoView /> : null}
+              {tab === "planificacion" && area === "direccion" ? <PlanificacionView /> : null}
+              {tab === "pipeline" && area === "ventas" ? <PipelineView /> : null}
+              {tab === "carga" && area === "entrega" ? <CargaView /> : null}
             </>
           )}
         </div>
@@ -121,6 +138,13 @@ function AreaSystems({ area }: { area: string }) {
   const [edit, setEdit] = useState<Record<string, string>>({});
   return (
     <div className="space-y-6">
+      <FolderSystems area={area} />
+
+      <details className="group rounded-lg border">
+        <summary className="cursor-pointer select-none px-3 py-2 text-caption text-muted-foreground">
+          Configuración de la app: capacidades del código, roles, agente{area === "entrega" || area === "ventas" ? ", servicios" : ""} e indicadores
+        </summary>
+        <div className="space-y-6 border-t p-3">
       <Section title={`Capacidades (${caps.length}) · modo de ejecución`}>
         <BizTable
           rows={caps as unknown as BizRow[]}
@@ -235,13 +259,17 @@ function AreaSystems({ area }: { area: string }) {
               render: (k) => (
                 <Input
                   className="h-7 w-24 text-caption"
+                  placeholder="sin meta"
                   disabled={!admin}
                   defaultValue={k.target === null || k.target === undefined ? "" : str(k.target)}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => setEdit((x) => ({ ...x, [str(k.code)]: e.target.value }))}
                   onBlur={() => {
-                    const v = edit[str(k.code)];
-                    if (v !== undefined && v !== "" && !Number.isNaN(Number(v))) exec("kpi.update", { code: str(k.code), target: Number(v) }, "Meta actualizada");
+                    const v = edit[str(k.code)]?.trim();
+                    if (v === undefined) return;
+                    if (v === "") {
+                      if (k.target !== null && k.target !== undefined) exec("kpi.update", { code: str(k.code), clear: true }, "Meta quitada: sin meta");
+                    } else if (!Number.isNaN(Number(v))) exec("kpi.update", { code: str(k.code), target: Number(v) }, "Meta actualizada");
                   }}
                 />
               ),
@@ -249,7 +277,10 @@ function AreaSystems({ area }: { area: string }) {
             { key: "alert", label: "Alerta", className: "w-20", render: (k) => (k.alert === null || k.alert === undefined ? "—" : formatKpiValue(Number(k.alert), str(k.unit))) },
           ]}
         />
+        <p className="text-caption text-muted-foreground">Sin meta, el indicador muestra su valor sin veredicto. Deja la meta vacía para quitarla.</p>
       </Section>
+        </div>
+      </details>
     </div>
   );
 }

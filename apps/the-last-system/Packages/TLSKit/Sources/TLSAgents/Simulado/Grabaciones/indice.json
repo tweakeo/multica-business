@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "empresa": "Asesoría Ribera (ejemplo)",
+  "hoy": "2026-10-19",
+  "nota": "Grabaciones simuladas de los asistentes de Ribera. Todo lo que producen se enseña con la marca «Simulado».",
+  "grabaciones": [
+    {
+      "nombre": "mika-algo-rojo",
+      "asistente": "mika",
+      "disparo": "rutina",
+      "clave": "algo-rojo",
+      "titulo": "«¿Algo rojo?»: una tarjeta 1-3-1 sobre las ventas de octubre",
+      "deja": [
+        "tarjeta 1-3-1 en Decisiones"
+      ]
+    },
+    {
+      "nombre": "mika-resumen-semana",
+      "asistente": "mika",
+      "disparo": "rutina",
+      "clave": "resumen-semana",
+      "titulo": "Resumen de la semana del lunes",
+      "deja": [
+        "resumen en la Actividad y la Bitácora"
+      ]
+    },
+    {
+      "nombre": "comercial-repaso-embudo",
+      "asistente": "comercial",
+      "disparo": "rutina",
+      "clave": "repaso-embudo",
+      "titulo": "Repaso del embudo: seguimiento del día 7 de Javier Ortega",
+      "deja": [
+        "borrador de correo",
+        "aprobación pendiente"
+      ]
+    },
+    {
+      "nombre": "comercial-preparar-seguimiento",
+      "asistente": "comercial",
+      "disparo": "accion",
+      "clave": "preparar-seguimiento",
+      "titulo": "«Preparar seguimiento» desde la ficha del Comercial: el del día 7 de Javier Ortega",
+      "deja": [
+        "borrador de correo",
+        "aprobación pendiente"
+      ]
+    },
+    {
+      "nombre": "contable-extracto-importado",
+      "asistente": "contable",
+      "disparo": "evento",
+      "clave": "extracto.importado",
+      "titulo": "Extracto importado: conciliación propuesta y una pregunta",
+      "deja": [
+        "conciliación propuesta",
+        "pregunta que espera respuesta"
+      ]
+    },
+    {
+      "nombre": "contable-respuesta",
+      "asistente": "contable",
+      "disparo": "respuesta",
+      "clave": "contable-extracto-importado",
+      "titulo": "Respuesta a la pregunta de la factura de Móvil Levante",
+      "deja": [
+        "borrador de correo",
+        "aprobación pendiente",
+        "propuesta de mejora"
+      ]
+    },
+    {
+      "nombre": "cartero-triaje",
+      "asistente": "cartero",
+      "disparo": "rutina",
+      "clave": "triaje",
+      "titulo": "Triaje del correo: cuatro correos clasificados y un plazo de Hacienda en rojo",
+      "deja": [
+        "3 tareas con el enlace al correo",
+        "respuesta en borrador",
+        "registro del Buzón del día",
+        "aviso en rojo"
+      ]
+    },
+    {
+      "nombre": "ordenador-barrido",
+      "asistente": "ordenador",
+      "disparo": "rutina",
+      "clave": "barrido",
+      "titulo": "Barrido de la carpeta",
+      "deja": []
+    },
+    {
+      "nombre": "mika-chat-hoy",
+      "asistente": "mika",
+      "disparo": "chat",
+      "clave": "hoy",
+      "titulo": "¿Qué tengo hoy?",
+      "palabras": [
+        "hoy",
+        "dia",
+        "tengo",
+        "agenda",
+        "semana"
+      ],
+      "deja": []
+    },
+    {
+      "nombre": "mika-chat-caja",
+      "asistente": "mika",
+      "disparo": "chat",
+      "clave": "caja",
+      "titulo": "¿Cómo vamos de caja?",
+      "palabras": [
+        "caja",
+        "dinero",
+        "banco",
+        "saldo",
+        "cobro",
+        "cobros",
+        "cuentas"
+      ],
+      "deja": []
+    },
+    {
+      "nombre": "mika-chat-embudo",
+      "asistente": "mika",
+      "disparo": "chat",
+      "clave": "embudo",
+      "titulo": "¿Cómo va el embudo?",
+      "palabras": [
+        "embudo",
+        "ventas",
+        "oportunidad",
+        "oportunidades",
+        "clientes",
+        "propuestas"
+      ],
+      "deja": []
+    },
+    {
+      "nombre": "mika-chat-tarea",
+      "asistente": "mika",
+      "disparo": "chat",
+      "clave": "tarea",
+      "titulo": "Prepárame la llamada con Amparo Ribera",
+      "palabras": [
+        "apunta",
+        "recuerdame",
+        "tarea",
+        "llamada",
+        "prepara",
+        "preparame"
+      ],
+      "deja": [
+        "tarea para el Comercial"
+      ]
+    },
+    {
+      "nombre": "mika-chat",
+      "asistente": "mika",
+      "disparo": "chat",
+      "clave": "",
+      "titulo": "Qué puede contestar Mika en el ejemplo",
+      "deja": []
+    },
+    {
+      "nombre": "generica",
+      "asistente": "",
+      "disparo": "",
+      "clave": "",
+      "titulo": "Cualquier otro trabajo del ejemplo (sin cambios)",
+      "deja": []
+    }
+  ]
+}

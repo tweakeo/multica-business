@@ -150,6 +150,8 @@ vi.mock("@multica/core/paths", async (importOriginal) => ({
     settings: () => "/acme/settings",
     empresa: () => "/acme/empresa",
     empresaArea: (area: string) => `/acme/empresa/${area}`,
+    bases: () => "/acme/bases",
+    basesDb: (db: string) => `/acme/bases/${db}`,
     issueDetail: (id: string) => `/acme/issues/${id}`,
     projectDetail: (id: string) => `/acme/projects/${id}`,
   }),

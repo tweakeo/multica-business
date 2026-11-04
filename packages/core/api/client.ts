@@ -991,6 +991,13 @@ export class ApiClient {
     return this.fetch<unknown>(`/api/biz${path}`);
   }
 
+  // Raw bytes of a file of the company folder (TLS library), for opening the
+  // original from an object URL: a plain link would not carry the auth headers.
+  async bizBlob(path: string): Promise<Blob> {
+    const res = await this.fetchRaw(`/api/biz${path}`);
+    return res.blob();
+  }
+
   async bizPost(path: string, body: unknown): Promise<unknown> {
     return this.fetch<unknown>(`/api/biz${path}`, {
       method: "POST",

@@ -12,7 +12,8 @@
     "runtimes": "ランタイム",
     "skills": "スキル",
     "settings": "設定",
-    "empresa": "会社"
+    "empresa": "会社",
+    "bases": "データベース"
   },
   "tab": {
     "issue": "タスク",
@@ -62,6 +63,8 @@
       "title": "Discord に参加",
       "dismiss": "閉じる"
     },
-    "empresa_group": "会社"
+    "empresa_group": "会社",
+    "bases_group": "データベース",
+    "bases_all": "すべてのデータベース"
   }
 }

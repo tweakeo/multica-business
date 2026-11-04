@@ -1,0 +1,11 @@
+{
+  "operacion": "escritor",
+  "descripcion": "appendLine añade la línea tras la última con texto, con su salto de línea.",
+  "plan": [
+    {
+      "op": "appendLine",
+      "ruta": "1 · Dirección/Decisiones.md",
+      "linea": "- 2026-10-20 · Trimestrales pasa a 165 € desde T1 2027 · perdemos clientes por precio pero el margen no da · Ventas"
+    }
+  ]
+}

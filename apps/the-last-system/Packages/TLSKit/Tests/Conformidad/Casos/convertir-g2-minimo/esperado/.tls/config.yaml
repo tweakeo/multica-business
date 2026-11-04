@@ -1,0 +1,13 @@
+# Configuración de esta carpeta, creada por The Last System al convertir una exportación de G2.
+# Lo que cambies aquí no llega a la carpeta de origen.
+version: 1
+id: 80456a26-5841-5c15-9279-32593cdf7291
+clase: demo
+origen: "entrada"
+creada: 2026-10-19
+hoy: 2026-10-19
+privado: []
+# Datos del emisor: solo los pone la app en los PDF; ningún asistente los lee.
+facturacion:
+  razon_social: Asesoría Ribera Demo SL
+  nif: B00000000 (ficticio)

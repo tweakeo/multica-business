@@ -1,0 +1,841 @@
+# Plantillas de serie de The Last System (PLANTILLAS.md §1.1).
+# Qué crea cada plantilla, dónde, con qué nombre y qué pregunta al crear.
+# `fichero`: dónde se instala en la carpeta ({direccion}, {ventas}… son las carpetas de área).
+# `origen`: la original dentro de la app. `carpeta` y `nombre`: dónde nace la nota y cómo se llama.
+# `carpeta_si`: carpeta según desde qué ficha se crea (la primera que haya gana).
+# `serie`: contador de `.tls/secuencias.json` que da `{{numero}}`.
+
+# Comunes (se instalan en 1 · Dirección/Sistemas/Plantillas/)
+tarea:
+  fichero: "{direccion}/Sistemas/Plantillas/Tarea.md"
+  origen: "Comunes/Tarea.md"
+  tipo: task
+  carpeta: "{area}/Tareas"
+  carpeta_si: {proyecto: "{{proyecto.carpeta}}/Tareas"}
+  nombre: "t-{{numero:cifras}}-{{slug}}"
+  preguntas: [titulo, responsable]
+  desde: [project, opportunity, organization, contact]
+  serie: tarea
+  modulo: tareas
+  sistemas: [todos]
+pregunta-asistente:
+  fichero: "{direccion}/Sistemas/Plantillas/Pregunta de asistente.md"
+  origen: "Comunes/Pregunta de asistente.md"
+  tipo: task
+  carpeta: "{area}/Tareas"
+  carpeta_si: {proyecto: "{{proyecto.carpeta}}/Tareas"}
+  nombre: "t-{{numero:cifras}}-{{slug}}"
+  preguntas: [titulo, asistente]
+  serie: tarea
+  modulo: tareas
+  sistemas: [DI1]
+decision-1-3-1:
+  fichero: "{direccion}/Sistemas/Plantillas/Decisión 1-3-1.md"
+  origen: "Comunes/Decisión 1-3-1.md"
+  tipo: task
+  carpeta: "{area}/Tareas"
+  carpeta_si: {proyecto: "{{proyecto.carpeta}}/Tareas"}
+  nombre: "t-{{numero:cifras}}-{{slug}}"
+  preguntas: [titulo]
+  serie: tarea
+  modulo: tareas
+  sistemas: [DI1]
+ficha-de-decision:
+  fichero: "{direccion}/Sistemas/Plantillas/Ficha de decisión.md"
+  origen: "Comunes/Ficha de decisión.md"
+  tipo: decision
+  carpeta: "{direccion}/Decisiones"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  modulo: decisiones
+  sistemas: [DI1]
+reunion:
+  fichero: "{direccion}/Sistemas/Plantillas/Reunión.md"
+  origen: "Comunes/Reunión.md"
+  tipo: meeting
+  carpeta: "{area}/Reuniones"
+  carpeta_si: {proyecto: "{{proyecto.carpeta}}/Reuniones", oportunidad: "{ventas}/Oportunidades/{{oportunidad.slug}}/Reuniones"}
+  nombre: "{{fecha}}-{{slug}}"
+  preguntas: [titulo, fecha, hora]
+  desde: [organization, contact, opportunity, project]
+  modulo: crm
+  sistemas: [todos]
+ficha-de-sistema:
+  fichero: "{direccion}/Sistemas/Plantillas/Ficha de sistema.md"
+  origen: "Comunes/Ficha de sistema.md"
+  tipo: system
+  carpeta: "{area}/Sistemas"
+  nombre: "{{titulo}}"
+  preguntas: [titulo, area]
+  sistemas: [todos]
+procedimiento:
+  fichero: "{direccion}/Sistemas/Plantillas/Procedimiento.md"
+  origen: "Comunes/Procedimiento.md"
+  tipo: procedure
+  carpeta: "{area}/Sistemas"
+  nombre: "{{titulo}}"
+  preguntas: [titulo, sistema]
+  desde: [system]
+  sistemas: [todos]
+activo:
+  fichero: "{direccion}/Sistemas/Plantillas/Activo.md"
+  origen: "Comunes/Activo.md"
+  tipo: asset
+  carpeta: "{area}/Activos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, sistema]
+  desde: [system]
+  sistemas: [todos]
+nota-indice:
+  fichero: "{direccion}/Sistemas/Plantillas/Nota índice.md"
+  origen: "Comunes/Nota índice.md"
+  tipo: index
+  nombre: "{{titulo}}"
+  preguntas: [titulo, coleccion]
+proyecto-interno:
+  fichero: "{direccion}/Sistemas/Plantillas/Proyecto interno.md"
+  origen: "Comunes/Proyecto interno.md"
+  tipo: project
+  carpeta: "{area}/Proyectos/{{slug}}"
+  nombre: "Proyecto"
+  preguntas: [titulo, area]
+  modulo: cronograma
+  sistemas: [DI2, DI3]
+captura-rapida:
+  fichero: "{direccion}/Sistemas/Plantillas/Captura rápida.md"
+  origen: "Comunes/Captura rápida.md"
+  tipo: capture
+  carpeta: "Buzón"
+  nombre: "{{fecha}} {{hora:hhmm}}"
+  modulo: captura-rapida
+  sistemas: [CO1]
+borrador-de-mensaje:
+  fichero: "{direccion}/Sistemas/Plantillas/Borrador de mensaje.md"
+  origen: "Comunes/Borrador de mensaje.md"
+  tipo: draft
+  carpeta: "{area}/Borradores"
+  nombre: "{{slug}}"
+  preguntas: [titulo, para]
+  sistemas: [todos]
+cabecera-de-area:
+  fichero: "{direccion}/Sistemas/Plantillas/Cabecera de área.md"
+  origen: "Comunes/Cabecera de área.md"
+  tipo: area
+  carpeta: "{area}"
+  nombre: "Área"
+tu-empresa:
+  fichero: "{direccion}/Sistemas/Plantillas/Tu empresa.md"
+  origen: "Comunes/Tu empresa.md"
+  tipo: company
+  carpeta: ""
+  nombre: "Empresa"
+registro-del-buzon:
+  fichero: "{direccion}/Sistemas/Plantillas/Registro del Buzón.md"
+  origen: "Comunes/Registro del Buzón.md"
+  tipo: log
+  carpeta: "Buzón"
+  nombre: "Correo {{mes}}"
+  sistemas: [CO1]
+informe-de-importacion:
+  fichero: "{direccion}/Sistemas/Plantillas/Informe de importación.md"
+  origen: "Comunes/Informe de importación.md"
+  tipo: import_report
+  carpeta: "Buzón"
+  nombre: "Informe de importación {{fecha}}"
+  sistemas: [CO1]
+
+# Dirección
+diagnostico:
+  fichero: "{direccion}/Sistemas/Plantillas/Diagnóstico.md"
+  origen: "1 · Dirección/Diagnóstico.md"
+  tipo: diagnosis
+  carpeta: "{direccion}"
+  nombre: "Diagnóstico"
+  sistemas: [DI3]
+rumbo:
+  fichero: "{direccion}/Sistemas/Plantillas/Rumbo.md"
+  origen: "1 · Dirección/Rumbo.md"
+  tipo: strategy
+  carpeta: "{direccion}"
+  nombre: "Rumbo"
+  sistemas: [DI3]
+plan-de-4-semanas:
+  fichero: "{direccion}/Sistemas/Plantillas/Plan de 4 semanas.md"
+  origen: "1 · Dirección/Plan de 4 semanas.md"
+  tipo: project
+  carpeta: "{direccion}/Proyectos/plan-de-4-semanas-{{cuello.slug}}"
+  nombre: "Proyecto"
+  preguntas: [cuello]
+  sistemas: [DI3]
+metas:
+  fichero: "{direccion}/Sistemas/Plantillas/Metas.md"
+  origen: "1 · Dirección/Metas.md"
+  tipo: log
+  carpeta: "{direccion}"
+  nombre: "Metas"
+  sistemas: [DI3]
+registro-de-decisiones:
+  fichero: "{direccion}/Sistemas/Plantillas/Registro de decisiones.md"
+  origen: "1 · Dirección/Registro de decisiones.md"
+  tipo: log
+  carpeta: "{direccion}"
+  nombre: "Decisiones"
+  sistemas: [DI1]
+cinco-porques:
+  fichero: "{direccion}/Sistemas/Plantillas/Cinco porqués.md"
+  origen: "1 · Dirección/Cinco porqués.md"
+  tipo: root_cause
+  carpeta: "{area}"
+  carpeta_si: {proyecto: "{{proyecto.carpeta}}"}
+  nombre: "cinco-porques-{{slug}}"
+  preguntas: [titulo]
+  desde: [project, system]
+  sistemas: [DI3, EN3]
+rutina:
+  fichero: "{direccion}/Sistemas/Plantillas/Rutina.md"
+  origen: "1 · Dirección/Rutina.md"
+  tipo: routine
+  carpeta: "{direccion}/Rutinas"
+  nombre: "{{slug}}"
+  preguntas: [titulo, cadencia, pregunta]
+  modulo: rutinas
+  sistemas: [DI2]
+inicio-de-semana:
+  fichero: "{direccion}/Sistemas/Plantillas/Inicio de semana.md"
+  origen: "1 · Dirección/Inicio de semana.md"
+  tipo: routine_log
+  carpeta: "{direccion}/Rutinas/inicio-de-semana"
+  carpeta_si: {rutina: "{{rutina.carpeta}}/{{rutina.slug}}"}
+  nombre: "{{fecha}}"
+  desde: [routine]
+  modulo: rutinas
+  sistemas: [DI2]
+cierre-de-semana:
+  fichero: "{direccion}/Sistemas/Plantillas/Cierre de semana.md"
+  origen: "1 · Dirección/Cierre de semana.md"
+  tipo: routine_log
+  carpeta: "{direccion}/Rutinas/cierre-de-semana"
+  carpeta_si: {rutina: "{{rutina.carpeta}}/{{rutina.slug}}"}
+  nombre: "{{fecha}}"
+  desde: [routine]
+  modulo: rutinas
+  sistemas: [DI1, DI2]
+revision-mensual:
+  fichero: "{direccion}/Sistemas/Plantillas/Revisión mensual.md"
+  origen: "1 · Dirección/Revisión mensual.md"
+  tipo: routine_log
+  carpeta: "{direccion}/Rutinas/revision-mensual"
+  carpeta_si: {rutina: "{{rutina.carpeta}}/{{rutina.slug}}"}
+  nombre: "{{fecha}}"
+  desde: [routine]
+  modulo: rutinas
+  sistemas: [DI2, DI3]
+revision-trimestral:
+  fichero: "{direccion}/Sistemas/Plantillas/Revisión trimestral.md"
+  origen: "1 · Dirección/Revisión trimestral.md"
+  tipo: routine_log
+  carpeta: "{direccion}/Rutinas/revision-trimestral"
+  carpeta_si: {rutina: "{{rutina.carpeta}}/{{rutina.slug}}"}
+  nombre: "{{fecha}}"
+  desde: [routine]
+  modulo: rutinas
+  sistemas: [DI2, DI3]
+objetivo:
+  fichero: "{direccion}/Sistemas/Plantillas/Objetivo.md"
+  origen: "1 · Dirección/Objetivo.md"
+  tipo: objective
+  carpeta: "{direccion}/Objetivos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, periodo, meta, medido_por]
+  modulo: objetivos
+  sistemas: [DI2]
+peticion-de-encargo:
+  fichero: "{direccion}/Sistemas/Plantillas/Petición de encargo.md"
+  origen: "1 · Dirección/Petición de encargo.md"
+  tipo: task
+  carpeta: "{direccion}/Tareas"
+  nombre: "t-{{numero:cifras}}-{{slug}}"
+  preguntas: [titulo]
+  desde: [organization, contact]
+  serie: tarea
+  modulo: tareas
+  sistemas: [DI1]
+
+# Ventas
+contacto:
+  fichero: "{ventas}/Sistemas/Plantillas/Contacto.md"
+  origen: "2 · Ventas/Contacto.md"
+  tipo: contact
+  carpeta: "{ventas}/Contactos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, empresa, email]
+  desde: [organization]
+  modulo: directorio
+  sistemas: [VE2]
+empresa:
+  fichero: "{ventas}/Sistemas/Plantillas/Empresa.md"
+  origen: "2 · Ventas/Empresa.md"
+  tipo: organization
+  carpeta: "{ventas}/Empresas"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  desde: [contact]
+  modulo: directorio
+  sistemas: [VE2]
+oportunidad:
+  fichero: "{ventas}/Sistemas/Plantillas/Oportunidad.md"
+  origen: "2 · Ventas/Oportunidad.md"
+  tipo: opportunity
+  carpeta: "{ventas}/Oportunidades"
+  nombre: "{{contacto.slug}}-{{servicio.slug}}"
+  titulo: "{{contacto.nombre}} · {{servicio.nombre}}"
+  preguntas: [contacto, servicio]
+  desde: [organization, contact, service]
+  modulo: crm
+  sistemas: [VE2]
+servicio:
+  fichero: "{ventas}/Sistemas/Plantillas/Servicio.md"
+  origen: "2 · Ventas/Servicio.md"
+  tipo: service
+  carpeta: "{ventas}/Productos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, codigo]
+  modulo: crm
+  sistemas: [VE1]
+version-de-oferta:
+  fichero: "{ventas}/Sistemas/Plantillas/Versión de oferta.md"
+  origen: "2 · Ventas/Versión de oferta.md"
+  tipo: offer
+  carpeta: "{ventas}/Productos/Versiones"
+  nombre: "{{servicio.slug}}-v{{version}}"
+  preguntas: [servicio, version]
+  desde: [service]
+  sistemas: [VE1]
+guion-de-diagnostico:
+  fichero: "{ventas}/Sistemas/Plantillas/Guion de diagnóstico.md"
+  origen: "2 · Ventas/Guion de diagnóstico.md"
+  tipo: asset
+  carpeta: "{ventas}/Activos"
+  nombre: "guion-de-diagnostico-v{{version}}"
+  preguntas: [version]
+  sistemas: [VE2]
+objeciones:
+  fichero: "{ventas}/Sistemas/Plantillas/Objeciones.md"
+  origen: "2 · Ventas/Objeciones.md"
+  tipo: asset
+  carpeta: "{ventas}/Activos"
+  nombre: "objeciones-{{servicio.slug}}"
+  preguntas: [servicio]
+  desde: [service]
+  sistemas: [VE1]
+reunion-de-descubrimiento:
+  fichero: "{ventas}/Sistemas/Plantillas/Reunión de descubrimiento.md"
+  origen: "2 · Ventas/Reunión de descubrimiento.md"
+  tipo: meeting
+  carpeta: "{ventas}/Oportunidades/{{oportunidad.slug}}/Reuniones"
+  nombre: "{{fecha}}-descubrimiento-{{servicio.slug}}"
+  titulo: "Descubrimiento · {{servicio.nombre}} · {{empresa.nombre}}"
+  variante_por: servicio
+  preguntas: [servicio, fecha, hora]
+  desde: [organization, contact, opportunity, service]
+  modulo: crm
+  sistemas: [VE2, VE1]
+reunion-de-diagnostico:
+  fichero: "{ventas}/Sistemas/Plantillas/Reunión de diagnóstico.md"
+  origen: "2 · Ventas/Reunión de diagnóstico.md"
+  tipo: meeting
+  carpeta: "{ventas}/Oportunidades/{{oportunidad.slug}}/Reuniones"
+  nombre: "{{fecha}}-diagnostico"
+  titulo: "Diagnóstico · {{empresa.nombre}}"
+  preguntas: [fecha, hora]
+  desde: [organization, contact, opportunity]
+  modulo: crm
+  sistemas: [VE2]
+propuesta:
+  fichero: "{ventas}/Sistemas/Plantillas/Propuesta.md"
+  origen: "2 · Ventas/Propuesta.md"
+  tipo: proposal
+  carpeta: "{ventas}/Oportunidades/{{oportunidad.slug}}"
+  nombre: "Propuesta v{{orden}}"
+  preguntas: [oportunidad]
+  desde: [opportunity, meeting, organization, contact]
+  modulo: propuestas-y-presupuestos
+  sistemas: [VE2]
+presupuesto:
+  fichero: "{ventas}/Sistemas/Plantillas/Presupuesto.md"
+  origen: "2 · Ventas/Presupuesto.md"
+  tipo: quote
+  carpeta: "{ventas}/Oportunidades/{{oportunidad.slug}}"
+  nombre: "Presupuesto v{{orden}}"
+  preguntas: [oportunidad]
+  desde: [opportunity, organization, contact]
+  modulo: propuestas-y-presupuestos
+  sistemas: [VE2, FI1]
+mensaje:
+  fichero: "{ventas}/Sistemas/Plantillas/Mensaje.md"
+  origen: "2 · Ventas/Mensaje.md"
+  tipo: draft
+  carpeta: "{ventas}/Borradores"
+  nombre: "{{slug}}"
+  preguntas: [titulo, motivo]
+  desde: [contact, opportunity]
+  sistemas: [VE2]
+seguimiento:
+  fichero: "{ventas}/Sistemas/Plantillas/Seguimiento.md"
+  origen: "2 · Ventas/Seguimiento.md"
+  tipo: task
+  carpeta: "{ventas}/Tareas"
+  nombre: "t-{{numero:cifras}}-{{slug}}"
+  preguntas: [dia]
+  desde: [opportunity]
+  serie: tarea
+  modulo: seguimientos
+  sistemas: [VE2]
+peticion-de-referido:
+  fichero: "{ventas}/Sistemas/Plantillas/Petición de referido.md"
+  origen: "2 · Ventas/Petición de referido.md"
+  tipo: draft
+  carpeta: "{ventas}/Borradores"
+  nombre: "peticion-de-referido-{{empresa.slug}}"
+  desde: [organization, contact, project]
+  modulo: referidos
+  sistemas: [VE3]
+mensaje-de-continuidad:
+  fichero: "{ventas}/Sistemas/Plantillas/Mensaje de continuidad.md"
+  origen: "2 · Ventas/Mensaje de continuidad.md"
+  tipo: draft
+  carpeta: "{ventas}/Borradores"
+  nombre: "continuidad-{{empresa.slug}}"
+  desde: [organization, contact, project]
+  modulo: referidos
+  sistemas: [VE3]
+
+# Entrega
+plan-de-entrega:
+  fichero: "{entrega}/Sistemas/Plantillas/Plan de entrega.md"
+  origen: "3 · Entrega/Plan de entrega.md"
+  tipo: delivery_template
+  carpeta: "{entrega}/Planes de entrega"
+  nombre: "{{servicio.slug}}"
+  preguntas: [servicio]
+  desde: [service]
+  modulo: planes-de-entrega
+  sistemas: [EN2]
+proyecto-de-entrega:
+  fichero: "{entrega}/Sistemas/Plantillas/Proyecto de entrega.md"
+  origen: "3 · Entrega/Proyecto de entrega.md"
+  tipo: project
+  carpeta: "{entrega}/Proyectos/{{empresa.slug}}-{{servicio.slug}}"
+  nombre: "Proyecto"
+  titulo: "{{empresa.nombre}} · {{servicio.nombre}}"
+  preguntas: [oportunidad]
+  desde: [opportunity, organization, contact]
+  modulo: expedientes
+  sistemas: [EN1]
+antecedentes:
+  fichero: "{entrega}/Sistemas/Plantillas/Antecedentes.md"
+  origen: "3 · Entrega/Antecedentes.md"
+  tipo: background
+  carpeta: "{{proyecto.carpeta}}"
+  nombre: "Antecedentes"
+  desde: [project]
+  modulo: expedientes
+  sistemas: [EN1]
+traspaso:
+  fichero: "{entrega}/Sistemas/Plantillas/Traspaso.md"
+  origen: "3 · Entrega/Traspaso.md"
+  tipo: fragment
+  forma: seccion
+  donde: "Proyecto.md › Traspaso"
+  desde: [project]
+  modulo: expedientes
+  sistemas: [EN1]
+bienvenida:
+  fichero: "{entrega}/Sistemas/Plantillas/Bienvenida.md"
+  origen: "3 · Entrega/Bienvenida.md"
+  tipo: welcome
+  carpeta: "{entrega}/Portal Cliente/{{proyecto.slug}}"
+  nombre: "Bienvenida"
+  desde: [project]
+  modulo: viaje-y-portal
+  sistemas: [EN1]
+peticion-de-contexto:
+  fichero: "{entrega}/Sistemas/Plantillas/Petición de contexto.md"
+  origen: "3 · Entrega/Petición de contexto.md"
+  tipo: draft
+  carpeta: "{entrega}/Borradores"
+  nombre: "peticion-de-contexto-{{proyecto.slug}}"
+  desde: [project]
+  modulo: expedientes
+  sistemas: [EN1]
+portal:
+  fichero: "{entrega}/Sistemas/Plantillas/Portal.md"
+  origen: "3 · Entrega/Portal.md"
+  tipo: portal
+  carpeta: "{{proyecto.carpeta}}"
+  nombre: "Portal"
+  desde: [project]
+  modulo: viaje-y-portal
+  sistemas: [EN1]
+acta-de-sesion:
+  fichero: "{entrega}/Sistemas/Plantillas/Acta de sesión.md"
+  origen: "3 · Entrega/Acta de sesión.md"
+  tipo: meeting
+  carpeta: "{{proyecto.carpeta}}/Reuniones"
+  nombre: "{{fecha}}-sesion-{{orden}}"
+  preguntas: [sesion, fecha, hora]
+  desde: [project]
+  modulo: viaje-y-portal
+  sistemas: [EN2]
+reunion-de-seguimiento:
+  fichero: "{entrega}/Sistemas/Plantillas/Reunión de seguimiento.md"
+  origen: "3 · Entrega/Reunión de seguimiento.md"
+  tipo: meeting
+  carpeta: "{{proyecto.carpeta}}/Reuniones"
+  nombre: "{{fecha}}-seguimiento-{{orden}}"
+  titulo: "Seguimiento {{orden}} · {{empresa.nombre}}"
+  preguntas: [fecha, hora]
+  desde: [project, organization, contact]
+  modulo: expedientes
+  sistemas: [EN2]
+mensaje-previo-a-la-sesion:
+  fichero: "{entrega}/Sistemas/Plantillas/Mensaje previo a la sesión.md"
+  origen: "3 · Entrega/Mensaje previo a la sesión.md"
+  tipo: draft
+  carpeta: "{entrega}/Borradores"
+  nombre: "previo-{{proyecto.slug}}-{{fecha}}"
+  desde: [project]
+  modulo: viaje-y-portal
+  sistemas: [EN2]
+mensaje-posterior-a-la-sesion:
+  fichero: "{entrega}/Sistemas/Plantillas/Mensaje posterior a la sesión.md"
+  origen: "3 · Entrega/Mensaje posterior a la sesión.md"
+  tipo: draft
+  carpeta: "{entrega}/Borradores"
+  nombre: "posterior-{{proyecto.slug}}-{{fecha}}"
+  desde: [project, meeting]
+  modulo: viaje-y-portal
+  sistemas: [EN2]
+resumen-de-la-sesion:
+  fichero: "{entrega}/Sistemas/Plantillas/Resumen de la sesión.md"
+  origen: "3 · Entrega/Resumen de la sesión.md"
+  tipo: session_summary
+  carpeta: "{entrega}/Portal Cliente/{{proyecto.slug}}"
+  nombre: "Resumen {{fecha}}"
+  desde: [project, meeting]
+  modulo: viaje-y-portal
+  sistemas: [EN2]
+informe-de-avance:
+  fichero: "{entrega}/Sistemas/Plantillas/Informe de avance.md"
+  origen: "3 · Entrega/Informe de avance.md"
+  tipo: report
+  carpeta: "{{proyecto.carpeta}}/Informes"
+  nombre: "{{semana}}"
+  desde: [project]
+  modulo: expedientes
+  sistemas: [EN2]
+registro-de-incidencias:
+  fichero: "{entrega}/Sistemas/Plantillas/Registro de incidencias.md"
+  origen: "3 · Entrega/Registro de incidencias.md"
+  tipo: log
+  carpeta: "{{proyecto.carpeta}}"
+  nombre: "Incidencias"
+  desde: [project]
+  modulo: incidencias
+  sistemas: [EN3]
+ficha-de-incidencia:
+  fichero: "{entrega}/Sistemas/Plantillas/Ficha de incidencia.md"
+  origen: "3 · Entrega/Ficha de incidencia.md"
+  tipo: incident
+  carpeta: "{{proyecto.carpeta}}/Incidencias"
+  nombre: "{{numero}}"
+  preguntas: [titulo, gravedad]
+  desde: [project]
+  serie: incidencia
+  modulo: incidencias
+  sistemas: [EN3]
+acuse-de-recibo:
+  fichero: "{entrega}/Sistemas/Plantillas/Acuse de recibo.md"
+  origen: "3 · Entrega/Acuse de recibo.md"
+  tipo: draft
+  carpeta: "{entrega}/Borradores"
+  nombre: "acuse-{{incidencia.slug}}"
+  desde: [incident]
+  modulo: incidencias
+  sistemas: [EN3]
+cierre:
+  fichero: "{entrega}/Sistemas/Plantillas/Cierre.md"
+  origen: "3 · Entrega/Cierre.md"
+  tipo: closure
+  carpeta: "{{proyecto.carpeta}}"
+  nombre: "Cierre"
+  desde: [project]
+  modulo: expedientes
+  sistemas: [EN3]
+
+# Finanzas
+contrato:
+  fichero: "{finanzas}/Sistemas/Plantillas/Contrato.md"
+  origen: "4 · Finanzas/Contrato.md"
+  tipo: agreement
+  carpeta: "{ventas}/Oportunidades/{{oportunidad.slug}}"
+  nombre: "Contrato"
+  desde: [opportunity]
+  modulo: facturas-y-cobros
+  sistemas: [FI1]
+factura:
+  fichero: "{finanzas}/Sistemas/Plantillas/Factura.md"
+  origen: "4 · Finanzas/Factura.md"
+  tipo: invoice
+  carpeta: "{finanzas}/Fiscal/Borradores"
+  nombre: "{{empresa.slug}}-{{fecha}}"
+  preguntas: [oportunidad, hito]
+  desde: [organization, contact, opportunity, project]
+  modulo: facturas-y-cobros
+  sistemas: [FI1]
+factura-rectificativa:
+  fichero: "{finanzas}/Sistemas/Plantillas/Factura rectificativa.md"
+  origen: "4 · Finanzas/Factura rectificativa.md"
+  tipo: invoice
+  carpeta: "{finanzas}/Fiscal/Borradores"
+  nombre: "{{empresa.slug}}-{{fecha}}-rectificativa"
+  preguntas: [factura, metodo, motivo]
+  desde: [invoice]
+  modulo: facturas-y-cobros
+  sistemas: [FI1]
+recibo-de-cobro:
+  fichero: "{finanzas}/Sistemas/Plantillas/Recibo de cobro.md"
+  origen: "4 · Finanzas/Recibo de cobro.md"
+  tipo: receipt
+  carpeta: "{finanzas}/Fiscal/{{año}}/{{trimestre:corto}}/Ingresos/Cobros"
+  nombre: "{{numero}}"
+  desde: [invoice]
+  serie: recibo
+  modulo: facturas-y-cobros
+  sistemas: [FI1]
+recordatorio-de-cobro:
+  fichero: "{finanzas}/Sistemas/Plantillas/Recordatorio de cobro.md"
+  origen: "4 · Finanzas/Recordatorio de cobro.md"
+  tipo: draft
+  carpeta: "{finanzas}/Borradores"
+  nombre: "recordatorio-{{factura.slug}}"
+  desde: [invoice]
+  modulo: facturas-y-cobros
+  sistemas: [FI1]
+condiciones-de-cobro:
+  fichero: "{finanzas}/Sistemas/Plantillas/Condiciones de cobro.md"
+  origen: "4 · Finanzas/Condiciones de cobro.md"
+  tipo: fragment
+  forma: seccion
+  donde: "Servicio › Condiciones de cobro"
+  desde: [service]
+  modulo: facturas-y-cobros
+  sistemas: [FI1, VE1]
+cuenta-bancaria:
+  fichero: "{finanzas}/Sistemas/Plantillas/Cuenta bancaria.md"
+  origen: "4 · Finanzas/Cuenta bancaria.md"
+  tipo: account
+  carpeta: "{finanzas}/Registros/Bancos/{{slug}}"
+  nombre: "Cuenta"
+  preguntas: [titulo, banco]
+  modulo: banco-y-conciliacion
+  sistemas: [FI2]
+gasto:
+  fichero: "{finanzas}/Sistemas/Plantillas/Gasto.md"
+  origen: "4 · Finanzas/Gasto.md"
+  tipo: fragment
+  forma: fila
+  donde: "{finanzas}/Registros/recibidas.csv"
+  modulo: gastos
+  sistemas: [FI3]
+indice-del-paquete-trimestral:
+  fichero: "{finanzas}/Sistemas/Plantillas/Índice del paquete trimestral.md"
+  origen: "4 · Finanzas/Índice del paquete trimestral.md"
+  tipo: period
+  carpeta: "{finanzas}/Fiscal/{{año}}/{{trimestre:corto}}/Modelos/Paquete gestoría"
+  nombre: "indice"
+  modulo: trimestre-y-gestoria
+  sistemas: [FI3]
+dudas-para-la-gestoria:
+  fichero: "{finanzas}/Sistemas/Plantillas/Dudas para la gestoría.md"
+  origen: "4 · Finanzas/Dudas para la gestoría.md"
+  tipo: log
+  carpeta: "{finanzas}/Gestoría"
+  nombre: "Dudas"
+  modulo: trimestre-y-gestoria
+  sistemas: [FI3]
+
+# Marca
+manual-de-marca:
+  fichero: "{marca}/Sistemas/Plantillas/Manual de marca.md"
+  origen: "5 · Marca/Manual de marca.md"
+  tipo: brand
+  carpeta: "{marca}"
+  nombre: "Marca"
+  modulo: kit-de-marca-y-logo
+  sistemas: [MA1]
+kit-de-logo:
+  fichero: "{marca}/Sistemas/Plantillas/Kit de logo.md"
+  origen: "5 · Marca/Kit de logo.md"
+  tipo: asset
+  carpeta: "{marca}/Activos/Logo"
+  nombre: "Logo"
+  modulo: kit-de-marca-y-logo
+  sistemas: [MA1]
+plan-editorial:
+  fichero: "{marca}/Sistemas/Plantillas/Plan editorial.md"
+  origen: "5 · Marca/Plan editorial.md"
+  tipo: editorial_plan
+  carpeta: "{marca}"
+  nombre: "Plan editorial"
+  modulo: calendario-editorial
+  sistemas: [MA2]
+calendario-editorial:
+  fichero: "{marca}/Sistemas/Plantillas/Calendario editorial.md"
+  origen: "5 · Marca/Calendario editorial.md"
+  tipo: index
+  carpeta: "{marca}"
+  nombre: "Calendario editorial"
+  modulo: calendario-editorial
+  sistemas: [MA2]
+post:
+  fichero: "{marca}/Sistemas/Plantillas/Post.md"
+  origen: "5 · Marca/Post.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, pilar]
+  modulo: contenido
+  sistemas: [MA2]
+carrusel:
+  fichero: "{marca}/Sistemas/Plantillas/Carrusel.md"
+  origen: "5 · Marca/Carrusel.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, pilar]
+  modulo: contenido
+  sistemas: [MA2]
+video-corto:
+  fichero: "{marca}/Sistemas/Plantillas/Vídeo corto.md"
+  origen: "5 · Marca/Vídeo corto.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, pilar]
+  modulo: contenido
+  sistemas: [MA2]
+newsletter:
+  fichero: "{marca}/Sistemas/Plantillas/Newsletter.md"
+  origen: "5 · Marca/Newsletter.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  modulo: contenido
+  sistemas: [MA2]
+articulo:
+  fichero: "{marca}/Sistemas/Plantillas/Artículo.md"
+  origen: "5 · Marca/Artículo.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, palabra_clave]
+  modulo: contenido
+  sistemas: [MA2]
+anuncio:
+  fichero: "{marca}/Sistemas/Plantillas/Anuncio.md"
+  origen: "5 · Marca/Anuncio.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo, presupuesto]
+  modulo: contenido
+  sistemas: [MA2]
+caso-de-exito:
+  fichero: "{marca}/Sistemas/Plantillas/Caso de éxito.md"
+  origen: "5 · Marca/Caso de éxito.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  desde: [project, organization]
+  modulo: conversaciones-y-casos
+  sistemas: [MA3]
+testimonio:
+  fichero: "{marca}/Sistemas/Plantillas/Testimonio.md"
+  origen: "5 · Marca/Testimonio.md"
+  tipo: content
+  carpeta: "{marca}/Contenidos"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  desde: [project, contact, organization]
+  modulo: conversaciones-y-casos
+  sistemas: [MA3, VE3]
+conversacion:
+  fichero: "{marca}/Sistemas/Plantillas/Conversación.md"
+  origen: "5 · Marca/Conversación.md"
+  tipo: conversation
+  carpeta: "{marca}/Conversaciones"
+  nombre: "{{canal}}-{{contacto.slug}}"
+  preguntas: [contacto, canal]
+  desde: [contact, content]
+  modulo: conversaciones-y-casos
+  sistemas: [MA3]
+
+# Equipo
+rol:
+  fichero: "{equipo}/Sistemas/Plantillas/Rol.md"
+  origen: "6 · Equipo/Rol.md"
+  tipo: role
+  carpeta: "{equipo}/Roles"
+  nombre: "{{slug}}"
+  preguntas: [titulo, ocupante]
+  modulo: roles
+  sistemas: [EQ1]
+rol-de-asistente:
+  fichero: "{equipo}/Sistemas/Plantillas/Rol de asistente.md"
+  origen: "6 · Equipo/Rol de asistente.md"
+  tipo: role
+  carpeta: "{equipo}/Roles"
+  nombre: "{{slug}}"
+  preguntas: [titulo]
+  modulo: roles
+  sistemas: [EQ1, EQ2]
+acuerdo-de-colaboracion:
+  fichero: "{equipo}/Sistemas/Plantillas/Acuerdo de colaboración.md"
+  origen: "6 · Equipo/Acuerdo de colaboración.md"
+  tipo: collaboration
+  carpeta: "{equipo}/Colaboraciones"
+  nombre: "{{contacto.slug}}"
+  preguntas: [contacto]
+  desde: [contact, project]
+  modulo: colaboraciones
+  sistemas: [EQ3]
+plan-de-incorporacion:
+  fichero: "{equipo}/Sistemas/Plantillas/Plan de incorporación.md"
+  origen: "6 · Equipo/Plan de incorporación.md"
+  tipo: delivery_template
+  carpeta: "{equipo}/Sistemas/Plantillas"
+  nombre: "Plan de incorporación · {{rol.nombre}}"
+  preguntas: [rol]
+  desde: [role]
+  modulo: colaboraciones
+  sistemas: [EQ3]
+bitacora-mensual:
+  fichero: "{equipo}/Sistemas/Plantillas/Bitácora mensual.md"
+  origen: "6 · Equipo/Bitácora mensual.md"
+  tipo: log
+  carpeta: "{equipo}/Bitácora"
+  nombre: "{{mes}}"
+  modulo: bitacora
+  sistemas: [EQ2]
+conexion:
+  fichero: "{equipo}/Sistemas/Plantillas/Conexión.md"
+  origen: "6 · Equipo/Conexión.md"
+  tipo: connection
+  carpeta: "{equipo}/Conexiones"
+  nombre: "{{slug}}"
+  preguntas: [titulo, tipo]
+  modulo: asistentes
+  sistemas: [EQ2]

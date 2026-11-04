@@ -11,7 +11,7 @@ import {
 } from "@multica/ui/components/ui/sidebar";
 import { AppLink } from "../navigation";
 import { useT } from "../i18n";
-import { AREAS, AreaDot } from "../empresa/shared";
+import { AREAS } from "../empresa/shared";
 import { routeIconForPath } from "./route-icon-components";
 
 const NAV_ITEM_CLASS_NAME =
@@ -19,8 +19,9 @@ const NAV_ITEM_CLASS_NAME =
 
 /**
  * TLS "Empresa" group: company overview plus the six business areas in
- * presentation order. Area names are business data, shown as-is; the dot is
- * the area accent and always sits next to its name.
+ * presentation order. Area names are business data, shown as-is. Areas are
+ * text-only sub-items indented under "Empresa": the name is the signal, so no
+ * per-area dot or icon competes with it.
  */
 export function EmpresaNavGroup({ pathname }: { pathname: string }) {
   const { t } = useT("layout");
@@ -45,11 +46,8 @@ export function EmpresaNavGroup({ pathname }: { pathname: string }) {
                 <SidebarMenuButton
                   isActive={pathname === href || pathname.startsWith(`${href}/`)}
                   render={<AppLink href={href} />}
-                  className={NAV_ITEM_CLASS_NAME}
+                  className={`${NAV_ITEM_CLASS_NAME} pl-8`}
                 >
-                  <span className="flex size-4 items-center justify-center">
-                    <AreaDot area={area.code} />
-                  </span>
                   <span>{area.name}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>

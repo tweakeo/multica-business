@@ -1,0 +1,553 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		273E4CAEFC3139EF008F731D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8A904CE94551A789520E8C /* main.swift */; };
+		374C321BB05BC29451ACED5E /* TLSMCPHost in Frameworks */ = {isa = PBXBuildFile; productRef = 86EDD4F3F1E88E6896DAD50F /* TLSMCPHost */; };
+		485C50C6A3971645ABEEF3C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48EE8D2BE0E70753CBC3C407 /* Assets.xcassets */; };
+		563189A89C78AE63101521BF /* TLSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3084D3F4E8FD04E6DD84C4EF /* TLSCore */; };
+		7DF008F863B08BD44B0F81CB /* TLSMCPShared in Frameworks */ = {isa = PBXBuildFile; productRef = DB317EBC6FC46C404B958E19 /* TLSMCPShared */; };
+		9105A99BDD41BAC508389912 /* TLSOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 70EE93726391BA1979B510F6 /* TLSOnboarding */; };
+		A1028C4984E800D215063FC6 /* Recursos in Resources */ = {isa = PBXBuildFile; fileRef = 199B45EF52AD90AEC44C0236 /* Recursos */; };
+		A1FB8CDDC455D60657FE4B35 /* TheLastSystemApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E6712A1E31030A4CB71E24 /* TheLastSystemApp.swift */; };
+		BE7D53765078E52320F59FD2 /* tls-mcp in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 65B34CC3345A4C12DBF02708 /* tls-mcp */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF41D4B27E9B893597473B13 /* TLSIntegracion in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1F670BBC9464B17C59F47C /* TLSIntegracion */; };
+		DC93A51937B8767B80FF3148 /* TLSUI in Frameworks */ = {isa = PBXBuildFile; productRef = 99866B51AA212B51F8428455 /* TLSUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6054B6F048EDCC9E3E762438 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF2595422756D544B2E72F8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9250BBF6175A568FED92907;
+			remoteInfo = "tls-mcp";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B4F1C3A7D97CE03436A81C18 /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Helpers;
+			dstSubfolderSpec = 1;
+			files = (
+				BE7D53765078E52320F59FD2 /* tls-mcp in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0D371F7C398BF43F2EC136E7 /* TLSKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TLSKit; path = Packages/TLSKit; sourceTree = SOURCE_ROOT; };
+		199B45EF52AD90AEC44C0236 /* Recursos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Recursos; path = App/Recursos; sourceTree = SOURCE_ROOT; };
+		2B8A904CE94551A789520E8C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		48EE8D2BE0E70753CBC3C407 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		65B34CC3345A4C12DBF02708 /* tls-mcp */ = {isa = PBXFileReference; includeInIndex = 0; path = "tls-mcp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		730F560EF331E7BEFE82F590 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		B9E6712A1E31030A4CB71E24 /* TheLastSystemApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheLastSystemApp.swift; sourceTree = "<group>"; };
+		D99668AAA209262F704E4140 /* TheLastSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheLastSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4774001D39AD5587290B8BA1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DF008F863B08BD44B0F81CB /* TLSMCPShared in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51C6D9847F6907EF1829899E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC93A51937B8767B80FF3148 /* TLSUI in Frameworks */,
+				563189A89C78AE63101521BF /* TLSCore in Frameworks */,
+				9105A99BDD41BAC508389912 /* TLSOnboarding in Frameworks */,
+				CF41D4B27E9B893597473B13 /* TLSIntegracion in Frameworks */,
+				374C321BB05BC29451ACED5E /* TLSMCPHost in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		096BB180A0BAFA7B8248E5AC /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				0D371F7C398BF43F2EC136E7 /* TLSKit */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		0CD9F4F9907A0A0257C79C10 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				48EE8D2BE0E70753CBC3C407 /* Assets.xcassets */,
+				199B45EF52AD90AEC44C0236 /* Recursos */,
+				59D9B582879D2913F2D0DAB5 /* Sources */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		59D9B582879D2913F2D0DAB5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B9E6712A1E31030A4CB71E24 /* TheLastSystemApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		94B83C554BA31F141EF8FADC /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A998F23BC9D036A9E83D75AE /* tls-mcp */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		A998F23BC9D036A9E83D75AE /* tls-mcp */ = {
+			isa = PBXGroup;
+			children = (
+				2B8A904CE94551A789520E8C /* main.swift */,
+			);
+			path = "tls-mcp";
+			sourceTree = "<group>";
+		};
+		BE580AD2ED41C72930AE4498 = {
+			isa = PBXGroup;
+			children = (
+				0CD9F4F9907A0A0257C79C10 /* App */,
+				C021ED538A4397217471BB96 /* Config */,
+				94B83C554BA31F141EF8FADC /* Helpers */,
+				096BB180A0BAFA7B8248E5AC /* Packages */,
+				C37507613C4CA164F0819553 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C021ED538A4397217471BB96 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				730F560EF331E7BEFE82F590 /* Base.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		C37507613C4CA164F0819553 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D99668AAA209262F704E4140 /* TheLastSystem.app */,
+				65B34CC3345A4C12DBF02708 /* tls-mcp */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4191A07561CBB646862E1661 /* TheLastSystem */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8122A119955131B70CE79121 /* Build configuration list for PBXNativeTarget "TheLastSystem" */;
+			buildPhases = (
+				59CEBB0813F3FEAE01189508 /* Sources */,
+				24330C97395A0C38793F2C82 /* Resources */,
+				51C6D9847F6907EF1829899E /* Frameworks */,
+				B4F1C3A7D97CE03436A81C18 /* Embed Dependencies */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EA1F51A3C3A2E529E49D905C /* PBXTargetDependency */,
+			);
+			name = TheLastSystem;
+			packageProductDependencies = (
+				99866B51AA212B51F8428455 /* TLSUI */,
+				3084D3F4E8FD04E6DD84C4EF /* TLSCore */,
+				70EE93726391BA1979B510F6 /* TLSOnboarding */,
+				4E1F670BBC9464B17C59F47C /* TLSIntegracion */,
+				86EDD4F3F1E88E6896DAD50F /* TLSMCPHost */,
+			);
+			productName = TheLastSystem;
+			productReference = D99668AAA209262F704E4140 /* TheLastSystem.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A9250BBF6175A568FED92907 /* tls-mcp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D667B6D35071AE6457D577E1 /* Build configuration list for PBXNativeTarget "tls-mcp" */;
+			buildPhases = (
+				177CE7AF23B4E82F72C1CA60 /* Sources */,
+				4774001D39AD5587290B8BA1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "tls-mcp";
+			packageProductDependencies = (
+				DB317EBC6FC46C404B958E19 /* TLSMCPShared */,
+			);
+			productName = "tls-mcp";
+			productReference = 65B34CC3345A4C12DBF02708 /* tls-mcp */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3CF2595422756D544B2E72F8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4191A07561CBB646862E1661 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					A9250BBF6175A568FED92907 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = ED73F1940A40890EEA6190CF /* Build configuration list for PBXProject "TheLastSystem" */;
+			developmentRegion = es;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				es,
+			);
+			mainGroup = BE580AD2ED41C72930AE4498;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2A1D8B4B019E8E935212F1D7 /* XCLocalSwiftPackageReference "Packages/TLSKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C37507613C4CA164F0819553 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4191A07561CBB646862E1661 /* TheLastSystem */,
+				A9250BBF6175A568FED92907 /* tls-mcp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		24330C97395A0C38793F2C82 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				485C50C6A3971645ABEEF3C5 /* Assets.xcassets in Resources */,
+				A1028C4984E800D215063FC6 /* Recursos in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		177CE7AF23B4E82F72C1CA60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				273E4CAEFC3139EF008F731D /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59CEBB0813F3FEAE01189508 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1FB8CDDC455D60657FE4B35 /* TheLastSystemApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EA1F51A3C3A2E529E49D905C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9250BBF6175A568FED92907 /* tls-mcp */;
+			targetProxy = 6054B6F048EDCC9E3E762438 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		280980D4B25E55CD3F930F2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 730F560EF331E7BEFE82F590 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		434530FA85C4B1DE927610E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "es.thelast.system.tls-mcp";
+				PRODUCT_NAME = "tls-mcp";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		710623AA107A71072A43845A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "es.thelast.system.tls-mcp";
+				PRODUCT_NAME = "tls-mcp";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		737811BE81B61A38ABC82203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 730F560EF331E7BEFE82F590 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		9763BE762D419A79AFEAE996 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/TheLastSystem.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = es.thelast.system;
+				PRODUCT_NAME = "The Last System";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CBEB096138284394808D4F79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/TheLastSystem.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = es.thelast.system;
+				PRODUCT_NAME = "The Last System";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8122A119955131B70CE79121 /* Build configuration list for PBXNativeTarget "TheLastSystem" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBEB096138284394808D4F79 /* Debug */,
+				9763BE762D419A79AFEAE996 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D667B6D35071AE6457D577E1 /* Build configuration list for PBXNativeTarget "tls-mcp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				434530FA85C4B1DE927610E1 /* Debug */,
+				710623AA107A71072A43845A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ED73F1940A40890EEA6190CF /* Build configuration list for PBXProject "TheLastSystem" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				280980D4B25E55CD3F930F2D /* Debug */,
+				737811BE81B61A38ABC82203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2A1D8B4B019E8E935212F1D7 /* XCLocalSwiftPackageReference "Packages/TLSKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/TLSKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3084D3F4E8FD04E6DD84C4EF /* TLSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSCore;
+		};
+		4E1F670BBC9464B17C59F47C /* TLSIntegracion */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSIntegracion;
+		};
+		70EE93726391BA1979B510F6 /* TLSOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSOnboarding;
+		};
+		86EDD4F3F1E88E6896DAD50F /* TLSMCPHost */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSMCPHost;
+		};
+		99866B51AA212B51F8428455 /* TLSUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSUI;
+		};
+		DB317EBC6FC46C404B958E19 /* TLSMCPShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TLSMCPShared;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 3CF2595422756D544B2E72F8 /* Project object */;
+}

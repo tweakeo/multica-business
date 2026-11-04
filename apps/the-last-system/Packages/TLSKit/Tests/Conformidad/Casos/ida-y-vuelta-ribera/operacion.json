@@ -1,0 +1,5 @@
+{
+  "operacion": "ida-y-vuelta",
+  "descripcion": "Leer y reescribir sin cambios cada .md y .csv de Asesoría Ribera convertida (App/Recursos/Ejemplos/Asesoria-Ribera) da los mismos bytes.",
+  "origen": "ejemplo:Asesoria-Ribera"
+}

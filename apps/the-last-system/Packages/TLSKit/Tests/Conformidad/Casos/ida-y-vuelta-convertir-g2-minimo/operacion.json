@@ -1,0 +1,5 @@
+{
+  "operacion": "ida-y-vuelta",
+  "descripcion": "La salida esperada del caso convertir-g2-minimo también se reescribe sin cambios.",
+  "origen": "caso:convertir-g2-minimo/esperado"
+}

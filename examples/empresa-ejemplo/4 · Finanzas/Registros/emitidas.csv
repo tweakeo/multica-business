@@ -1,0 +1,4 @@
+id,fecha_documento,tercero,numero_documento,moneda,total_documento,documento,ambito,proyecto_id,estado_emision,fuente
+EMI-20260715-001,2026-07-15,Talleres Martín e Hijos (ficticia),F-2026-0004,EUR,181.50,Fiscal/2026/T3/Ingresos/2026-07-15 F-2026-0004 Talleres Martín 181,50€.pdf,Asesoría Ribera,,emitida,manual
+EMI-20260802-001,2026-08-02,Clara Ibáñez (ficticia),F-2026-0005,EUR,108.90,Fiscal/2026/T3/Ingresos/2026-08-02 F-2026-0005 Clara Ibáñez 108,90€.pdf,Asesoría Ribera,,emitida,manual
+EMI-20260910-001,2026-09-10,Arquitectura Nexo (ficticia),F-2026-0006,EUR,834.90,Fiscal/2026/T3/Ingresos/2026-09-10 F-2026-0006 Arquitectura Nexo 834,90€.pdf,Asesoría Ribera,,emitida,manual

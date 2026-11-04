@@ -144,17 +144,21 @@ function SalesManagement() {
   const contacts = useQuery({ ...bizListOptions(wsId, "contact", {}), enabled: view === "contactos" });
   const orgs = useQuery({ ...bizListOptions(wsId, "organization", {}), enabled: view === "organizaciones" });
   const offers = useQuery({ ...bizListOptions(wsId, "offer", {}), enabled: view === "ofertas" });
-  const rows = (opps.data ?? []).filter((o) => !service || str(o.service_code) === service);
+  const services = useQuery(bizListOptions(wsId, "service", {}));
+  const serviceOptions = (services.data ?? []).filter((s) => !s.archived_at);
+  const rows = (opps.data ?? []).filter((o) => !service || str(o.service_id) === service);
   return (
     <div>
       <SubNav value={view} onChange={setView} options={[["embudo", "Embudo"], ["cerradas", "Ganadas y perdidas"], ["contactos", "Contactos"], ["organizaciones", "Organizaciones"], ["ofertas", "Ofertas y precios"]]} />
       {view === "embudo" ? (
         <>
-          <div className="mb-2 flex gap-1.5">
-            {[["", "Todos los servicios"], ["RENTA", "Renta"], ["TRIM", "Trimestrales"]].map(([v, l]) => (
-              <Button key={v} size="xs" variant={service === v ? "secondary" : "ghost"} onClick={() => setService(v!)}>{l}</Button>
-            ))}
-          </div>
+          {serviceOptions.length > 1 ? (
+            <div className="mb-2 flex gap-1.5">
+              {[["", "Todos los servicios"], ...serviceOptions.map((s) => [str(s.id), str(s.name)])].map(([v, l]) => (
+                <Button key={v} size="xs" variant={service === v ? "secondary" : "ghost"} onClick={() => setService(v!)}>{l}</Button>
+              ))}
+            </div>
+          ) : null}
           {opps.isLoading ? <LoadingBlock /> : (
             <Kanban
               columns={OPEN_STAGES.map((s) => {
@@ -526,7 +530,8 @@ function BrandManagement() {
   const contents = useQuery(bizListOptions(wsId, "content", {}));
   const conversations = useQuery({ ...bizListOptions(wsId, "conversation", {}), enabled: view === "conversaciones" });
   const { exec, pending } = useAction();
-  const [f, setF] = useState({ title: "", pillar: "Autónomos al día", channel: "instagram" });
+  const [f, setF] = useState({ title: "", pillar: "", channel: "instagram" });
+  const pillars = [...new Set((contents.data ?? []).map((c) => str(c.pillar)).filter(Boolean))].sort();
   return (
     <div>
       <SubNav value={view} onChange={setView} options={[["calendario", "Contenidos"], ["conversaciones", "Conversaciones"]]} />
@@ -534,9 +539,8 @@ function BrandManagement() {
         <>
           <div className="mb-3 flex flex-wrap gap-1.5">
             <Input className="h-8 w-72 text-caption" placeholder="Nueva idea de contenido" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
-            <select className="h-8 rounded-md border bg-transparent px-2 text-caption" value={f.pillar} onChange={(e) => setF({ ...f, pillar: e.target.value })} aria-label="Pilar">
-              {["Renta sin sustos", "Autónomos al día", "Casos", "Calendario fiscal"].map((x) => <option key={x}>{x}</option>)}
-            </select>
+            <Input className="h-8 w-44 text-caption" placeholder="Pilar (opcional)" list="tls-pillars" value={f.pillar} onChange={(e) => setF({ ...f, pillar: e.target.value })} aria-label="Pilar" />
+            <datalist id="tls-pillars">{pillars.map((x) => <option key={x} value={x} />)}</datalist>
             <select className="h-8 rounded-md border bg-transparent px-2 text-caption" value={f.channel} onChange={(e) => setF({ ...f, channel: e.target.value })} aria-label="Canal">
               {["instagram", "linkedin", "blog", "newsletter"].map((x) => <option key={x}>{x}</option>)}
             </select>
@@ -714,7 +718,7 @@ function DirectionManagement() {
             <Textarea className="min-h-14 text-caption" placeholder="Contexto: opciones, datos, quién se ve afectado" value={dec.context} onChange={(e) => setDec({ ...dec, context: e.target.value })} />
           </div>
           <BizTable entity="decision" rows={decisions.data} isLoading={decisions.isLoading} columns={[
-            { key: "created_at", label: "Fecha", render: (d) => formatDate(d.created_at) },
+            { key: "decided_at", label: "Fecha", className: "w-24", render: (d) => formatDate(d.decided_at ?? d.created_at) },
             { key: "area", label: "Área", render: (d) => <AreaDot area={str(d.area)} /> },
             { key: "title", label: "Decisión" },
             { key: "status", label: "Estado", render: (d) => ({ open: "Abierta", decided: "Decidida", superseded: "Sustituida" } as Record<string, string>)[str(d.status)] },

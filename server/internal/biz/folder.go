@@ -10,9 +10,11 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -38,6 +40,10 @@ type Folder struct {
 }
 
 const folderSchema = 1
+
+// humanMark prefixes the journal hash of a note whose body is a person's:
+// TLS only updates its frontmatter.
+const humanMark = "human:"
 
 // Root is the company folder. A leading "~/" is the current user's home, so
 // a company (and the bundled demo) moves between Macs without rewriting it.
@@ -72,7 +78,12 @@ func (f *Folder) PendingCount(ctx context.Context, ws string) int {
 func (f *Folder) FlushPending(ctx context.Context, ws string) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	root := f.Root(ctx, f.svc.Pool, ws)
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil {
+		// Another TLS owns the folder: intents stay pending, nothing is written.
+		f.svc.Log.Warn("biz folder not written", "error", err)
+		return
+	}
 	if root == "" {
 		return
 	}
@@ -103,6 +114,9 @@ func (f *Folder) FlushPending(ctx context.Context, ws string) {
 
 // ExportAll journals every record so the next flush writes the full folder.
 func (f *Folder) ExportAll(ctx context.Context, ws string) (int, error) {
+	if _, err := f.writeRoot(ctx, ws); err != nil {
+		return 0, invalid("%v", err)
+	}
 	n := 0
 	err := f.svc.withTx(ctx, func(tx pgx.Tx) error {
 		for typ, table := range entityTables {
@@ -118,10 +132,27 @@ func (f *Folder) ExportAll(ctx context.Context, ws string) (int, error) {
 		return nil
 	})
 	if err == nil {
+		f.ensureSkeleton(ctx, ws)
 		f.FlushPending(ctx, ws)
 		err = f.writeCompanyIndex(ctx, ws)
 	}
 	return n, err
+}
+
+// ensureSkeleton creates the layout's empty folders (Sistemas/, Recursos/,
+// Buzón/, Archivo/…). Creating a folder never touches anything inside it.
+func (f *Folder) ensureSkeleton(ctx context.Context, ws string) {
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
+		return
+	}
+	l, err := LoadLayout(root)
+	if err != nil {
+		return
+	}
+	for _, d := range l.Skeleton {
+		_ = os.MkdirAll(filepath.Join(root, filepath.FromSlash(l.expand(d))), 0o755)
+	}
 }
 
 var nonSlug = regexp.MustCompile(`[^a-z0-9]+`)
@@ -152,69 +183,93 @@ func short(id string) string {
 	return id
 }
 
-// relPath decides where a record lives. The file name carries a short ID so
-// renaming a title never changes identity: identity is the `id` field.
-func relPath(typ string, m map[string]any, lookup func(string, string) string) string {
+// relPath decides where a record lives, following the folder's layout. The
+// file name carries a short ID so renaming a title never changes identity:
+// identity is the `id` field. "" means the record has no file of its own
+// (it lives in a register or in the decisions file).
+func relPath(l Layout, typ string, m map[string]any, lookup func(string, string) string) string {
 	id := str(m["id"])
 	name := func(field string) string { return slugify(str(m[field])) + "--" + short(id) + ".md" }
-	qdir := func(date string) string {
+	quarter := func(date string) (string, string) {
 		t, err := time.Parse("2006-01-02", date)
 		if err != nil {
-			return "Sin fecha"
+			return l.expand("{finanzas}/Sin fecha"), "Sin fecha"
 		}
 		y, q := quarterOf(t)
-		return fmt.Sprintf("%d/T%d", y, q)
+		return l.quarterDir(y, q), fmt.Sprintf("%d-T%d", y, q)
 	}
-	switch typ {
-	case "organization":
-		return "Ventas/Organizaciones/" + name("name")
-	case "contact":
-		return "Ventas/Contactos/" + name("name")
-	case "opportunity":
-		return "Ventas/Oportunidades/" + name("title")
-	case "service":
-		return "Entrega/Servicios/" + slugify(str(m["code"])) + ".md"
-	case "offer":
-		return fmt.Sprintf("Ventas/Ofertas/%s-v%v.md", slugify(lookup("service", str(m["service_id"]))), m["version"])
-	case "invoice":
-		date := str(m["issue_date"])
-		if str(m["direction"]) == "issued" {
-			if m["number"] == nil {
-				return "Finanzas/Borradores/borrador--" + short(id) + ".md"
-			}
-			return "Finanzas/" + qdir(date) + "/Ingresos/" + slugify(str(m["number"])) + ".md"
+	in := func(dirType, file string) string {
+		if d := l.dir(dirType); d != "" {
+			return d + "/" + file
 		}
-		return "Finanzas/" + qdir(date) + "/Gastos/" + slugify(lookup("organization", str(m["organization_id"]))) + "/" + slugify(str(m["number"])) + "--" + short(id) + ".md"
+		return ""
+	}
+	var rel string
+	switch typ {
+	case "organization", "contact", "role":
+		rel = in(typ, name("name"))
+	case "opportunity", "objective", "content":
+		rel = in(typ, name("title"))
+		if typ == "objective" && rel != "" {
+			rel = in(typ, slugify(str(m["period"]))+"/"+name("title"))
+		}
+	case "service":
+		rel = in(typ, slugify(str(m["code"]))+".md")
+	case "offer":
+		rel = in(typ, fmt.Sprintf("%s-v%v.md", slugify(lookup("service", str(m["service_id"]))), m["version"]))
+	case "invoice":
+		qd, _ := quarter(str(m["issue_date"]))
+		switch {
+		case str(m["direction"]) == "issued" && m["number"] == nil:
+			rel = in("invoice_draft", "borrador--"+short(id)+".md")
+		case str(m["direction"]) == "issued":
+			rel = qd + "/Ingresos/" + slugify(str(m["number"])) + ".md"
+		default:
+			party := lookup("organization", str(m["organization_id"]))
+			if attrs, _ := m["attrs"].(map[string]any); m["organization_id"] == nil && str(attrs["tercero"]) != "" {
+				party = str(attrs["tercero"]) // registered from its document, without an organization
+			}
+			rel = qd + "/Gastos/" + slugify(party) + "/" + slugify(str(m["number"])) + "--" + short(id) + ".md"
+		}
 	case "payment":
-		return "Finanzas/" + qdir(str(m["paid_on"])) + "/Cobros y pagos/" + str(m["paid_on"]) + "--" + short(id) + ".md"
+		if d := l.Dirs["payment"]; d != "" {
+			qd, _ := quarter(str(m["paid_on"]))
+			rel = l.expand(strings.ReplaceAll(d, "{quarter}", qd)) + "/" + str(m["paid_on"]) + "--" + short(id) + ".md"
+		}
 	case "account":
-		return "Finanzas/Bancos/" + slugify(str(m["name"])) + "/cuenta.md"
+		rel = in(typ, slugify(str(m["name"]))+"/cuenta.md")
 	case "movement":
-		return "Finanzas/Bancos/" + slugify(lookup("account", str(m["account_id"]))) + "/" + strings.ReplaceAll(qdir(str(m["booked_on"])), "/", "-") + "/" + str(m["booked_on"]) + "--" + short(id) + ".md"
+		_, label := quarter(str(m["booked_on"]))
+		rel = in("account", slugify(lookup("account", str(m["account_id"])))+"/"+label+"/"+str(m["booked_on"])+"--"+short(id)+".md")
 	case "period":
-		return fmt.Sprintf("Finanzas/%v/T%v/periodo.md", m["year"], m["quarter"])
+		y, _ := strconv.Atoi(fmt.Sprint(m["year"]))
+		q, _ := strconv.Atoi(fmt.Sprint(m["quarter"]))
+		rel = l.quarterDir(y, q) + "/periodo.md"
 	case "kpi":
-		return "Dirección/KPI/" + slugify(str(m["code"])) + ".md"
-	case "objective":
-		return "Dirección/Objetivos/" + slugify(str(m["period"])) + "/" + name("title")
+		rel = in(typ, slugify(str(m["code"]))+".md")
 	case "decision":
+		if l.Decisiones != "" {
+			return ""
+		}
 		created := str(m["created_at"])
 		if len(created) >= 10 {
 			created = created[:10]
 		}
-		return "Dirección/Decisiones/" + created + "--" + name("title")
+		rel = in(typ, created+"--"+name("title"))
 	case "routine":
-		return "Dirección/Rutinas/" + str(m["kind"]) + "/" + slugify(str(m["period_key"])) + ".md"
-	case "content":
-		return "Marca/Contenidos/" + name("title")
+		rel = in(typ, str(m["kind"])+"/"+slugify(str(m["period_key"]))+".md")
 	case "conversation":
-		return "Marca/Conversaciones/" + name("channel")
-	case "role":
-		return "Equipo/Roles/" + name("name")
+		rel = in(typ, name("channel"))
 	case "document":
-		return "Documentos/" + name("title")
+		rel = in(typ, name("title"))
+	default:
+		rel = "Otros/" + typ + "--" + id + ".md"
 	}
-	return "Otros/" + typ + "--" + id + ".md"
+	// A retired record keeps its place, under Archivo/.
+	if rel != "" && m["archived_at"] != nil {
+		rel = l.Archivo + "/" + rel
+	}
+	return rel
 }
 
 var bodyField = map[string]string{"opportunity": "notes", "organization": "notes", "contact": "notes", "content": "body", "role": "manual", "decision": "context", "period": "notes", "invoice": "notes", "movement": "notes"}
@@ -237,17 +292,16 @@ func (f *Folder) lookupName(ctx context.Context) func(string, string) string {
 	}
 }
 
-func render(typ string, m map[string]any) ([]byte, error) {
+// frontOf splits a record into its frontmatter and its body text.
+func frontOf(typ string, m map[string]any) (map[string]any, string) {
 	body := ""
 	if bf, ok := bodyField[typ]; ok {
 		body = str(m[bf])
-		delete(m, bf)
 	}
 	front := map[string]any{"tls_type": typ, "tls_schema": folderSchema}
 	attrs, _ := m["attrs"].(map[string]any)
-	delete(m, "attrs")
 	for k, v := range m {
-		if k == "workspace_id" {
+		if k == "workspace_id" || k == "attrs" || k == bodyField[typ] {
 			continue
 		}
 		front[k] = v
@@ -257,6 +311,11 @@ func render(typ string, m map[string]any) ([]byte, error) {
 			front[k] = v
 		}
 	}
+	return front, body
+}
+
+func render(typ string, m map[string]any) ([]byte, error) {
+	front, body := frontOf(typ, m)
 	var buf bytes.Buffer
 	buf.WriteString("---\n")
 	enc := yaml.NewEncoder(&buf)
@@ -299,32 +358,98 @@ func hashBytes(b []byte) string {
 }
 
 func (f *Folder) writeEntity(ctx context.Context, ws, root, typ, id string) (string, string, error) {
+	l, err := LoadLayout(root)
+	if err != nil {
+		return "", "", err
+	}
 	m, err := rowMap(ctx, f.svc.Pool, typ, id)
 	if err != nil {
 		return "", "", err
 	}
-	rel := relPath(typ, m, f.lookupName(ctx))
-	// The path may change when a title changes; remove the old file so one
-	// identity never lives in two files.
-	var prev string
-	_ = f.svc.Pool.QueryRow(ctx, `SELECT rel_path FROM biz_journal WHERE workspace_id=$1 AND entity_type=$2 AND entity_id=$3 AND state='committed' ORDER BY committed_at DESC LIMIT 1`, ws, typ, id).Scan(&prev)
+	var regRel, regHash string
+	if l.Registros != "" {
+		if regRel, regHash, err = f.writeRegisterRow(ctx, root, l, typ, m); err != nil {
+			return "", "", err
+		}
+	}
+	if typ == "decision" && l.Decisiones != "" {
+		return writeDecisionLine(root, l, m)
+	}
+	if typ == "kpi" && l.Metas != "" {
+		return writeMetaRow(root, l, m)
+	}
+	rel := relPath(l, typ, m, f.lookupName(ctx))
+	if rel == "" {
+		return regRel, regHash, nil
+	}
+	var prev, prevHash string
+	_ = f.svc.Pool.QueryRow(ctx, `SELECT rel_path, content_hash FROM biz_journal WHERE workspace_id=$1 AND entity_type=$2 AND entity_id=$3 AND state='committed' AND rel_path<>''
+		ORDER BY committed_at DESC LIMIT 1`, ws, typ, id).Scan(&prev, &prevHash)
+	abs := func(r string) string { return filepath.Join(root, filepath.FromSlash(r)) }
+	// Inside the same folder a file keeps the name a person may have linked
+	// to; it only moves when its folder changes (quarter, Archivo…).
+	if prev != "" && path.Dir(prev) == path.Dir(rel) && exists(abs(prev)) {
+		rel = prev
+	}
+	// A note that holds another record (or a person's note) never gets
+	// overwritten: it moves to Archivo/ first.
+	if rel != prev && exists(abs(rel)) {
+		if old, err := os.ReadFile(abs(rel)); err == nil {
+			if rec, perr := parseRecord(rel, old); perr != nil || rec.ID != id {
+				if _, err := retire(root, l, rel); err != nil {
+					return "", "", err
+				}
+			}
+		}
+	}
+	src := rel
+	if prev != "" && prev != rel && exists(abs(prev)) {
+		src = prev
+	}
 	data, err := render(typ, m)
 	if err != nil {
 		return "", "", err
 	}
-	if err := atomicWrite(filepath.Join(root, rel), data); err != nil {
+	human := false
+	if old, err := os.ReadFile(abs(src)); err == nil && (hashBytes(old) != prevHash || strings.HasPrefix(prevHash, humanMark)) {
+		// A person wrote or edited this note: keep its body and update only
+		// the frontmatter, without adding empty fields. The note stays the
+		// person's from then on (journal hash marked human:).
+		front, _ := frontOf(typ, m)
+		for k, v := range front {
+			if v == nil || v == "" {
+				delete(front, k)
+			}
+		}
+		if data, err = mergeNote(old, front); err != nil {
+			return "", "", fmt.Errorf("%s: %v", src, err)
+		}
+		human = true
+	}
+	if src != rel && exists(abs(src)) {
+		// Move, never delete: the record changes folder with its file.
+		if err := os.MkdirAll(filepath.Dir(abs(rel)), 0o755); err != nil {
+			return "", "", err
+		}
+		if err := os.Rename(abs(src), abs(rel)); err != nil {
+			return "", "", err
+		}
+	}
+	if err := atomicWrite(abs(rel), data); err != nil {
 		return "", "", err
 	}
-	if prev != "" && prev != rel {
-		_ = os.Remove(filepath.Join(root, prev))
+	if human {
+		return rel, humanMark + hashBytes(data), nil
 	}
 	return rel, hashBytes(data), nil
 }
 
+// writeCompanyIndex keeps Empresa.md. When it exists, only its frontmatter is
+// updated: the text below is the company's own and is never rewritten.
 func (f *Folder) writeCompanyIndex(ctx context.Context, ws string) error {
-	root := f.Root(ctx, f.svc.Pool, ws)
-	if root == "" {
-		return nil
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
+		return err
 	}
 	var name string
 	_ = f.svc.Pool.QueryRow(ctx, `SELECT name FROM workspace WHERE id=$1`, ws).Scan(&name)
@@ -332,67 +457,177 @@ func (f *Folder) writeCompanyIndex(ctx context.Context, ws string) error {
 	_ = json.Unmarshal(f.svc.Setting(ctx, f.svc.Pool, ws, "company_profile"), &profile)
 	front := map[string]any{"tls_type": "company", "tls_schema": folderSchema, "workspace_id": ws, "name": name, "profile": profile,
 		"areas": Areas, "exported_at": time.Now().UTC().Format(time.RFC3339)}
+	target := filepath.Join(root, "Empresa.md")
+	if old, err := os.ReadFile(target); err == nil {
+		data, err := mergeNote(old, front)
+		if err != nil {
+			return fmt.Errorf("Empresa.md: %v", err)
+		}
+		return atomicWrite(target, data)
+	}
 	var buf bytes.Buffer
 	buf.WriteString("---\n")
 	_ = yaml.NewEncoder(&buf).Encode(front)
 	buf.WriteString("---\n\n# " + name + "\n\nCarpeta portable de la empresa. Cada fichera Markdown es un registro; su identidad es el campo `id`, no el nombre del fichero.\n" +
 		"Los índices, cachés y servicios viven fuera de esta carpeta (Application Support). Aquí no se guardan secretos.\n")
-	return atomicWrite(filepath.Join(root, "Empresa.md"), buf.Bytes())
+	return atomicWrite(target, buf.Bytes())
 }
 
 // --- Rebuild and external changes ----------------------------------------
 
 type folderRecord struct {
-	Path  string
-	Type  string
-	ID    string
-	Front map[string]any
-	Body  string
-	Hash  string
+	Path     string
+	Type     string
+	ID       string
+	Front    map[string]any
+	Body     string
+	Hash     string
+	Inferred bool // type taken from the folder or from `tipo:`
 }
 
 func parseRecord(path string, data []byte) (*folderRecord, error) {
-	text := string(data)
-	if !strings.HasPrefix(text, "---\n") {
-		return nil, fmt.Errorf("sin frontmatter")
-	}
-	end := strings.Index(text[4:], "\n---\n")
-	if end < 0 {
-		return nil, fmt.Errorf("frontmatter sin cerrar")
+	fm, body, ok := splitNote(data)
+	if !ok {
+		if strings.HasPrefix(string(data), "---\n") {
+			return nil, fmt.Errorf("frontmatter sin cerrar")
+		}
+		return nil, errNoFrontmatter
 	}
 	front := map[string]any{}
-	if err := yaml.Unmarshal([]byte(text[4:4+end]), &front); err != nil {
+	if err := yaml.Unmarshal([]byte(fm), &front); err != nil {
 		return nil, fmt.Errorf("YAML no válido: %v", err)
 	}
+	if front == nil {
+		front = map[string]any{}
+	}
 	typ, _ := front["tls_type"].(string)
-	id, _ := front["id"].(string)
-	return &folderRecord{Path: path, Type: typ, ID: id, Front: front, Body: strings.TrimSpace(text[4+end+5:]), Hash: hashBytes(data)}, nil
+	id := str(front["id"])
+	return &folderRecord{Path: path, Type: typ, ID: id, Front: front, Body: strings.TrimSpace(body), Hash: hashBytes(data)}, nil
 }
 
-func (f *Folder) scan(root string) ([]*folderRecord, []map[string]string) {
+// scan reads every record in the folder: explicit notes (tls_type), notes a
+// person made in a record folder (type inferred from the folder or `tipo:`),
+// the decisions file and app payments in pagos.csv. Notes in a record folder
+// that cannot be read yet come back as proposals (see Adopt). Notes outside
+// record folders (Área.md, Sistemas/…) are not records and are not errors.
+func (f *Folder) scan(root string) ([]*folderRecord, []map[string]string, []map[string]any) {
 	var recs []*folderRecord
-	var errs []map[string]string
+	errs := []map[string]string{}
+	proposals := []map[string]any{}
+	l, err := LoadLayout(root)
+	if err != nil {
+		return nil, []map[string]string{{"path": layoutFile, "error": err.Error()}}, proposals
+	}
+	decisions := l.decisionsFile()
+	payments := ""
+	if l.Registros != "" && l.Dirs["payment"] == "" {
+		payments = path.Join(l.registersDir(), "pagos.csv")
+	}
 	_ = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || !strings.HasSuffix(p, ".md") || strings.Contains(p, "Paquete gestoría") {
+		if err != nil {
+			return nil
+		}
+		if d.IsDir() {
+			if p != root && l.skipDir(d.Name()) {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 		rel, _ := filepath.Rel(root, p)
+		rel = filepath.ToSlash(rel)
+		if rel == payments {
+			if reg, err := readRegister(p); err != nil {
+				errs = append(errs, map[string]string{"path": rel, "error": err.Error()})
+			} else {
+				recs = append(recs, scanPayments(rel, reg)...)
+			}
+			return nil
+		}
+		if !strings.HasSuffix(p, ".md") {
+			return nil
+		}
+		archived := l.archived(rel)
+		if archived && !hasTLSType(p) {
+			return nil // Archivo holds history; only records TLS retired are read
+		}
 		data, err := os.ReadFile(p)
 		if err != nil {
 			errs = append(errs, map[string]string{"path": rel, "error": err.Error()})
 			return nil
 		}
+		if rel == decisions {
+			recs = append(recs, scanDecisions(rel, data)...)
+			proposals = append(proposals, humanDecisionProposals(rel, data)...)
+			return nil
+		}
 		rec, err := parseRecord(rel, data)
+		if err == errNoFrontmatter {
+			if typ := l.inferType(rel); typ != "" && !archived {
+				proposals = append(proposals, minimalFront(rel, typ, nil))
+			}
+			return nil
+		}
 		if err != nil {
 			errs = append(errs, map[string]string{"path": rel, "error": err.Error()})
 			return nil
+		}
+		if rec.Type == "" && !archived {
+			if !l.recordNote(rel) {
+				return nil
+			}
+			typ := legacyTypes[strings.ToLower(str(rec.Front["tipo"]))]
+			if typ == "" {
+				typ = l.inferType(rel)
+			}
+			if typ == "" {
+				return nil
+			}
+			if !isUUID(rec.ID) {
+				proposals = append(proposals, minimalFront(rel, typ, rec.Front))
+				return nil
+			}
+			rec.Type, rec.Inferred = typ, true
+			proposals = append(proposals, minimalFront(rel, typ, rec.Front))
+		}
+		for alias, col := range fieldAliases {
+			if v, ok := rec.Front[alias]; ok {
+				if _, has := rec.Front[col]; !has {
+					rec.Front[col] = v
+				}
+				delete(rec.Front, alias)
+			}
+		}
+		// A note a person wrote (inferred, or adopted with only tls_type,
+		// tls_schema and id) names itself by its H1; a service also needs a
+		// code, taken from the file name. Nothing is written back.
+		if field := map[string]string{"organization": "name", "contact": "name", "opportunity": "title", "service": "name"}[rec.Type]; field != "" && str(rec.Front[field]) == "" {
+			rec.Front[field] = firstHeading(rec.Body)
+			if str(rec.Front[field]) == "" {
+				rec.Front[field] = strings.TrimSuffix(path.Base(rel), ".md")
+			}
+		}
+		if rec.Type == "service" && str(rec.Front["code"]) == "" {
+			rec.Front["code"] = slugify(strings.TrimSuffix(path.Base(rel), ".md"))
 		}
 		if _, ok := entityTables[rec.Type]; ok && rec.ID != "" {
 			recs = append(recs, rec)
 		}
 		return nil
 	})
-	return recs, errs
+	return recs, errs, proposals
+}
+
+// hasTLSType peeks at the start of a note without reading it whole: Archivo
+// can hold thousands of old notes.
+func hasTLSType(p string) bool {
+	fh, err := os.Open(p)
+	if err != nil {
+		return false
+	}
+	defer fh.Close()
+	buf := make([]byte, 2048)
+	n, _ := fh.Read(buf)
+	return strings.HasPrefix(string(buf[:n]), "---\n") && strings.Contains(string(buf[:n]), "\ntls_type:")
 }
 
 // Status compares the folder with what TLS last wrote: externally edited
@@ -405,7 +640,13 @@ func (f *Folder) Status(ctx context.Context, ws string) (map[string]any, error) 
 		return out, nil
 	}
 	out["configured"] = true
-	recs, errs := f.scan(root)
+	l, err := LoadLayout(root)
+	if err != nil {
+		return nil, invalid("%v", err)
+	}
+	out["layout"] = l.Preset
+	out["escritor"] = f.writerStatus(ctx, ws, root)
+	recs, errs, proposals := f.scan(root)
 	known := map[string]string{}
 	rows, err := f.svc.Pool.Query(ctx, `SELECT DISTINCT ON (entity_id) entity_id::text, rel_path, content_hash FROM biz_journal
 		WHERE workspace_id=$1 AND state='committed' ORDER BY entity_id, committed_at DESC`, ws)
@@ -416,7 +657,7 @@ func (f *Folder) Status(ctx context.Context, ws string) (map[string]any, error) 
 	for rows.Next() {
 		var id, rel, hash string
 		_ = rows.Scan(&id, &rel, &hash)
-		known[id] = hash
+		known[id] = strings.TrimPrefix(hash, humanMark)
 		paths[id] = rel
 	}
 	rows.Close()
@@ -439,7 +680,18 @@ func (f *Folder) Status(ctx context.Context, ws string) (map[string]any, error) 
 			dups = append(dups, map[string]any{"id": id, "paths": ps})
 		}
 	}
+	inferred := 0
+	for _, r := range recs {
+		if r.Inferred {
+			inferred++
+		}
+	}
+	regs, regErrs := f.registerReport(ctx, ws, root, l, false)
 	out["files"] = len(recs)
+	out["inferred"] = inferred
+	out["proposals"] = proposals
+	out["registros"] = regs
+	errs = append(errs, regErrs...)
 	out["modified_externally"] = modified
 	out["unknown_files"] = unknown
 	out["duplicate_ids"] = dups
@@ -516,8 +768,18 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 	if root == "" {
 		return nil, invalid("La empresa no tiene carpeta configurada")
 	}
-	recs, errs := f.scan(root)
+	if apply {
+		if err := f.claim(ctx, ws, root); err != nil {
+			return nil, invalid("%v", err)
+		}
+	}
+	l, err := LoadLayout(root)
+	if err != nil {
+		return nil, invalid("%v", err)
+	}
+	recs, errs, proposals := f.scan(root)
 	seen := map[string]string{}
+	var present []*folderRecord // records whose row exists after this run
 	var conflicts []map[string]any
 	var missing, different []map[string]any
 	equal, applied := 0, 0
@@ -532,7 +794,7 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 		want := map[string]any{}
 		extra := map[string]any{}
 		for k, v := range r.Front {
-			if k == "tls_type" || k == "tls_schema" {
+			if k == "tls_type" || k == "tls_schema" || k == "workspace_id" {
 				continue
 			}
 			if cols[k] {
@@ -548,6 +810,16 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 			want["attrs"] = extra
 		}
 		want["workspace_id"] = ws
+		if r.Type == "payment" && !isUUID(str(want["invoice_id"])) {
+			// pagos.csv links by the register id of the invoice.
+			var inv string
+			_ = f.svc.Pool.QueryRow(ctx, `SELECT id::text FROM biz_invoice WHERE workspace_id=$1 AND attrs->>'registro_id'=$2`, ws, str(want["invoice_id"])).Scan(&inv)
+			if inv == "" {
+				errs = append(errs, map[string]string{"path": r.Path, "error": "factura del pago no encontrada: " + str(want["invoice_id"])})
+				continue
+			}
+			want["invoice_id"] = inv
+		}
 		current, err := rowMap(ctx, f.svc.Pool, r.Type, r.ID)
 		if err != nil {
 			missing = append(missing, map[string]any{"path": r.Path, "id": r.ID, "type": r.Type})
@@ -563,6 +835,7 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 			}
 			if len(diffs) == 0 {
 				equal++
+				present = append(present, r)
 				continue
 			}
 			different = append(different, map[string]any{"path": r.Path, "id": r.ID, "type": r.Type, "fields": diffs})
@@ -573,6 +846,20 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 				continue
 			}
 			applied++
+			present = append(present, r)
+		}
+	}
+	regs, regErrs := f.registerReport(ctx, ws, root, l, apply)
+	errs = append(errs, regErrs...)
+	different = append(different, regs["diferencias"].([]map[string]any)...)
+	applied += regs["aplicados"].(int)
+	if apply {
+		// Remember where each record lives so later writes update that file
+		// (a person's note keeps its name and body) instead of creating another.
+		for _, r := range present {
+			_, _ = f.svc.Pool.Exec(ctx, `INSERT INTO biz_journal (workspace_id, entity_type, entity_id, rel_path, content_hash, state, committed_at)
+				SELECT $1,$2,$3,$4,$6,'committed',now() WHERE NOT EXISTS (SELECT 1 FROM biz_journal WHERE workspace_id=$1 AND entity_type=$2 AND entity_id=$3
+				AND state='committed' AND rel_path=$4 AND content_hash IN ($5, $6))`, ws, r.Type, r.ID, r.Path, r.Hash, humanMark+r.Hash)
 		}
 	}
 	if apply && applied > 0 {
@@ -589,7 +876,8 @@ func (f *Folder) Rebuild(ctx context.Context, ws string, apply bool) (map[string
 		different = []map[string]any{}
 	}
 	return map[string]any{"files": len(recs), "equal": equal, "missing_in_db": missing, "different": different, "duplicate_ids": conflicts,
-		"parse_errors": errs, "applied": applied, "mode": map[bool]string{true: "apply", false: "preview"}[apply]}, nil
+		"parse_errors": errs, "applied": applied, "proposals": proposals, "registros": regs, "layout": l.Preset,
+		"mode": map[bool]string{true: "apply", false: "preview"}[apply]}, nil
 }
 
 func (f *Folder) upsert(ctx context.Context, table string, row map[string]any) error {
@@ -640,12 +928,20 @@ func (s *Service) attachDocument(ctx context.Context, tx pgx.Tx, ws, entityType,
 }
 
 func (f *Folder) WritePeriodPackage(ctx context.Context, ws string, year, quarter int) error {
-	root := f.Root(ctx, f.svc.Pool, ws)
-	if root == "" {
-		return nil
+	root, err := f.writeRoot(ctx, ws)
+	if err != nil || root == "" {
+		return err
+	}
+	l, err := LoadLayout(root)
+	if err != nil {
+		return err
 	}
 	start, end := quarterRange(year, quarter)
-	dir := filepath.Join(root, fmt.Sprintf("Finanzas/%d/T%d/Paquete gestoría", year, quarter))
+	dir := filepath.Join(root, filepath.FromSlash(l.packageDir(year, quarter)))
+	derived := ""
+	if l.Registros != "" {
+		derived = "\n> Los registros únicos están en `" + l.registersDir() + "/`. Estos CSV son una copia calculada para la gestoría: no se editan.\n"
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
@@ -743,8 +1039,8 @@ Estado del periodo: **%s**. Generado: %s.
 | Gastos | %s | %s | %s | %s |
 
 Cada fila lleva el `+"`id`"+` del registro: se puede rastrear hasta la operación en TLS y en la carpeta de la empresa.
-`, year, quarter, periodLabel(status), time.Now().In(madridNow().Location()).Format("02/01/2006 15:04"), nIssued, nReceived, nMov, nDiff,
+%s`, year, quarter, periodLabel(status), time.Now().In(madridNow().Location()).Format("02/01/2006 15:04"), nIssued, nReceived, nMov, nDiff,
 		eur(sm.Issued["base_minor"]), eur(sm.Issued["tax_minor"]), eur(sm.Issued["withholding_minor"]), eur(sm.Issued["total_minor"]),
-		eur(sm.Received["base_minor"]), eur(sm.Received["tax_minor"]), eur(sm.Received["withholding_minor"]), eur(sm.Received["total_minor"]))
+		eur(sm.Received["base_minor"]), eur(sm.Received["tax_minor"]), eur(sm.Received["withholding_minor"]), eur(sm.Received["total_minor"]), derived)
 	return atomicWrite(filepath.Join(dir, "indice.md"), []byte(idx))
 }

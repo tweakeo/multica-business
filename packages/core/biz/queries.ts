@@ -18,6 +18,17 @@ export const bizKeys = {
   audit: (wsId: string, actorType: string) => [...bizKeys.all(wsId), "audit", actorType] as const,
   events: (wsId: string, status: string) => [...bizKeys.all(wsId), "events", status] as const,
   folder: (wsId: string) => [...bizKeys.all(wsId), "folder"] as const,
+  systems: (wsId: string, area: string) => [...bizKeys.all(wsId), "systems", area] as const,
+  documents: (wsId: string) => [...bizKeys.all(wsId), "documents"] as const,
+  portals: (wsId: string) => [...bizKeys.all(wsId), "portal"] as const,
+  portal: (wsId: string, slug: string, client: boolean) => [...bizKeys.all(wsId), "portal", slug, client] as const,
+  databases: (wsId: string) => [...bizKeys.all(wsId), "databases"] as const,
+  database: (wsId: string, key: string) => [...bizKeys.all(wsId), "databases", key] as const,
+  databaseRow: (wsId: string, key: string, id: string) => [...bizKeys.all(wsId), "databases", key, "row", id] as const,
+  ritmo: (wsId: string, period: string) => [...bizKeys.all(wsId), "ritmo", period] as const,
+  pipeline: (wsId: string) => [...bizKeys.all(wsId), "pipeline"] as const,
+  carga: (wsId: string) => [...bizKeys.all(wsId), "carga"] as const,
+  planificacion: (wsId: string) => [...bizKeys.all(wsId), "planificacion"] as const,
 };
 
 export const bizMetaOptions = (wsId: string) =>
@@ -58,3 +69,34 @@ export const bizEventsOptions = (wsId: string, status = "") =>
 
 export const bizFolderOptions = (wsId: string) =>
   queryOptions({ queryKey: bizKeys.folder(wsId), queryFn: bizApi.folderStatus });
+
+export const bizSystemsOptions = (wsId: string, area: string) =>
+  queryOptions({ queryKey: bizKeys.systems(wsId, area), queryFn: () => bizApi.systems(area), staleTime: 30_000 });
+
+export const bizDocumentsOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.documents(wsId), queryFn: bizApi.documents, staleTime: 30_000 });
+
+export const bizPortalsOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.portals(wsId), queryFn: bizApi.portals, staleTime: 15_000 });
+
+export const bizPortalOptions = (wsId: string, slug: string, client: boolean) =>
+  queryOptions({ queryKey: bizKeys.portal(wsId, slug, client), queryFn: () => bizApi.portal(slug, client), enabled: Boolean(slug), staleTime: 15_000 });
+
+export const bizDatabasesOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.databases(wsId), queryFn: bizApi.databases, staleTime: 15_000 });
+
+export const bizDatabaseOptions = (wsId: string, key: string) =>
+  queryOptions({ queryKey: bizKeys.database(wsId, key), queryFn: () => bizApi.database(key), enabled: Boolean(key), staleTime: 15_000 });
+
+export const bizDatabaseRowOptions = (wsId: string, key: string, id: string) =>
+  queryOptions({ queryKey: bizKeys.databaseRow(wsId, key, id), queryFn: () => bizApi.databaseRow(key, id), enabled: Boolean(key && id), staleTime: 15_000 });
+
+export const bizRitmoOptions = (wsId: string, period: string) =>
+  queryOptions({ queryKey: bizKeys.ritmo(wsId, period), queryFn: () => bizApi.ritmo(period), staleTime: 15_000 });
+
+export const bizPipelineOptions = (wsId: string) => queryOptions({ queryKey: bizKeys.pipeline(wsId), queryFn: bizApi.pipeline, staleTime: 15_000 });
+
+export const bizCargaOptions = (wsId: string) => queryOptions({ queryKey: bizKeys.carga(wsId), queryFn: bizApi.carga, staleTime: 15_000 });
+
+export const bizPlanificacionOptions = (wsId: string) =>
+  queryOptions({ queryKey: bizKeys.planificacion(wsId), queryFn: bizApi.planificacion, staleTime: 15_000 });

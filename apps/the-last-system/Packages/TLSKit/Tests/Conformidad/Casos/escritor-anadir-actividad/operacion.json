@@ -1,0 +1,12 @@
+{
+  "operacion": "escritor",
+  "descripcion": "appendToSection añade al final de «Actividad», tras una línea en blanco; nada más cambia.",
+  "plan": [
+    {
+      "op": "appendToSection",
+      "ruta": "1 · Dirección/Tareas/t-0001-subir-trimestrales-a-165-desde-t1-2027.md",
+      "seccion": "Actividad",
+      "texto": "### 2026-10-20 09:00 · Manu\nSí, desde T1 2027 y avisando antes a los clientes actuales."
+    }
+  ]
+}

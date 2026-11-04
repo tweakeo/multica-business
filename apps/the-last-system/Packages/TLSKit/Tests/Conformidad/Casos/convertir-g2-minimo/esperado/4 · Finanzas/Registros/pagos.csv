@@ -1,0 +1,2 @@
+id,fecha,direccion,importe,moneda,documento_id,proyecto_id,tercero,metodo,evidencia,verificacion
+PAG-20260701-001,2026-07-01,pago,663.00,EUR,REC-20260701-001,,Inmobiliaria Centro SL,transferencia,Registros/Bancos/cuenta-corriente-banco-demo/movimientos.csv#MOV-08f0e849554b,confirmado

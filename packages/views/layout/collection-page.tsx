@@ -15,7 +15,8 @@ import { cn } from "@multica/ui/lib/utils";
 import { PageHeader } from "./page-header";
 
 interface CollectionPageHeaderProps {
-  icon: LucideIcon;
+  /** Optional: minimal pages (Empresa) let the title stand alone. */
+  icon?: LucideIcon;
   title: ReactNode;
   count?: number;
   description?: ReactNode;
@@ -43,10 +44,12 @@ export function CollectionPageHeader({
   return (
     <PageHeader className={className}>
       <div className="flex min-w-0 flex-1 items-center gap-2">
-        <Icon
-          aria-hidden="true"
-          className="size-4 shrink-0 text-muted-foreground"
-        />
+        {Icon ? (
+          <Icon
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground"
+          />
+        ) : null}
         <h1 className="truncate text-body font-medium">{title}</h1>
         {typeof count === "number" && count > 0 ? (
           <span className="shrink-0 font-mono text-caption tabular-nums text-muted-foreground">

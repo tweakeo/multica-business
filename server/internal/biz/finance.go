@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -81,73 +80,170 @@ var classifyRules = []struct {
 	{regexp.MustCompile(`(?i)pr[eé]stamo|cuota hipoteca`), "loan", "Préstamo"},
 }
 
-// ImportStatement ingests a bank CSV (documented in docs/tls/FORMATOS.md):
-// fecha;fecha_valor;concepto;importe;saldo — semicolon separated, Spanish
-// decimals. Re-importing the same file inserts nothing (import_hash).
+// statementRow is one line of a statement, ready to insert. Skip says why a
+// line is not a movement that can be imported (it is reported, not dropped).
+type statementRow struct {
+	Line    int
+	ExtID   string // id column of a register-style file (mv-…)
+	Booked  time.Time
+	ValueOn *time.Time
+	Desc    string
+	Amount  int64
+	Balance *int64
+	Skip    string
+}
+
+// Hash identifies a movement for re-imports: by its own id when the file has
+// one, otherwise by account, date, amount, concept and balance.
+func (m statementRow) Hash(accountID string) string {
+	key := "id|" + m.ExtID
+	if m.ExtID == "" {
+		bal := ""
+		if m.Balance != nil {
+			bal = strconv.FormatInt(*m.Balance, 10)
+		}
+		key = fmt.Sprintf("%s|%s|%d|%s|%s", accountID, m.Booked.Format("2006-01-02"), m.Amount, strings.ToLower(m.Desc), bal)
+	}
+	sum := sha256.Sum256([]byte(key))
+	return hex.EncodeToString(sum[:])
+}
+
+// parseStatement reads the two formats of docs/tls/FORMATOS.md:
+//   - the bank's: fecha;fecha_valor;concepto;importe;saldo — semicolon,
+//     Spanish decimals, header optional;
+//   - a register with a header (Registros/importar/*.csv): columns by name
+//     (id, fecha, fecha_valor, concepto, importe, saldo), comma or semicolon.
+//     When it also has «iva» (and «retencion_irpf»), «importe» is the amount
+//     before tax, as the old ledger kept it, and the money that moved is
+//     importe + IVA − retención. A line whose tax is negative (refunds and
+//     credit notes) or that is a draft does not say what moved: it is skipped
+//     with its reason, never guessed.
+func parseStatement(content string) (rows []statementRow, errs []string) {
+	content = strings.TrimPrefix(content, "\ufeff")
+	first, _, _ := strings.Cut(content, "\n")
+	comma := ';'
+	if strings.Count(first, ",") > strings.Count(first, ";") {
+		comma = ','
+	}
+	r := csv.NewReader(strings.NewReader(content))
+	r.Comma = comma
+	r.FieldsPerRecord = -1
+	r.TrimLeadingSpace = true
+	all, err := r.ReadAll()
+	if err != nil {
+		return nil, []string{err.Error()}
+	}
+	col := map[string]int{"fecha": 0, "fecha_valor": 1, "concepto": 2, "importe": 3, "saldo": 4}
+	named := false
+	if len(all) > 0 {
+		head := map[string]int{}
+		for i, h := range all[0] {
+			head[headerKey(h)] = i
+		}
+		if _, ok := head["importe"]; ok {
+			if _, ok := head["fecha"]; ok {
+				col, named = head, true
+			}
+		}
+	}
+	get := func(rec []string, name string) string {
+		if i, ok := col[name]; ok && i < len(rec) {
+			return strings.TrimSpace(rec[i])
+		}
+		return ""
+	}
+	_, ledger := col["iva"]
+	for n, rec := range all {
+		line := n + 1
+		if (named && n == 0) || len(rec) < 4 || strings.EqualFold(get(rec, "fecha"), "fecha") {
+			continue
+		}
+		m := statementRow{Line: line, ExtID: get(rec, "id"), Desc: get(rec, "concepto")}
+		booked, err := parseDate(get(rec, "fecha"))
+		if err != nil {
+			errs = append(errs, fmt.Sprintf("línea %d: %v", line, err))
+			continue
+		}
+		m.Booked = booked
+		if v, err := parseDate(get(rec, "fecha_valor")); err == nil {
+			m.ValueOn = &v
+		}
+		if m.Amount, err = parseAmount(get(rec, "importe")); err != nil {
+			errs = append(errs, fmt.Sprintf("línea %d: %v", line, err))
+			continue
+		}
+		if b := get(rec, "saldo"); b != "" {
+			if v, err := parseAmount(b); err == nil {
+				m.Balance = &v
+			}
+		}
+		if ledger {
+			tax, terr := parseAmount(get(rec, "iva"))
+			ret := int64(0)
+			if raw := get(rec, "retencion_irpf"); raw != "" {
+				ret, err = parseAmount(raw)
+			}
+			switch {
+			case strings.EqualFold(get(rec, "tipo_fiscal"), "borrador") && strings.Contains(strings.ToLower(m.Desc), "borrador"):
+				m.Skip = "Borrador: no es un movimiento del banco"
+			case terr != nil || err != nil:
+				m.Skip = "Sin IVA o retención legibles: no se sabe qué importe se movió"
+			case tax < 0 || ret < 0:
+				m.Skip = "Devolución o rectificativa con IVA negativo: el importe que se movió no se deduce de la fila"
+			case m.Amount < 0:
+				m.Amount -= tax - ret
+			default:
+				m.Amount += tax - ret
+			}
+		}
+		rows = append(rows, m)
+	}
+	return rows, errs
+}
+
+// ImportStatement ingests a bank statement (see parseStatement). Re-importing
+// the same file inserts nothing (import_hash).
 func (s *Service) importStatement(ctx context.Context, tx pgx.Tx, ws, accountID, batch, content string) (map[string]any, error) {
 	if err := requireRow(ctx, tx, ws, "account", accountID); err != nil {
 		return nil, invalid("El movimiento necesita una cuenta bancaria válida (FIN-01)")
 	}
-	r := csv.NewReader(strings.NewReader(content))
-	r.Comma = ';'
-	r.FieldsPerRecord = -1
-	r.TrimLeadingSpace = true
-	inserted, duplicates, line := 0, 0, 0
-	var errs []string
-	for {
-		rec, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		line++
-		if err != nil {
-			errs = append(errs, fmt.Sprintf("línea %d: %v", line, err))
+	stmt, errs := parseStatement(content)
+	inserted, duplicates := 0, 0
+	skipped := []map[string]any{}
+	for _, m := range stmt {
+		if m.Skip != "" {
+			skipped = append(skipped, map[string]any{"line": m.Line, "id": m.ExtID, "concept": m.Desc, "reason": m.Skip})
 			continue
 		}
-		if len(rec) < 4 || strings.EqualFold(strings.TrimSpace(rec[0]), "fecha") {
-			continue
+		var valueOn, balance any
+		if m.ValueOn != nil {
+			valueOn = *m.ValueOn
 		}
-		booked, err := parseDate(rec[0])
-		if err != nil {
-			errs = append(errs, fmt.Sprintf("línea %d: %v", line, err))
-			continue
+		if m.Balance != nil {
+			balance = *m.Balance
 		}
-		var valueOn any
-		if v, err := parseDate(rec[1]); err == nil {
-			valueOn = v
-		}
-		desc := strings.TrimSpace(rec[2])
-		amount, err := parseAmount(rec[3])
-		if err != nil {
-			errs = append(errs, fmt.Sprintf("línea %d: %v", line, err))
-			continue
-		}
-		var balance any
-		balanceRaw := ""
-		if len(rec) > 4 && strings.TrimSpace(rec[4]) != "" {
-			if b, err := parseAmount(rec[4]); err == nil {
-				balance, balanceRaw = b, strconv.FormatInt(b, 10)
-			}
-		}
-		sum := sha256.Sum256([]byte(fmt.Sprintf("%s|%s|%d|%s|%s", accountID, booked.Format("2006-01-02"), amount, strings.ToLower(desc), balanceRaw)))
 		nature, category := "unclassified", ""
 		for _, rule := range classifyRules {
-			if rule.re.MatchString(desc) {
+			if rule.re.MatchString(m.Desc) {
 				nature, category = rule.nature, rule.category
 				break
 			}
 		}
 		if nature == "unclassified" {
-			if amount > 0 {
+			if m.Amount > 0 {
 				nature = "operating_income"
 			} else {
 				nature = "operating_expense"
 			}
 		}
+		notes := ""
+		if m.ExtID != "" {
+			notes = "Fila " + m.ExtID + " de " + batch
+		}
 		tag, err := tx.Exec(ctx, `INSERT INTO biz_bank_movement (workspace_id, account_id, booked_on, value_on, amount_minor, description, counterparty,
-				balance_after_minor, import_hash, import_batch, nature, category)
-			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT (account_id, import_hash) DO NOTHING`,
-			ws, accountID, booked, valueOn, amount, desc, counterparty(desc), balance, hex.EncodeToString(sum[:]), batch, nature, category)
+				balance_after_minor, import_hash, import_batch, nature, category, notes)
+			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT (account_id, import_hash) DO NOTHING`,
+			ws, accountID, m.Booked, valueOn, m.Amount, m.Desc, counterparty(m.Desc), balance, m.Hash(accountID), batch, nature, category, notes)
 		if err != nil {
 			return nil, err
 		}
@@ -172,7 +268,10 @@ func (s *Service) importStatement(ctx context.Context, tx pgx.Tx, ws, accountID,
 	for _, id := range ids {
 		s.Folder.Journal(ctx, tx, ws, "movement", id)
 	}
-	return map[string]any{"entity_type": "account", "id": accountID, "inserted": inserted, "duplicates": duplicates, "proposed_matches": proposed, "errors": errs}, nil
+	if errs == nil {
+		errs = []string{}
+	}
+	return map[string]any{"entity_type": "account", "id": accountID, "inserted": inserted, "duplicates": duplicates, "skipped": skipped, "proposed_matches": proposed, "errors": errs}, nil
 }
 
 func counterparty(desc string) string {
@@ -199,7 +298,7 @@ func (s *Service) proposeMatches(ctx context.Context, tx pgx.Tx, ws string) (int
 		pending                    int64
 		date                       time.Time
 	}
-	rows, err := tx.Query(ctx, `SELECT i.id::text, i.direction, coalesce(i.number,''), lower(coalesce(o.name,'')), i.total_minor - i.paid_minor, coalesce(i.issue_date, i.created_at::date)
+	rows, err := tx.Query(ctx, `SELECT i.id::text, i.direction, coalesce(i.number,''), lower(coalesce(o.name, i.attrs->>'tercero', '')), i.total_minor - i.paid_minor, coalesce(i.issue_date, i.created_at::date)
 		FROM biz_invoice i LEFT JOIN biz_organization o ON o.id=i.organization_id
 		WHERE i.workspace_id=$1 AND i.status IN ('issued','partially_paid') AND i.total_minor - i.paid_minor <> 0
 		AND NOT EXISTS (SELECT 1 FROM biz_bank_movement m WHERE m.invoice_id=i.id AND m.status='proposed')`, ws)
@@ -507,6 +606,88 @@ func (s *Service) registerFinance() {
 			res := entityResult("invoice", row)
 			if in.DocumentPath != "" {
 				if err := s.attachDocument(ctx, tx, ws, "invoice", str(res["id"]), "justificante", in.Number, in.DocumentPath); err != nil {
+					return nil, err
+				}
+			}
+			s.Folder.Journal(ctx, tx, ws, "invoice", str(res["id"]))
+			return res, nil
+		},
+	})
+
+	// invoice.register records an invoice that already exists as a document
+	// (issued or received) with its own number: it never assigns numbering.
+	// Every amount must have been read from the document; one that is not
+	// known keeps the invoice out of the app (only its register row exists),
+	// because an unknown is never made zero.
+	s.register(&Command{
+		Action: "invoice.register", Capability: "FIN-08", Area: "finanzas",
+		Exec: func(ctx context.Context, tx pgx.Tx, s *Service, ws string, a Actor, p json.RawMessage) (any, error) {
+			in, err := decode[struct {
+				Direction        string `json:"direction"`
+				Number           string `json:"number"`
+				IssueDate        string `json:"issue_date"`
+				Party            string `json:"party"`
+				Concept          string `json:"concept"`
+				Currency         string `json:"currency"`
+				BaseMinor        *int64 `json:"base_minor"`
+				TaxMinor         *int64 `json:"tax_minor"`
+				WithholdingMinor *int64 `json:"withholding_minor"`
+				TotalMinor       *int64 `json:"total_minor"`
+				DocumentPath     string `json:"document_path"`
+				RegistroID       string `json:"registro_id"`
+				Ambito           string `json:"ambito"`
+				Fuente           string `json:"fuente"`
+			}](p)
+			if err != nil {
+				return nil, err
+			}
+			if in.Direction != "issued" && in.Direction != "received" {
+				return nil, invalid("direction: issued o received")
+			}
+			if in.Number == "" || in.IssueDate == "" || in.Party == "" || in.RegistroID == "" {
+				return nil, invalid("La factura necesita número, fecha, tercero e id de registro")
+			}
+			if in.BaseMinor == nil || in.TaxMinor == nil || in.TotalMinor == nil {
+				return nil, invalid("Base, IVA y total tienen que leerse del documento; si falta alguno, la factura se queda solo en el registro")
+			}
+			withholding := int64(0)
+			if in.WithholdingMinor != nil {
+				withholding = *in.WithholdingMinor
+			}
+			if *in.BaseMinor+*in.TaxMinor-withholding != *in.TotalMinor {
+				return nil, invalid("Base + IVA − retención no da el total (%s)", eur(*in.TotalMinor))
+			}
+			issue, err := parseDate(in.IssueDate)
+			if err != nil {
+				return nil, invalid("%v", err)
+			}
+			if in.Currency == "" {
+				in.Currency = "EUR"
+			}
+			var existing string
+			_ = tx.QueryRow(ctx, `SELECT id::text FROM biz_invoice WHERE workspace_id=$1 AND attrs->>'registro_id'=$2`, ws, in.RegistroID).Scan(&existing)
+			if existing != "" {
+				return map[string]any{"entity_type": "invoice", "id": existing, "duplicate": true}, nil
+			}
+			attrs := map[string]any{"registro_id": in.RegistroID, "tercero": in.Party}
+			if in.Ambito != "" {
+				attrs["ambito"] = in.Ambito
+			}
+			if in.Fuente != "" {
+				attrs["fuente"] = in.Fuente
+			}
+			attrsJSON, _ := json.Marshal(attrs)
+			lines, _ := json.Marshal([]map[string]any{{"concept": in.Concept, "base_minor": *in.BaseMinor}})
+			var row json.RawMessage
+			if err := tx.QueryRow(ctx, `INSERT INTO biz_invoice (workspace_id, direction, number, status, issue_date, lines, base_minor, tax_minor, withholding_minor,
+					total_minor, currency, notes, origin, attrs)
+				VALUES ($1,$2,$3,'issued',$4,$5,$6,$7,$8,$9,$10,$11,'registro',$12) RETURNING to_jsonb(biz_invoice.*)`,
+				ws, in.Direction, in.Number, issue, lines, *in.BaseMinor, *in.TaxMinor, withholding, *in.TotalMinor, in.Currency, in.Concept, attrsJSON).Scan(&row); err != nil {
+				return nil, invalid("No se pudo registrar (¿número repetido?): %v", err)
+			}
+			res := entityResult("invoice", row)
+			if in.DocumentPath != "" {
+				if err := s.attachDocument(ctx, tx, ws, "invoice", str(res["id"]), "original", in.Number, in.DocumentPath); err != nil {
 					return nil, err
 				}
 			}

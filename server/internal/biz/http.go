@@ -42,6 +42,11 @@ func (s *Service) Routes(r chi.Router) {
 	r.Get("/folder/status", s.handle(func(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) { return s.Folder.Status(ctx, ws) }))
 	r.Post("/folder/export", s.handle(s.postFolderExport))
 	r.Post("/folder/rebuild", s.handle(s.postFolderRebuild))
+	r.Post("/folder/adopt", s.handle(s.postFolderAdopt))
+	s.databaseRoutes(r)
+	s.libraryRoutes(r)
+	s.portalRoutes(r)
+	s.vistasRoutes(r)
 	r.Post("/events/process", s.handle(func(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) {
 		s.ProcessEvents(ctx)
 		return map[string]any{"ok": true}, nil
@@ -224,7 +229,7 @@ var listQueries = map[string]string{
 	"account": `SELECT a.*, (SELECT count(*) FROM biz_bank_movement m WHERE m.account_id=a.id) AS movements,
 		(SELECT balance_after_minor FROM biz_bank_movement m WHERE m.account_id=a.id AND balance_after_minor IS NOT NULL ORDER BY booked_on DESC, created_at DESC LIMIT 1) AS last_balance_minor
 		FROM biz_bank_account a WHERE a.workspace_id=$1`,
-	"movement": `SELECT m.*, a.name AS account_name, i.number AS invoice_number, org.name AS invoice_organization FROM biz_bank_movement m JOIN biz_bank_account a ON a.id=m.account_id
+	"movement": `SELECT m.*, a.name AS account_name, i.number AS invoice_number, coalesce(org.name, i.attrs->>'tercero') AS invoice_organization FROM biz_bank_movement m JOIN biz_bank_account a ON a.id=m.account_id
 		LEFT JOIN biz_invoice i ON i.id=m.invoice_id LEFT JOIN biz_organization org ON org.id=i.organization_id WHERE m.workspace_id=$1`,
 	"period":       `SELECT * FROM biz_period p WHERE p.workspace_id=$1`,
 	"kpi":          `SELECT * FROM biz_kpi k WHERE k.workspace_id=$1`,
@@ -438,4 +443,18 @@ func (s *Service) postFolderRebuild(ctx context.Context, ws string, a Actor, r *
 	}
 	_ = json.NewDecoder(r.Body).Decode(&in)
 	return s.Folder.Rebuild(ctx, ws, in.Apply)
+}
+
+// postFolderAdopt previews (or, with apply, adds) the minimal frontmatter for
+// notes a person made in record folders. Bodies are never rewritten.
+func (s *Service) postFolderAdopt(ctx context.Context, ws string, a Actor, r *http.Request) (any, error) {
+	if a.Type != "member" || (a.Role != "owner" && a.Role != "admin") {
+		return nil, errf(403, "forbidden", "Solo propietarios y administradores adoptan notas de la carpeta")
+	}
+	var in struct {
+		Apply bool     `json:"apply"`
+		Types []string `json:"types"`
+	}
+	_ = json.NewDecoder(r.Body).Decode(&in)
+	return s.Folder.Adopt(ctx, ws, in.Apply, in.Types...)
 }

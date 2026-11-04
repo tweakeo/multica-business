@@ -7,6 +7,7 @@ dist
 # build outputs
 .turbo
 .next
+.next-*
 out
 build
 bin
@@ -82,3 +83,6 @@ perf-report/
 # The production example is a tracked template; `.env*` above would hide it.
 !apps/mobile/.env.production.example
 /dist/
+
+# Local deny list for scripts/privacidad/escanear.sh (names and values that must never leave this machine)
+.privacidad.local

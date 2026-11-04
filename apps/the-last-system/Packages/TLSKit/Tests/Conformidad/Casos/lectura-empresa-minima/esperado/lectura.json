@@ -1,0 +1,687 @@
+[
+  {
+    "clase" : "otro",
+    "ruta" : ".tls/layout.json"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "1 · Dirección/Decisiones.md",
+    "titulo" : "Decisiones"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "1 · Dirección/Rumbo.md",
+    "titulo" : "Rumbo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "1 · Dirección/Sistemas/Elegir proyectos.md",
+    "titulo" : "Elegir proyectos"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "1 · Dirección/Sistemas/Plan del estudio.md",
+    "titulo" : "Plan del estudio"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Sistemas/Plan%20del%20estudio.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Sistemas/Plan del estudio.md"
+      },
+      {
+        "destino" : "Rumbo.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Rumbo.md"
+      },
+      {
+        "destino" : "../Empresa.md",
+        "estilo" : "markdown",
+        "resuelve" : "Empresa.md"
+      },
+      {
+        "destino" : "Sistemas/Elegir%20proyectos.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Sistemas/Elegir proyectos.md"
+      },
+      {
+        "destino" : "Rumbo.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Rumbo.md"
+      },
+      {
+        "destino" : "Decisiones.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Decisiones.md"
+      },
+      {
+        "destino" : "../Empresa.md",
+        "estilo" : "markdown",
+        "resuelve" : "Empresa.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "1 · Dirección/Área.md",
+    "titulo" : "Dirección"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "[[Lucía Prueba]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Contactos/Lucía Prueba.md"
+      },
+      {
+        "destino" : "[[José Núñez]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Contactos/José Núñez.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "2 · Ventas/Contactos/Contactos.md",
+    "titulo" : "Contactos"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Lucía%20Prueba.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Contactos/Lucía Prueba.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "2 · Ventas/Contactos/José Núñez.md",
+    "titulo" : "José Núñez"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "[[Ferretería Ejemplo]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Empresas/Ferretería Ejemplo.md"
+      },
+      {
+        "destino" : "[[web-ferreteria-ejemplo]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Oportunidades/web-ferreteria-ejemplo.md"
+      },
+      {
+        "destino" : "[[Embudo#Etapas]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Sistemas/Embudo.md"
+      },
+      {
+        "destino" : "Jos%C3%A9%20N%C3%BA%C3%B1ez.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Contactos/José Núñez.md"
+      },
+      {
+        "destino" : "[[Ferretería Ejemplo]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Empresas/Ferretería Ejemplo.md"
+      }
+    ],
+    "propiedades" : [
+      [
+        "tipo",
+        "texto",
+        "persona"
+      ],
+      [
+        "nombre",
+        "texto",
+        "Lucía Prueba"
+      ],
+      [
+        "empresa",
+        "texto",
+        "[[Ferretería Ejemplo]]"
+      ],
+      [
+        "email",
+        "texto",
+        "lucia@example.com"
+      ],
+      [
+        "alta",
+        "texto",
+        "2026-10-21"
+      ],
+      [
+        "ultimo_contacto",
+        "texto",
+        "2026-09-10T22:00:00.000Z"
+      ],
+      [
+        "etiquetas",
+        "lista",
+        "cliente | web"
+      ],
+      [
+        "activo",
+        "bool",
+        "true"
+      ],
+      [
+        "importe",
+        "numero",
+        "1200"
+      ],
+      [
+        "notas",
+        "texto",
+        "Persona ficticia para pruebas."
+      ],
+      [
+        "direccion",
+        "yaml",
+        "calle: Calle Falsa 1\nciudad: Valencia"
+      ]
+    ],
+    "ruta" : "2 · Ventas/Contactos/Lucía Prueba.md",
+    "titulo" : "Lucía Prueba"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "../Contactos/Lucía%20Prueba.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Contactos/Lucía Prueba.md"
+      }
+    ],
+    "propiedades" : [
+      [
+        "tipo",
+        "texto",
+        "empresa"
+      ],
+      [
+        "nombre",
+        "texto",
+        "Ferretería Ejemplo"
+      ],
+      [
+        "sector",
+        "texto",
+        "comercio"
+      ]
+    ],
+    "ruta" : "2 · Ventas/Empresas/Ferretería Ejemplo.md",
+    "titulo" : "Ferretería Ejemplo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "../Empresas/Ferreter%C3%ADa%20Ejemplo.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Empresas/Ferretería Ejemplo.md"
+      },
+      {
+        "destino" : "[[Lucía Prueba]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Contactos/Lucía Prueba.md"
+      }
+    ],
+    "propiedades" : [
+      [
+        "tls_type",
+        "texto",
+        "opportunity"
+      ],
+      [
+        "tls_schema",
+        "numero",
+        "1"
+      ],
+      [
+        "id",
+        "texto",
+        "6f1c2a9e-0000-4000-8000-000000000001"
+      ],
+      [
+        "nombre",
+        "texto",
+        "Web para Ferretería Ejemplo"
+      ],
+      [
+        "estado",
+        "texto",
+        "Propuesta"
+      ],
+      [
+        "empresa_id",
+        "vacio",
+        ""
+      ],
+      [
+        "valor",
+        "numero",
+        "1200"
+      ],
+      [
+        "entrada",
+        "texto",
+        "2026-10-01"
+      ]
+    ],
+    "ruta" : "2 · Ventas/Oportunidades/web-ferreteria-ejemplo.md",
+    "tipo" : "opportunity",
+    "titulo" : "Web para Ferretería Ejemplo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "2 · Ventas/Sistemas/Embudo.md",
+    "titulo" : "Embudo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "2 · Ventas/Sistemas/Registro de contactos.md",
+    "titulo" : "Registro de contactos"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Sistemas/Embudo.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Sistemas/Embudo.md"
+      },
+      {
+        "destino" : "[[Registro de contactos]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Sistemas/Registro de contactos.md"
+      },
+      {
+        "destino" : "Contactos/Contactos.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Contactos/Contactos.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "2 · Ventas/Área.md",
+    "titulo" : "Ventas"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "../../../2%20·%20Ventas/Oportunidades/web-ferreteria-ejemplo.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Oportunidades/web-ferreteria-ejemplo.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "3 · Entrega/Proyectos/web-ferreteria/Proyecto.md",
+    "titulo" : "Web de Ferretería Ejemplo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "[[Lucía Prueba]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Contactos/Lucía Prueba.md"
+      }
+    ],
+    "propiedades" : [
+      [
+        "tls_type",
+        "texto",
+        "task"
+      ],
+      [
+        "numero",
+        "texto",
+        "T-0001"
+      ],
+      [
+        "titulo",
+        "texto",
+        "Preparar la reunión de arranque"
+      ],
+      [
+        "estado",
+        "texto",
+        "Por hacer"
+      ],
+      [
+        "planificada",
+        "texto",
+        "2026-10-27"
+      ]
+    ],
+    "ruta" : "3 · Entrega/Proyectos/web-ferreteria/Tareas/t-0001-preparar-arranque.md",
+    "tipo" : "task",
+    "titulo" : "Preparar la reunión de arranque"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "3 · Entrega/Sistemas/Seguimiento de proyectos.md",
+    "titulo" : "Seguimiento de proyectos"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Sistemas/Seguimiento%20de%20proyectos.md",
+        "estilo" : "markdown",
+        "resuelve" : "3 · Entrega/Sistemas/Seguimiento de proyectos.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "3 · Entrega/Área.md",
+    "titulo" : "Entrega"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "4 · Finanzas/Gestoría/Asesor (Ejemplo).md",
+    "titulo" : "Asesor (Ejemplo)"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "emitidas.csv",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Registros/emitidas.csv"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "4 · Finanzas/Registros/Esquema.md",
+    "titulo" : "Esquema"
+  },
+  {
+    "cabecera" : [
+      "id",
+      "fecha",
+      "cliente",
+      "concepto",
+      "importe"
+    ],
+    "clase" : "tabla",
+    "delimitador" : ",",
+    "filas" : 2,
+    "ruta" : "4 · Finanzas/Registros/emitidas.csv"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "4 · Finanzas/Sistemas/Facturación y cobros.md",
+    "titulo" : "Facturación y cobros"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "4 · Finanzas/Sistemas/Gastos del mes.md",
+    "titulo" : "Gastos del mes"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Registros/Esquema.md",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Registros/Esquema.md"
+      },
+      {
+        "destino" : "Sistemas/Facturación%20y%20cobros.md",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Sistemas/Facturación y cobros.md"
+      },
+      {
+        "destino" : "Sistemas/Gastos%20del%20mes.md",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Sistemas/Gastos del mes.md"
+      },
+      {
+        "destino" : "Sistemas/Gastos%20del%20mes/Anotar%20ticket.md",
+        "estilo" : "markdown"
+      },
+      {
+        "destino" : "Gestoría/Asesor (Ejemplo).md",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Gestoría/Asesor (Ejemplo).md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "4 · Finanzas/Área.md",
+    "titulo" : "Finanzas"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "5 · Marca/Sistemas/Identidad.md",
+    "titulo" : "Identidad"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Sistemas/Identidad.md",
+        "estilo" : "markdown",
+        "resuelve" : "5 · Marca/Sistemas/Identidad.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "5 · Marca/Área.md",
+    "titulo" : "Marca"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "6 · Equipo/Sistemas/Asistentes.md",
+    "titulo" : "Asistentes"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "6 · Equipo/Sistemas/Colaboradores.md",
+    "titulo" : "Colaboradores"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "Sistemas/Colaboradores.md",
+        "estilo" : "markdown",
+        "resuelve" : "6 · Equipo/Sistemas/Colaboradores.md"
+      },
+      {
+        "destino" : "Sistemas/Asistentes.md",
+        "estilo" : "markdown",
+        "resuelve" : "6 · Equipo/Sistemas/Asistentes.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "6 · Equipo/Área.md",
+    "titulo" : "Equipo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "AGENTS.md",
+    "titulo" : "Instrucciones"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "[[Ferretería Ejemplo]]",
+        "estilo" : "wiki",
+        "resuelve" : "2 · Ventas/Empresas/Ferretería Ejemplo.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "Archivo/2025/Propuesta antigua.md",
+    "titulo" : "Propuesta antigua"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "Buzón/Correspondencia.md",
+    "titulo" : "Correspondencia"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+      {
+        "destino" : "1%20·%20Dirección/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "1 · Dirección/Área.md"
+      },
+      {
+        "destino" : "2%20·%20Ventas/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "2 · Ventas/Área.md"
+      },
+      {
+        "destino" : "3%20·%20Entrega/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "3 · Entrega/Área.md"
+      },
+      {
+        "destino" : "4%20·%20Finanzas/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "4 · Finanzas/Área.md"
+      },
+      {
+        "destino" : "5%20·%20Marca/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "5 · Marca/Área.md"
+      },
+      {
+        "destino" : "6%20·%20Equipo/Área.md",
+        "estilo" : "markdown",
+        "resuelve" : "6 · Equipo/Área.md"
+      }
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "Empresa.md",
+    "titulo" : "Estudio Ejemplo"
+  },
+  {
+    "clase" : "nota",
+    "enlaces" : [
+
+    ],
+    "propiedades" : [
+
+    ],
+    "ruta" : "Privado/Expediente personal.md",
+    "titulo" : "Expediente personal"
+  }
+]

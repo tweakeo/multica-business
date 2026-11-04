@@ -1,0 +1,8 @@
+id,fecha_documento,tercero,numero_documento,moneda,total_documento,documento,ambito,proyecto_id,estado_revision,fuente
+F-2026-0001,2026-05-06,Lucía Ferrer,F-2026-0001,EUR,108.90,Fiscal/2026/T2/Ingresos/f-2026-0001.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0002,2026-05-20,Marta Soler,F-2026-0002,EUR,108.90,Fiscal/2026/T2/Ingresos/f-2026-0002.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0003,2026-06-03,Pablo Ruiz,F-2026-0003,EUR,108.90,Fiscal/2026/T2/Ingresos/f-2026-0003.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0004,2026-07-05,Panadería Horno Sol SL,F-2026-0004,EUR,181.50,Fiscal/2026/T3/Ingresos/f-2026-0004.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0005,2026-07-08,Clínica Dental Sonrisa SLP,F-2026-0005,EUR,181.50,Fiscal/2026/T3/Ingresos/f-2026-0005.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0006,2026-09-15,Andrés Vidal,F-2026-0006,EUR,108.90,Fiscal/2026/T3/Ingresos/f-2026-0006.md,Asesoría Ribera (DEMO),,,importacion
+F-2026-0007,2026-10-15,Talleres Martín e Hijos SL,F-2026-0007,EUR,181.50,Fiscal/2026/T4/Ingresos/f-2026-0007.md,Asesoría Ribera (DEMO),,,importacion

@@ -8,6 +8,20 @@ Multica is a task management platform where people and agents collaborate on iss
 - For naming, translations, or Chinese UI/docs copy, read [conventions.mdx](apps/docs/content/docs/developers/conventions.mdx) and [conventions.zh.mdx](apps/docs/content/docs/developers/conventions.zh.mdx).
 - Maintain shared rules here and mobile-specific rules in the mobile file. `CLAUDE.md` files only import them. Update instructions in the same change that alters the referenced workflow or boundary; do not add incident timelines, dependency version lists, or duplicate rules.
 
+## TLS (Mika Business)
+
+This fork adds a business layer and a native macOS app. Start from [docs/tls/ARQUITECTURA.md](docs/tls/ARQUITECTURA.md); deployment is in [docs/tls/DESPLIEGUE.md](docs/tls/DESPLIEGUE.md), variables in [docs/tls/VARIABLES.md](docs/tls/VARIABLES.md), and the business rules the code enforces in [negocio/README.md](negocio/README.md).
+
+| Location | Responsibility |
+| --- | --- |
+| `server/internal/biz/`, `packages/core/biz/`, `packages/views/empresa/` | Business layer: areas, CRM, delivery, finance, company folder |
+| `apps/macos/`, `scripts/tls/` | The fork's macOS app, demo seed and separate-instance script |
+| `apps/the-last-system/` | Native Swift app with its own license and build (`make`); read its README and `docs/PROCEDENCIA.md` before changing it |
+| `negocio/`, `docs/diseno/`, `examples/empresa-ejemplo/` | Generic business knowledge, visual system and brand, fictitious company folder |
+
+- Domain rules: nothing leaves (send, issue, publish, confirm money) without a person's approval; a project is born from a confirmed payment; reconciliation is proposed, never auto-confirmed; the company folder is the source of truth and retiring means moving to `Archivo/`, never deleting.
+- **Privacy:** this repository only holds non-sensitive, invented data. Never add real people, clients, invoices, bank data, tax documents, health data, secrets or local paths of a real machine. Use the fictitious Asesoría Ribera and run `scripts/privacidad/escanear.sh --staged` before each commit; the Privacidad workflow runs it on every pull request.
+
 ## Sharing Rules and Package Boundaries
 
 | Location | Responsibility and constraints |

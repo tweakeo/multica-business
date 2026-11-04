@@ -1,0 +1,550 @@
+{
+  "version": 1,
+  "procedencia": "Programa v0.5 (Manu): core/sql/13-estructura.sql (sistemas_std) y core/sql/14-calibracion.sql (capacidades de cada sistema).",
+  "sistemas": [
+    {
+      "codigo": "DIR-1",
+      "area": "DIR",
+      "nombre": "Rumbo y objetivos",
+      "pregunta": "¿Adónde vamos este trimestre, con número?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 1,
+      "claves": [
+        "objetivo",
+        "rumbo",
+        "vision",
+        "visión",
+        "estrategia",
+        "mapa del negocio",
+        "trimestre",
+        "dirección t"
+      ],
+      "capacidades": [
+        "DIR-02",
+        "DIR-03",
+        "DIR-10"
+      ]
+    },
+    {
+      "codigo": "DIR-2",
+      "area": "DIR",
+      "nombre": "Cuadro de mando",
+      "pregunta": "¿Cómo sé si vamos bien sin preguntar a nadie?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 2,
+      "claves": [
+        "cuadro de mando",
+        "panel",
+        "dashboard",
+        "kpi",
+        "métrica",
+        "metrica",
+        "scorecard"
+      ],
+      "capacidades": [
+        "DIR-04",
+        "DIR-08",
+        "DIR-09"
+      ]
+    },
+    {
+      "codigo": "DIR-3",
+      "area": "DIR",
+      "nombre": "Registro de decisiones",
+      "pregunta": "¿Por qué decidimos lo que decidimos?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 3,
+      "claves": [
+        "decision",
+        "decisión",
+        "bitácora",
+        "bitacora",
+        "acta",
+        "registro de decisiones"
+      ],
+      "capacidades": [
+        "DIR-01",
+        "DIR-11"
+      ]
+    },
+    {
+      "codigo": "DIR-4",
+      "area": "DIR",
+      "nombre": "Rutina de dirección",
+      "pregunta": "¿Cuándo se mira y con qué pregunta fija?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 4,
+      "claves": [
+        "rutina del director",
+        "rutina de direccion",
+        "rutina de dirección",
+        "replanificación",
+        "replanificacion"
+      ],
+      "capacidades": [
+        "DIR-05",
+        "DIR-06",
+        "DIR-07"
+      ]
+    },
+    {
+      "codigo": "VEN-1",
+      "area": "VEN",
+      "nombre": "Cliente ideal y mensaje",
+      "pregunta": "¿A quién le sirve esto y qué le decimos?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 1,
+      "claves": [
+        "cliente ideal",
+        "icp",
+        "mercado",
+        "mensaje",
+        "pilares",
+        "posicionamiento",
+        "oferta"
+      ],
+      "capacidades": [
+        "VEN-02",
+        "VEN-10"
+      ]
+    },
+    {
+      "codigo": "VEN-2",
+      "area": "VEN",
+      "nombre": "Embudo",
+      "pregunta": "¿Por dónde entra y por dónde se cae?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 2,
+      "claves": [
+        "embudo",
+        "pipeline",
+        "funnel",
+        "a2",
+        "captación",
+        "captacion",
+        "lead"
+      ],
+      "capacidades": [
+        "VEN-01",
+        "VEN-03",
+        "VEN-04"
+      ]
+    },
+    {
+      "codigo": "VEN-3",
+      "area": "VEN",
+      "nombre": "Seguimiento de oportunidades",
+      "pregunta": "¿Qué oportunidad hay que tocar hoy?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 3,
+      "claves": [
+        "seguimiento",
+        "follow",
+        "toque",
+        "oportunidad",
+        "crm",
+        "cierre",
+        "a4"
+      ],
+      "capacidades": [
+        "VEN-07",
+        "VEN-08",
+        "VEN-09",
+        "VEN-13"
+      ]
+    },
+    {
+      "codigo": "VEN-4",
+      "area": "VEN",
+      "nombre": "Materiales de venta",
+      "pregunta": "¿Con qué se vende, sin improvisar?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 4,
+      "claves": [
+        "diagnóstico",
+        "diagnostico",
+        "propuesta",
+        "dossier",
+        "deck",
+        "presentación",
+        "presentacion",
+        "a1",
+        "a3",
+        "materiales",
+        "argumentario"
+      ],
+      "capacidades": [
+        "VEN-05",
+        "VEN-06",
+        "VEN-11",
+        "VEN-12"
+      ]
+    },
+    {
+      "codigo": "ENT-1",
+      "area": "ENT",
+      "nombre": "Proceso de entrega",
+      "pregunta": "¿Se entrega igual cada vez, sin depender de quién?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 1,
+      "claves": [
+        "entrega",
+        "implementación",
+        "implementacion",
+        "proceso",
+        "a6",
+        "flujo",
+        "sesiones",
+        "kit"
+      ],
+      "capacidades": [
+        "ENT-02",
+        "ENT-04",
+        "ENT-10"
+      ]
+    },
+    {
+      "codigo": "ENT-2",
+      "area": "ENT",
+      "nombre": "Onboarding de cliente",
+      "pregunta": "¿Qué pasa el primer día después de cobrar?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 2,
+      "claves": [
+        "onboarding",
+        "a5",
+        "arranque",
+        "kick",
+        "bienvenida"
+      ],
+      "capacidades": [
+        "ENT-01",
+        "ENT-03",
+        "ENT-08"
+      ]
+    },
+    {
+      "codigo": "ENT-3",
+      "area": "ENT",
+      "nombre": "Calidad e incidencias",
+      "pregunta": "¿Qué hacemos cuando algo sale mal dos veces?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 3,
+      "claves": [
+        "incidencia",
+        "calidad",
+        "pt1",
+        "soporte",
+        "revisión",
+        "revision"
+      ],
+      "capacidades": [
+        "ENT-06",
+        "ENT-07",
+        "ENT-09",
+        "ENT-13"
+      ]
+    },
+    {
+      "codigo": "ENT-4",
+      "area": "ENT",
+      "nombre": "Cierre y testimonio",
+      "pregunta": "¿Cómo acaba un proyecto y qué deja detrás?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 4,
+      "claves": [
+        "cierre",
+        "a7",
+        "testimonio",
+        "caso de éxito",
+        "caso de exito",
+        "entrega final"
+      ],
+      "capacidades": [
+        "ENT-05",
+        "ENT-11",
+        "ENT-12"
+      ]
+    },
+    {
+      "codigo": "FIN-1",
+      "area": "FIN",
+      "nombre": "Facturación y cobro",
+      "pregunta": "¿Se factura solo y se cobra a tiempo?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 1,
+      "claves": [
+        "factura",
+        "cobro",
+        "facturación",
+        "facturacion",
+        "remesa",
+        "recibo"
+      ],
+      "capacidades": [
+        "FIN-02",
+        "FIN-03",
+        "FIN-04",
+        "FIN-10"
+      ]
+    },
+    {
+      "codigo": "FIN-2",
+      "area": "FIN",
+      "nombre": "Control de caja",
+      "pregunta": "¿Cuántos meses aguanta la empresa?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 2,
+      "claves": [
+        "caja",
+        "tesorería",
+        "tesoreria",
+        "banco",
+        "liquidez",
+        "runway",
+        "rutina financiera"
+      ],
+      "capacidades": [
+        "FIN-01",
+        "FIN-05",
+        "FIN-12"
+      ]
+    },
+    {
+      "codigo": "FIN-3",
+      "area": "FIN",
+      "nombre": "Margen por proyecto",
+      "pregunta": "¿Qué cliente deja dinero y cuál se lo lleva?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 3,
+      "claves": [
+        "margen",
+        "rentabilidad",
+        "coste",
+        "precio",
+        "pyl"
+      ],
+      "capacidades": [
+        "FIN-06",
+        "FIN-08"
+      ]
+    },
+    {
+      "codigo": "FIN-4",
+      "area": "FIN",
+      "nombre": "Cierre fiscal",
+      "pregunta": "¿Llega el trimestre sin sustos?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 4,
+      "claves": [
+        "fiscal",
+        "303",
+        "trimestre",
+        "gestoría",
+        "gestoria",
+        "hacienda",
+        "irpf",
+        "iva"
+      ],
+      "capacidades": [
+        "FIN-07",
+        "FIN-09",
+        "FIN-11"
+      ]
+    },
+    {
+      "codigo": "MAR-1",
+      "area": "MAR",
+      "nombre": "Identidad y mensaje",
+      "pregunta": "¿Se reconoce lo nuestro sin ver el logo?",
+      "nivel": "E",
+      "desde_etapa": 2,
+      "orden": 1,
+      "claves": [
+        "marca",
+        "identidad",
+        "logo",
+        "manual de marca",
+        "tono",
+        "color",
+        "tipografía",
+        "tipografia"
+      ],
+      "capacidades": [
+        "MAR-01",
+        "MAR-09"
+      ]
+    },
+    {
+      "codigo": "MAR-2",
+      "area": "MAR",
+      "nombre": "Pilares de contenido",
+      "pregunta": "¿De qué hablamos y de qué no?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 2,
+      "claves": [
+        "pilar",
+        "pilares",
+        "línea editorial",
+        "linea editorial",
+        "temas"
+      ],
+      "capacidades": [
+        "MAR-02",
+        "MAR-11"
+      ]
+    },
+    {
+      "codigo": "MAR-3",
+      "area": "MAR",
+      "nombre": "Calendario editorial",
+      "pregunta": "¿Qué se publica y cuándo, sin pensarlo cada día?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 3,
+      "claves": [
+        "calendario",
+        "contenido",
+        "publicación",
+        "publicacion",
+        "editorial",
+        "guion"
+      ],
+      "capacidades": [
+        "MAR-03",
+        "MAR-04",
+        "MAR-10"
+      ]
+    },
+    {
+      "codigo": "MAR-4",
+      "area": "MAR",
+      "nombre": "Captación por contenido",
+      "pregunta": "¿El contenido trae conversaciones?",
+      "nivel": "R",
+      "desde_etapa": 4,
+      "orden": 4,
+      "claves": [
+        "captación",
+        "captacion",
+        "conversación",
+        "conversacion",
+        "lead magnet",
+        "atribución",
+        "atribucion"
+      ],
+      "capacidades": [
+        "MAR-05",
+        "MAR-06",
+        "MAR-07",
+        "MAR-08",
+        "MAR-12"
+      ]
+    },
+    {
+      "codigo": "EQU-1",
+      "area": "EQU",
+      "nombre": "Ficha de rol",
+      "pregunta": "¿Qué decide cada rol y con qué número?",
+      "nivel": "E",
+      "desde_etapa": 3,
+      "orden": 1,
+      "claves": [
+        "rol",
+        "ficha de rol",
+        "roles",
+        "responsabilidad",
+        "raci"
+      ],
+      "capacidades": [
+        "EQU-01",
+        "EQU-02",
+        "EQU-03"
+      ]
+    },
+    {
+      "codigo": "EQU-2",
+      "area": "EQU",
+      "nombre": "Onboarding de equipo",
+      "pregunta": "¿Cómo entra alguien nuevo sin robarte una semana?",
+      "nivel": "E",
+      "desde_etapa": 4,
+      "orden": 2,
+      "claves": [
+        "onboarding",
+        "alta",
+        "incorporación",
+        "incorporacion",
+        "manual de equipo",
+        "cultura"
+      ],
+      "capacidades": [
+        "EQU-04",
+        "EQU-06",
+        "EQU-08"
+      ]
+    },
+    {
+      "codigo": "EQU-3",
+      "area": "EQU",
+      "nombre": "Rutina de equipo y traspasos",
+      "pregunta": "¿Cuándo se revisa el trabajo de otro?",
+      "nivel": "E",
+      "desde_etapa": 4,
+      "orden": 3,
+      "claves": [
+        "rutina de equipo",
+        "traspaso",
+        "reunión de equipo",
+        "reunion de equipo",
+        "seguimiento de equipo"
+      ],
+      "capacidades": [
+        "EQU-05",
+        "EQU-07",
+        "EQU-09",
+        "EQU-10"
+      ]
+    },
+    {
+      "codigo": "EQU-4",
+      "area": "EQU",
+      "nombre": "Evaluación y criterio",
+      "pregunta": "¿Cómo sabemos si alguien lo hace bien?",
+      "nivel": "R",
+      "desde_etapa": 5,
+      "orden": 4,
+      "claves": [
+        "evaluación",
+        "evaluacion",
+        "desempeño",
+        "desempeno",
+        "feedback",
+        "captación de equipo",
+        "captacion de equipo"
+      ],
+      "capacidades": [
+        "EQU-11",
+        "EQU-12",
+        "EQU-13"
+      ]
+    }
+  ]
+}

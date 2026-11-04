@@ -173,6 +173,287 @@ const FolderStatusSchema = z.object({
 });
 export type BizFolderStatus = z.infer<typeof FolderStatusSchema>;
 
+const SystemSectionSchema = z.object({ heading: z.string().default(""), body: z.string().default("") });
+const SystemDocBase = z.object({
+  path: z.string(),
+  title: z.string().default(""),
+  summary: z.string().default(""),
+  status: z.string().default(""),
+  owner: z.string().default(""),
+  intro: z.string().default(""),
+  sections: z.array(SystemSectionSchema).nullable().default([]),
+  modified_at: z.string().default(""),
+});
+export type BizSystemNote = z.infer<typeof SystemDocBase>;
+const SystemDocSchema = SystemDocBase.extend({ children: z.array(SystemDocBase).nullable().default([]) });
+export type BizSystemDoc = z.infer<typeof SystemDocSchema>;
+const SystemsSchema = z.object({ configured: z.boolean().default(false), folder: z.string().default(""), systems: z.array(SystemDocSchema).default([]) });
+export type BizSystems = z.infer<typeof SystemsSchema>;
+
+const LibraryDocSchema = z.object({
+  path: z.string(),
+  name: z.string(),
+  group: z.string().default(""),
+  kind: z.string().default(""),
+  detail: z.string().default(""),
+  year: z.number().optional(),
+  quarter: z.string().optional(),
+  date: z.string().default(""),
+  date_source: z.string().default(""),
+  date_note: z.string().default(""),
+  quarter_from_date: z.boolean().default(false),
+  ext: z.string().default(""),
+  size: z.number().default(0),
+  modified_at: z.string().default(""),
+  private: z.boolean().default(false),
+  in_cloud: z.boolean().default(false),
+});
+export type BizLibraryDoc = z.infer<typeof LibraryDocSchema>;
+const DocumentsSchema = z.object({
+  configured: z.boolean().default(false),
+  folder: z.string().default(""),
+  dates_index: z.string().default(""),
+  groups: z.array(z.string()).default([]),
+  documents: z.array(LibraryDocSchema).default([]),
+});
+export type BizDocuments = z.infer<typeof DocumentsSchema>;
+
+const PortalDocSchema = z.object({
+  path: z.string(),
+  name: z.string(),
+  ext: z.string().default(""),
+  size: z.number().default(0),
+  modified_at: z.string().default(""),
+  session: z.string().default(""),
+  client: z.boolean().default(false),
+  in_cloud: z.boolean().default(false),
+});
+export type BizPortalDoc = z.infer<typeof PortalDocSchema>;
+const PortalSessionSchema = z.object({
+  code: z.string(),
+  name: z.string().default(""),
+  status: z.string().default(""),
+  state: z.string().default("pendiente"),
+  date: z.string().default(""),
+  summary: z.string().default(""),
+  note: z.string().default(""),
+  cover: z.string().default(""),
+  kit: z.array(PortalDocSchema).nullable().default([]),
+  current: z.boolean().default(false),
+});
+export type BizPortalSession = z.infer<typeof PortalSessionSchema>;
+const PortalTaskSchema = z.object({ text: z.string().default(""), done: z.boolean().default(false), session: z.string().default(""), due: z.string().default(""), overdue: z.boolean().default(false) });
+export type BizPortalTask = z.infer<typeof PortalTaskSchema>;
+const PortalIncidentSchema = z.object({
+  id: z.string().default(""),
+  date: z.string().default(""),
+  reporter: z.string().default(""),
+  email: z.string().default(""),
+  type: z.string().default(""),
+  severity: z.string().default(""),
+  status: z.string().default(""),
+  description: z.string().default(""),
+  owner: z.string().default(""),
+  resolution: z.string().default(""),
+  open: z.boolean().default(false),
+  age_days: z.number().default(0),
+});
+export type BizPortalIncident = z.infer<typeof PortalIncidentSchema>;
+const PortalProgressSchema = z.object({
+  sessions_done: z.number().default(0),
+  sessions_total: z.number().default(0),
+  tasks_done: z.number().default(0),
+  tasks_total: z.number().default(0),
+  incidents_open: z.number().default(0),
+  percent: z.number().default(0),
+  current: z.string().default(""),
+});
+const PortalProjectSchema = z.object({
+  slug: z.string(),
+  path: z.string().default(""),
+  title: z.string().default(""),
+  client: z.string().default(""),
+  state: z.string().default(""),
+  demo: z.boolean().default(false),
+  closed: z.boolean().default(false),
+  has_portal: z.boolean().default(false),
+  portal_path: z.string().default(""),
+  incidents_path: z.string().default(""),
+  client_folder: z.string().default(""),
+  sessions: z.array(PortalSessionSchema).nullable().default([]),
+  tasks: z.array(PortalTaskSchema).nullable().default([]),
+  incidents: z.array(PortalIncidentSchema).nullable().default([]),
+  documents: z.array(PortalDocSchema).nullable().default([]),
+  progress: PortalProgressSchema.default(PortalProgressSchema.parse({})),
+  intro: z.string().default(""),
+});
+export type BizPortalProject = z.infer<typeof PortalProjectSchema>;
+const PortalListSchema = z.object({
+  configured: z.boolean().default(false),
+  folder: z.string().default(""),
+  client_folder: z.string().default(""),
+  projects: z.array(PortalProjectSchema).default([]),
+  types: z.array(z.string()).default([]),
+  severities: z.array(z.string()).default([]),
+});
+export type BizPortalList = z.infer<typeof PortalListSchema>;
+export type BizIncidentInput = { reporter: string; email: string; date: string; type: string; severity: string; description: string; steps: string };
+
+// «Bases de datos»: every database of the company, read from where it lives.
+const DbFieldSchema = z.object({ label: z.string(), value: z.string().default("") });
+const DbLinkSchema = z.object({ db: z.string(), id: z.string(), title: z.string().default("") });
+export type BizDbLink = z.infer<typeof DbLinkSchema>;
+const DbRowSchema = z.object({
+  id: z.string(),
+  title: z.string().default(""),
+  subtitle: z.string().default(""),
+  area: z.string().default(""),
+  status: z.string().default(""),
+  date: z.string().default(""),
+  owner: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity: z.string().default(""),
+  entity_id: z.string().default(""),
+  private: z.boolean().default(false),
+  fields: z.array(DbFieldSchema).nullable().default([]),
+  links: z.array(DbLinkSchema).nullable().default([]),
+});
+export type BizDbRow = z.infer<typeof DbRowSchema>;
+const DbInfoSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  area: z.string().default(""),
+  description: z.string().default(""),
+  source: z.string().default(""),
+  folder: z.string().default(""),
+  fill: z.string().default(""),
+  why: z.string().default(""),
+  columns: z.array(z.string()).nullable().default([]),
+  count: z.number().default(0),
+});
+export type BizDbInfo = z.infer<typeof DbInfoSchema>;
+const DatabasesSchema = z.object({ configured: z.boolean().default(false), databases: z.array(DbInfoSchema).default([]) });
+export type BizDatabases = z.infer<typeof DatabasesSchema>;
+const DatabaseSchema = z.object({ configured: z.boolean().default(false), database: DbInfoSchema.nullable().default(null), rows: z.array(DbRowSchema).default([]) });
+export type BizDatabase = z.infer<typeof DatabaseSchema>;
+const DbDetailSchema = z.object({ row: DbRowSchema, inbound: z.array(DbLinkSchema).default([]), body: z.string().default("") });
+export type BizDbDetail = z.infer<typeof DbDetailSchema>;
+
+// Vistas de Dirección (MANU-60): ritmo de facturación, pipeline, carga y planificación interna.
+const nullNum = z.number().nullable().default(null);
+const InvoiceItemSchema = z.object({ date: z.string().default(""), number: z.string().default(""), party: z.string().default(""), amount: nullNum, path: z.string().default(""), id: z.string().default("") });
+const RitmoBucketSchema = z.object({
+  key: z.string(),
+  label: z.string().default(""),
+  start: z.string().default(""),
+  end: z.string().default(""),
+  current: z.boolean().default(false),
+  invoiced: nullNum,
+  invoices: z.number().default(0),
+  no_amount: z.number().default(0),
+  partial: z.boolean().default(false),
+  reason: z.string().default(""),
+  items: z.array(InvoiceItemSchema).nullable().default([]),
+});
+export type BizRitmoBucket = z.infer<typeof RitmoBucketSchema>;
+const RitmoSchema = z.object({
+  period: z.string().default("mes"),
+  buckets: z.array(RitmoBucketSchema).default([]),
+  first_record: z.string().default(""),
+  undated: z.number().default(0),
+  target: nullNum,
+  target_code: z.string().default(""),
+  target_note: z.string().default(""),
+  objectives: RowsSchema.nullable().default([]),
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizRitmo = z.infer<typeof RitmoSchema>;
+const PipelineCardSchema = z.object({
+  id: z.string(),
+  title: z.string().default(""),
+  client: z.string().default(""),
+  stage: z.string().default("entrada"),
+  outcome: z.string().default(""),
+  status: z.string().default(""),
+  amount: nullNum,
+  owner: z.string().default(""),
+  date: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity: z.string().default(""),
+  entity_id: z.string().default(""),
+});
+export type BizPipelineCard = z.infer<typeof PipelineCardSchema>;
+const PipelineStageSchema = z.object({ key: z.string(), count: z.number().default(0), amount: nullNum, no_amount: z.number().default(0), reached: z.number().default(0), conversion: nullNum });
+export type BizPipelineStage = z.infer<typeof PipelineStageSchema>;
+const PipelineSchema = z.object({
+  stages: z.array(PipelineStageSchema).default([]),
+  cards: z.array(PipelineCardSchema).default([]),
+  open: z.number().default(0),
+  open_amount: nullNum,
+  open_no_amount: z.number().default(0),
+  won: z.number().default(0),
+  lost: z.number().default(0),
+  archived: z.number().default(0),
+  win_rate: nullNum,
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizPipeline = z.infer<typeof PipelineSchema>;
+const WorkItemSchema = z.object({ kind: z.string(), title: z.string().default(""), project: z.string().default(""), date: z.string().default(""), overdue: z.boolean().default(false), db: z.string().default(""), id: z.string().default("") });
+const WorkloadSchema = z.object({
+  name: z.string(),
+  kind: z.string().default("persona"),
+  detail: z.string().default(""),
+  capacity: nullNum,
+  unit: z.string().default(""),
+  capacity_note: z.string().default(""),
+  assigned: nullNum,
+  visible: z.boolean().default(true),
+  note: z.string().default(""),
+  counts: z.array(z.object({ key: z.string(), label: z.string(), value: z.number() })).nullable().default([]),
+  items: z.array(WorkItemSchema).nullable().default([]),
+  load: nullNum,
+});
+export type BizWorkload = z.infer<typeof WorkloadSchema>;
+const CargaSchema = z.object({
+  people: z.array(WorkloadSchema).default([]),
+  capacity_note: z.string().default(""),
+  capacity_file: z.string().default(""),
+  has_capacity: z.boolean().default(false),
+  source: z.string().default(""),
+  configured: z.boolean().default(false),
+});
+export type BizCarga = z.infer<typeof CargaSchema>;
+const InternalProjectSchema = z.object({
+  id: z.string(),
+  db: z.string().default(""),
+  title: z.string().default(""),
+  status: z.string().default(""),
+  closed: z.boolean().default(false),
+  area: z.string().default("direccion"),
+  owner: z.string().default(""),
+  start: z.string().default(""),
+  end: z.string().default(""),
+  steps: z.number().default(0),
+  done: z.number().default(0),
+  next: z.string().default(""),
+  path: z.string().default(""),
+  origin: z.string().default(""),
+  entity_id: z.string().default(""),
+});
+export type BizInternalProject = z.infer<typeof InternalProjectSchema>;
+const PlanificacionSchema = z.object({
+  projects: z.array(InternalProjectSchema).default([]),
+  folder: z.string().default(""),
+  fill: z.string().default(""),
+  configured: z.boolean().default(false),
+  folder_exists: z.boolean().default(false),
+});
+export type BizPlanificacion = z.infer<typeof PlanificacionSchema>;
+
 const opts = (endpoint: string) => ({ endpoint });
 
 export const bizApi = {
@@ -203,5 +484,40 @@ export const bizApi = {
   decide: async (id: string, approve: boolean, reason: string) =>
     parseWithFallback(await api.bizPost(`/approvals/${id}/decide`, { approve, reason }), RowSchema, {}, opts("POST /api/biz/approvals/:id/decide")),
   folderExport: async () => api.bizPost("/folder/export", {}),
+  systems: async (area: string) =>
+    parseWithFallback(await api.bizGet(`/systems?area=${encodeURIComponent(area)}`), SystemsSchema, SystemsSchema.parse({}), opts("GET /api/biz/systems")),
+  documents: async () => parseWithFallback(await api.bizGet("/documents"), DocumentsSchema, DocumentsSchema.parse({}), opts("GET /api/biz/documents")),
+  /** The original file, as it is in the company folder. */
+  file: (path: string) => api.bizBlob(`/folder/file?path=${encodeURIComponent(path)}`),
+  /** Shows the original in Finder (the server runs on the Mac that holds the folder). */
+  reveal: async (path: string) => api.bizPost("/folder/reveal", { path }),
+  portals: async () => parseWithFallback(await api.bizGet("/portal"), PortalListSchema, PortalListSchema.parse({}), opts("GET /api/biz/portal")),
+  portal: async (slug: string, client: boolean) =>
+    parseWithFallback(
+      await api.bizGet(`/portal/${encodeURIComponent(slug)}${client ? "?vista=cliente" : ""}`),
+      PortalProjectSchema,
+      null as BizPortalProject | null,
+      opts("GET /api/biz/portal/:project"),
+    ),
+  addIncident: async (slug: string, input: BizIncidentInput) =>
+    parseWithFallback(await api.bizPost(`/portal/${encodeURIComponent(slug)}/incidents`, input), RowSchema, {}, opts("POST /api/biz/portal/:project/incidents")),
+  databases: async () => parseWithFallback(await api.bizGet("/databases"), DatabasesSchema, DatabasesSchema.parse({}), opts("GET /api/biz/databases")),
+  database: async (key: string) =>
+    parseWithFallback(await api.bizGet(`/databases/${encodeURIComponent(key)}`), DatabaseSchema, DatabaseSchema.parse({}), opts("GET /api/biz/databases/:db")),
+  databaseRow: async (key: string, id: string) =>
+    parseWithFallback(
+      await api.bizGet(`/databases/${encodeURIComponent(key)}?id=${encodeURIComponent(id)}`),
+      DbDetailSchema,
+      null as BizDbDetail | null,
+      opts("GET /api/biz/databases/:db?id"),
+    ),
+  /** Opens the original in Obsidian when the folder is in a vault; otherwise with the default app. */
+  openInObsidian: async (path: string) =>
+    parseWithFallback(await api.bizPost("/folder/obsidian", { path }), RowSchema, {}, opts("POST /api/biz/folder/obsidian")),
+  ritmo: async (period: string) =>
+    parseWithFallback(await api.bizGet(`/ritmo?periodo=${encodeURIComponent(period)}`), RitmoSchema, RitmoSchema.parse({}), opts("GET /api/biz/ritmo")),
+  pipeline: async () => parseWithFallback(await api.bizGet("/pipeline"), PipelineSchema, PipelineSchema.parse({}), opts("GET /api/biz/pipeline")),
+  carga: async () => parseWithFallback(await api.bizGet("/carga"), CargaSchema, CargaSchema.parse({}), opts("GET /api/biz/carga")),
+  planificacion: async () => parseWithFallback(await api.bizGet("/planificacion"), PlanificacionSchema, PlanificacionSchema.parse({}), opts("GET /api/biz/planificacion")),
   folderRebuild: async (apply: boolean) => parseWithFallback(await api.bizPost("/folder/rebuild", { apply }), RowSchema, {}, opts("POST /api/biz/folder/rebuild")),
 };

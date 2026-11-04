@@ -1,0 +1,5 @@
+{
+  "operacion": "convertir-g2",
+  "descripcion": "Subconjunto de la demo ficticia Asesoría Ribera (G2) con un registro de cada tipo, referencias que faltan, un extracto de banco, un justificante en PDF y una nota sin tipo. Debe salir la carpeta v2 de esperado/, byte a byte.",
+  "opciones": {"clase": "demo", "hoy": "2026-10-19"}
+}

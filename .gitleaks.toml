@@ -1,0 +1,10 @@
+# Default gitleaks rules plus the invented keys used by tests.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Invented test keys"
+regexes = [
+  '''sk_live_ABCDEFGHIJ(KLMN)?''',
+  '''(pit-)?clave-de-prueba-[0-9]+''',
+]

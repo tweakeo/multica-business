@@ -1,0 +1,127 @@
+# Configuración de esta carpeta, creada por The Last System al convertir una exportación de G2.
+# Lo que cambies aquí no llega a la carpeta de origen.
+version: 1
+id: 80456a26-5841-5c15-9279-32593cdf7291
+clase: demo
+origen: "DEV - Asesoría Ribera"
+creada: 2026-10-19
+hoy: 2026-10-19
+privado: []
+# Datos del emisor: solo los pone la app en los PDF; ningún asistente los lee.
+facturacion:
+  razon_social: Asesoría Ribera Demo SL
+  nif: B00000000 (ficticio)
+
+# Asistentes: lo que pueden hacer de verdad. Sus fichas de rol (Equipo › Roles) solo lo describen.
+interruptor: encendido
+pausa_areas: []
+avisos: {tope_tarjetas_dia: 5, tope_notificaciones_no_rojas_dia: 3}
+uso: {mostrar_eur: false, usd_eur: 0.92}
+agentes:
+  mika:
+    activo: true
+    coordinador: true
+    areas: [direccion]
+    lee_areas: [todas]
+    capacidades: [DIR-01, DIR-02, DIR-04, DIR-05, DIR-06, DIR-07, DIR-08, DIR-09, DIR-10]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: medium
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: algo-rojo, nombre: "¿Algo rojo?", dias: [lun, mar, mie, jue, vie], hora: "08:45", ventana_perdida_h: 6, activa: true, solo_si_rojo: true}
+      - {id: resumen-semana, nombre: "Resumen de la semana", dias: [lun], hora: "08:00", ventana_perdida_h: 12, activa: true}
+  comercial:
+    activo: true
+    areas: [ventas]
+    lee_areas: [marca, finanzas]
+    capacidades: [VEN-01, VEN-02, VEN-03, VEN-04, VEN-05, VEN-06, VEN-08, VEN-09, VEN-10, VEN-11, VEN-12, VEN-13, VEN-14]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: medium
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: repaso-embudo, nombre: "Repaso del embudo", dias: [lun], hora: "10:00", ventana_perdida_h: 8, activa: true}
+  implementador:
+    activo: true
+    areas: [entrega]
+    lee_areas: [ventas, finanzas]
+    capacidades: [ENT-02, ENT-03, ENT-04, ENT-06, ENT-07, ENT-09, ENT-10, ENT-11]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: medium
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: estado-clientes, nombre: "Estado de los clientes", dias: [vie], hora: "09:00", ventana_perdida_h: 8, activa: true}
+  contable:
+    activo: true
+    areas: [finanzas]
+    lee_areas: [ventas, entrega]
+    capacidades: [FIN-02, FIN-03, FIN-04, FIN-05, FIN-06, FIN-07, FIN-08, FIN-09, FIN-10, FIN-12]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: low
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: cobros-pendientes, nombre: "Cobros pendientes", dia_mes: 5, hora: "09:00", ventana_perdida_h: 72, activa: true}
+      - {id: paquete-gestoria, nombre: "Lista para la gestoría", dia_mes: 1, meses: [1, 4, 7, 10], hora: "09:00", ventana_perdida_h: 72, activa: true}
+  marca:
+    activo: false
+    areas: [marca]
+    lee_areas: [ventas, entrega]
+    capacidades: [MAR-02, MAR-03, MAR-05, MAR-06, MAR-08, MAR-10, MAR-11, MAR-12]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: medium
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: repaso-calendario, nombre: "Repaso del calendario", dias: [vie], hora: "11:00", ventana_perdida_h: 8, activa: true}
+  equipo:
+    activo: false
+    areas: [equipo]
+    lee_areas: [todas]
+    capacidades: [EQU-02, EQU-05, EQU-07, EQU-08, EQU-09, EQU-10, EQU-12, EQU-13]
+    herramientas_externas: []
+    modelo: sonnet
+    esfuerzo: low
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: revision-mensual, nombre: "Revisión del mes", dia_mes: 1, hora: "09:00", ventana_perdida_h: 72, activa: true}
+  cartero:
+    activo: false
+    areas: [buzon]
+    lee_areas: [ventas, finanzas]
+    capacidades: []
+    herramientas_externas: []
+    modelo: haiku
+    esfuerzo: low
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: triaje, nombre: "Triaje del correo", dias: [lun, mar, mie, jue, vie], hora: "08:30", ventana_perdida_h: 4, activa: true}
+  ordenador:
+    activo: true
+    areas: [buzon]
+    lee_areas: [todas]
+    capacidades: []
+    herramientas_externas: []
+    modelo: haiku
+    esfuerzo: low
+    max_tareas_por_ejecucion: 10
+    presupuesto_ejecucion_usd: 0.5
+    presupuesto_mes_usd: 15
+    rutinas:
+      - {id: barrido, nombre: "Barrido de la carpeta", dias: [lun, mar, mie, jue, vie], hora: "09:00", ventana_perdida_h: 6, activa: true}

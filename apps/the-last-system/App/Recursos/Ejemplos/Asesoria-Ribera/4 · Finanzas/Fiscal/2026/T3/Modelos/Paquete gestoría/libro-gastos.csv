@@ -1,0 +1,10 @@
+numero;fecha;proveedor;nif;categoria;naturaleza;base;iva;retencion;total;justificante;id
+ALQ-2026-07;2026-07-01;Inmobiliaria Centro SL;;Alquiler;operating;650,00;136,50;123,50;663,00;Justificantes/2026-07/ALQ-2026-07.pdf;[174 51 127 235 10 86 78 68 129 188 136 253 152 152 237 53]
+SCN-2607;2026-07-05;Software Contable Nube SL;;Software;operating;120,00;25,20;0,00;145,20;Justificantes/2026-07/SCN-2607.pdf;[85 43 140 166 36 50 75 62 135 64 64 183 49 231 160 239]
+ML-07-2026;2026-07-10;Movil Levante SL;;Suministros;operating;65,00;13,65;0,00;78,65;Justificantes/2026-07/ML-07-2026.pdf;[226 61 145 72 58 243 72 229 132 123 72 211 91 45 41 169]
+ALQ-2026-08;2026-08-01;Inmobiliaria Centro SL;;Alquiler;operating;650,00;136,50;123,50;663,00;Justificantes/2026-08/ALQ-2026-08.pdf;[55 109 3 193 79 188 65 123 177 171 122 37 142 124 210 130]
+SCN-2608;2026-08-05;Software Contable Nube SL;;Software;operating;120,00;25,20;0,00;145,20;Justificantes/2026-08/SCN-2608.pdf;[172 68 20 110 156 154 68 210 174 83 143 206 129 233 188 57]
+ML-08-2026;2026-08-10;Movil Levante SL;;Suministros;operating;65,00;13,65;0,00;78,65;FALTA;[140 56 194 26 210 209 73 221 189 67 171 39 5 188 8 8]
+ALQ-2026-09;2026-09-01;Inmobiliaria Centro SL;;Alquiler;operating;650,00;136,50;123,50;663,00;Justificantes/2026-09/ALQ-2026-09.pdf;[11 2 137 4 61 114 68 57 150 221 143 223 253 135 185 70]
+SCN-2609;2026-09-05;Software Contable Nube SL;;Software;operating;120,00;25,20;0,00;145,20;Justificantes/2026-09/SCN-2609.pdf;[135 99 134 91 204 10 79 213 174 247 21 189 197 176 234 167]
+ML-09-2026;2026-09-10;Movil Levante SL;;Suministros;operating;65,00;13,65;0,00;78,65;Justificantes/2026-09/ML-09-2026.pdf;[95 77 110 253 228 212 66 44 182 240 180 134 159 205 173 134]
