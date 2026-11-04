@@ -16,17 +16,20 @@
 #   scripts/tls/the-last.sh stop
 #   scripts/tls/the-last.sh status
 #   scripts/tls/the-last.sh build    # rebuild API and web after pulling changes
+#
+# Another instance (for example examples/empresa-ejemplo) needs its own state and ports:
+#   TLS_INSTANCE_DIR=<dir> TLS_API_PORT=<port> TLS_WEB_PORT=<port> TLS_COMPANY_FOLDER=<folder> scripts/tls/the-last.sh setup
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-STATE="$HOME/Library/Application Support/TLS/The Last"
+STATE="${TLS_INSTANCE_DIR:-$HOME/Library/Application Support/TLS/The Last}"
 PGDATA="$STATE/pgdata"
 SOCK="$STATE/pg"
 RUN="$STATE/run"
 LOGS="$HOME/Library/Logs/TLS"
 BREW="/opt/homebrew/opt/postgresql@17/bin"
-API_PORT=8090
-WEB_PORT=3001
+API_PORT="${TLS_API_PORT:-8090}"
+WEB_PORT="${TLS_WEB_PORT:-3001}"
 export COMPANY_FOLDER="${TLS_COMPANY_FOLDER:?Define TLS_COMPANY_FOLDER con la carpeta de la empresa}"
 mkdir -p "$STATE" "$SOCK" "$RUN" "$LOGS" "$STATE/uploads"
 chmod 700 "$STATE" "$SOCK"
