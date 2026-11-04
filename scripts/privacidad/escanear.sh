@@ -48,10 +48,10 @@ fi
 {
   if [ "$SOLO_STAGED" = 0 ]; then
     for c in $(git rev-list --reverse "$(git merge-base "$BASE" HEAD)"..HEAD); do
-      git show --format= --unified=0 --no-color --diff-filter=AM "$c"
+      git -c core.quotePath=false show --format= --unified=0 --no-color --diff-filter=AM "$c"
     done
   fi
-  git diff --cached --unified=0 --no-color --diff-filter=AM
+  git -c core.quotePath=false diff --cached --unified=0 --no-color --diff-filter=AM
 } | awk '
   /^\+\+\+ / { file = substr($0, 7); next }
   /^\+/ && !/^\+\+\+/ { print file "\t" substr($0, 2) }
