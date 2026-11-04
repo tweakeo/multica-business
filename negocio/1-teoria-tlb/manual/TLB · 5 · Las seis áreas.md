@@ -23,7 +23,7 @@ Un área es una parte del negocio que convierte una entrada en una salida. No es
 - [Equipo](<../fichas-de-area/Equipo · el área.md>) — convierte personas en capacidad.
 
 > [!info] La ficha y la madre no son lo mismo
-> La **ficha** es el área dentro de TLB: cómo se monta, qué mide y qué falla. La **nota madre** es todo lo que sé del tema, venga de TLB o de cualquier otro sitio. Se entra por una o por otra según lo que busques: Dirección · Ventas · Entrega · Finanzas · Equipo · [Marca](<../../3-areas/5 · Marca/Marca.md>).
+> La **ficha** es el área dentro de TLB: cómo se monta, qué mide y qué falla. La **nota madre** es todo lo que sé del tema, venga de TLB o de cualquier otro sitio. Se entra por una o por otra según lo que busques: Dirección · Ventas · Entrega · Finanzas · Equipo · [Marca](<../../2-areas-y-sistemas/5 · Marca/Marca.md>).
 
 ## Qué hay dentro de un área
 

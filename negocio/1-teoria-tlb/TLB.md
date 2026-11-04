@@ -32,7 +32,7 @@ Cada una tiene dos páginas y no dicen lo mismo: **la ficha** es cómo se ordena
 | 🟢  | **Ventas**    | Desconocidos en clientes   | [Ventas · el área](<fichas-de-area/Ventas · el área.md>)    | Ventas    |
 | 🔵  | **Entrega**   | Promesas en resultados     | [Entrega · el área](<fichas-de-area/Entrega · el área.md>)   | Entrega   |
 | 🟡  | **Finanzas**  | Actividad en caja y margen | [Finanzas · el área](<fichas-de-area/Finanzas · el área.md>)  | Finanzas  |
-| 🩷  | **Marca**     | Mercado en demanda         | [Marca · el área](<fichas-de-area/Marca · el área.md>)     | [Marca](<../3-areas/5 · Marca/Marca.md>)     |
+| 🩷  | **Marca**     | Mercado en demanda         | [Marca · el área](<fichas-de-area/Marca · el área.md>)     | [Marca](<../2-areas-y-sistemas/5 · Marca/Marca.md>)     |
 | 🔴  | **Equipo**    | Personas en capacidad      | [Equipo · el área](<fichas-de-area/Equipo · el área.md>)    | Equipo    |
 
 > [!warning] No las leas las seis

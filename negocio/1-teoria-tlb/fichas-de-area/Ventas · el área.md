@@ -122,4 +122,3 @@ Los dos están **propuestos, no fijados**: las metas describen una dirección y 
 - El referido es un proceso, no suerte — el tercer sistema, el que casi nadie llega a montar.
 - No negocies el cómo: se lo quitas a quien entrega — el límite con Entrega, contado desde la sala de venta.
 - La cita literal delata la causa, el resumen la esconde — cómo se apunta un síntoma para que siga sirviendo mañana.
-- [TLB · Modelos comerciales](<../TLB · Modelos comerciales.md>) — la propuesta y las condiciones que se mandan al final del embudo.

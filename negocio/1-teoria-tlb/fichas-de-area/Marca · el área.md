@@ -114,7 +114,7 @@ Los dos marcadores están **propuestos, no fijados**. La meta de conversaciones 
 ## Referencias
 
 - [TLB](<../TLB.md>) — el libro que ordena las seis áreas, sus roles y sus etapas; esta ficha es uno de sus capítulos.
-- [Marca](<../../3-areas/5 · Marca/Marca.md>) — la madre del tema, y el reparto es limpio: aquí está el **gobierno** del área (qué se mide, qué falla, qué está prohibido hacer); allí está el **cuerpo teórico** — marca personal, qué publicar para que conecte y cómo el contenido acaba en venta.
+- [Marca](<../../2-areas-y-sistemas/5 · Marca/Marca.md>) — la madre del tema, y el reparto es limpio: aquí está el **gobierno** del área (qué se mide, qué falla, qué está prohibido hacer); allí está el **cuerpo teórico** — marca personal, qué publicar para que conecte y cómo el contenido acaba en venta.
 - La marca amplifica, no arregla — por qué esta área se monta después de Entrega y nunca antes.
 - Que hable tu cliente por ti — el activo con más rendimiento: cuándo se pide el caso de cliente y qué tiene que llevar dentro.
 - Aporta 100 y capta 50 — dónde está la frontera entre enseñar el método y regalar el negocio.
