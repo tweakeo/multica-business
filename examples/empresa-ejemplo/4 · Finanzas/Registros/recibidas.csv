@@ -1,0 +1,4 @@
+id,fecha_documento,tercero,numero_documento,moneda,total_documento,documento,ambito,proyecto_id,estado_revision,fuente
+REC-20260701-001,2026-07-01,Inmobiliaria Centro (ficticia),ALQ-2026-07,EUR,663.00,Fiscal/2026/T3/Gastos/2026-07-01 Inmobiliaria Centro ALQ-2026-07 663,00€.pdf,Asesoría Ribera,,revisado,manual
+REC-20260705-001,2026-07-05,Software Contable Nube (ficticia),SCN-2607,EUR,145.20,Fiscal/2026/T3/Gastos/2026-07-05 Software Contable Nube SCN-2607 145,20€.pdf,Asesoría Ribera,,revisado,manual
+REC-20260820-001,2026-08-20,Papelería del Turia (ficticia),PT-0831,EUR,,,Asesoría Ribera,,pendiente,manual

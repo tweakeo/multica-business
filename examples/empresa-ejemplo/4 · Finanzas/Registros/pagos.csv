@@ -1,0 +1,3 @@
+id,fecha,direccion,importe,moneda,cuenta,documento_id,proyecto_id,evidencia,verificacion
+PAG-20260701-001,2026-07-01,pago,663.00,EUR,cuenta-corriente-demo,REC-20260701-001,,importar/2026-07 a 09 cuenta-corriente-demo.csv,confirmado
+PAG-20260722-001,2026-07-22,cobro,181.50,EUR,cuenta-corriente-demo,EMI-20260715-001,,importar/2026-07 a 09 cuenta-corriente-demo.csv,confirmado
