@@ -22,7 +22,8 @@ PATTERNS = [
 # Example or technical domains and paths.
 EMAIL_OK = re.compile(
     r"@(?:example\.(?:com|org|net)|[a-z0-9-]+\.example|tls\.local|test|localhost|"
-    r"(?:users\.)?noreply\.github\.com|anthropic\.com|multica\.ai|ejemplo\.(?:com|es)|empresa\.test)\b"
+    r"(?:users\.)?noreply\.github\.com|anthropic\.com|multica\.ai|ejemplo\.(?:com|es|test)|empresa\.test|dominio\.es)\b"
+    r"|\.invalid\b|\.example\b"
     r"|noreply@|^git@"
 )
 PATH_OK = re.compile(r"/Users/(?:prueba|ejemplo|persona|a|tu-usuario|usuario|runner|you|me|shared)\b")

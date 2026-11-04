@@ -3,3 +3,17 @@
 12345678Z
 ana@x.es
 l@x.es
+# Fictitious company IDs, NIE and phones from the native app's fixtures.
+B00000000
+B00000017
+B12345678
+X1234567L
+0034600000000
++34 600 000 000
+# Example addresses that are not on an example domain.
+b@c.es
+consulta@clinica-ejemplo.es
+notificaciones@aeat.es
+Laura@Example.com
+# Path used by a test to check the iCloud Drive label.
+Mobile Documents/com~apple~CloudDocs/E
