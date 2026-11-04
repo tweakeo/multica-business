@@ -1,0 +1,5 @@
+# Invented values that match a pattern on purpose (one exact match per line).
+# Test NIF used by the native app's fiscal tests.
+12345678Z
+ana@x.es
+l@x.es

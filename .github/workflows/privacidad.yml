@@ -1,0 +1,24 @@
+name: Privacidad
+
+# Blocks secrets and personal data in what a pull request adds.
+# The same check runs locally: scripts/privacidad/escanear.sh
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  escanear:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar -xz -C /usr/local/bin gitleaks
+      - name: Scan added lines
+        run: scripts/privacidad/escanear.sh --base "origin/${{ github.base_ref }}"
